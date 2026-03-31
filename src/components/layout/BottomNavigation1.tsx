@@ -1,16 +1,14 @@
 import React, { useState } from 'react';
-import { GoHomeFill } from "react-icons/go";
-import { FaShoppingCart, FaUser } from "react-icons/fa";
-import { MdAccountBalance } from "react-icons/md"; 
+import { Icons } from '../common/Icons';
 
 const BottomNavigation: React.FC = () => {
   const [activeTab, setActiveTab] = useState('홈');
 
   const navItems = [
-    { label: '홈', icon: <GoHomeFill size={26} /> },
-    { label: '포인트샵', icon: <FaShoppingCart size={24} /> },
-    { label: '금융상품', icon: <MdAccountBalance size={26} /> },
-    { label: '마이페이지', icon: <FaUser size={22} /> },
+    { label: '홈', icon: <Icons.Home /> },
+    { label: '포인트샵', icon: <Icons.Shop /> },
+    { label: '금융상품', icon: <Icons.Bank /> },
+    { label: '마이페이지', icon: <Icons.MyPage /> },
   ];
 
   return (

@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { House, ShoppingBasket, Landmark, User } from 'lucide-react';
+import { Icons } from '../common/Icons';
 
 const BottomNavigation: React.FC = () => {
   const [activeTab, setActiveTab] = useState('홈');
 
   const navItems = [
-    { label: '홈', icon: <House size={24} /> },
-    { label: '포인트샵', icon: <ShoppingBasket size={24} /> },
-    { label: '금융상품', icon: <Landmark size={24} /> },
-    { label: '마이페이지', icon: <User size={24} /> },
+    { label: '홈', icon: <Icons.Home /> },
+    { label: '포인트샵', icon: <Icons.Shop /> },
+    { label: '금융상품', icon: <Icons.Bank /> },
+    { label: '마이페이지', icon: <Icons.MyPage /> },
   ];
 
   return (

@@ -6,6 +6,7 @@ import Input from './components/common/Input'
 import BottomNavigation from './components/layout/BottomNavigation'
 import Header from './components/layout/Header'
 import MainLayout from './components/layout/MainLayout'
+import Button from './components/common/Button'
 
 // interface Item {
 //   id: number
@@ -68,6 +69,27 @@ function App() {
         </div>
       </Card>
 
+      <Button variant="primary" fullWidth>확인</Button>
+      <Button variant="outline" fullWidth>회원가입</Button>
+
+      <div className="flex gap-3 w-full mt-auto">
+        <Button
+          variant="sub"
+          className="flex-1"
+          onClick={() => console.log('적금 확인 페이지로!')}
+        >
+          내 적금 확인하기
+        </Button>
+        <Button
+          variant="primary"
+          className="flex-1"
+          onClick={() => console.log('메인으로!')}
+        >
+          메인으로 가기
+        </Button>
+      </div>
+
+      <Button variant="primary" disabled>구매하기</Button>
 
       <Card className="p-0 bg-primary-50">
         <div className="p-4">내용...</div>

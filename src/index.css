@@ -1,6 +1,8 @@
 @import "tailwindcss";
 
 @theme {
+  --radius-badge: 4px;
+  --radius-control: 8px;
   --header-h: 56px;           /* 상단바 높이 표준 */
   --nav-h: 66px;              /* 하단바 높이 표준 */
   --side-padding: 1rem;       /* 16px (px-4) 전체 공통 여백 */
@@ -67,4 +69,10 @@
   --text-title: 20px; 
   --font-weight-semibold: 600; /* SemiBold */
   --tracking-tight-sm: -0.02em; /* 자간 -2% */
+}
+
+@layer base {
+  body {
+    @apply bg-bg-light text-font-main font-pretendard;
+  }
 }

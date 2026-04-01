@@ -24,7 +24,7 @@ const Button: React.FC<ButtonProps> = ({
     size = 'md',
     fullWidth = false,
     className = '',
-    disabled,
+    type = 'button',
     ...props
 }) => {
     // 1. 상태별 컬러 정의 (지정하신 규격 그대로 반영)
@@ -50,17 +50,19 @@ const Button: React.FC<ButtonProps> = ({
         lg: 'h-[52px] px-6 text-lg font-semibold',
     };
 
+    const buttonClassName = [
+        'flex items-center justify-center rounded-control transition-all duration-200',
+        'active:scale-[0.98] cursor-pointer disabled:cursor-not-allowed',
+        variantStyles[variant],
+        sizeStyles[size],
+        fullWidth ? 'w-full' : 'w-fit',
+        className,
+    ].join(' ');
+
     return (
         <button
-            className={`
-        flex items-center justify-center rounded-[8px] transition-all duration-200
-        active:scale-[0.98] cursor-pointer disabled:cursor-not-allowed
-        ${variantStyles[variant]}
-        ${sizeStyles[size]}
-        ${fullWidth ? 'w-full' : 'w-fit'}
-        ${className}
-      `}
-            disabled={disabled}
+            type={type}
+            className={buttonClassName}
             {...props}
         >
             {children}

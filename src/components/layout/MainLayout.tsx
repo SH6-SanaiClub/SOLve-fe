@@ -11,26 +11,28 @@ import React from 'react';
 // @param {React.ReactNode} nav - 페이지 하단에 고정될 BottomNavigation 컴포넌트 (선택)
 
 interface Props {
+  className?: string;
   children: React.ReactNode;
   header?: React.ReactNode; // Header 컴포넌트
   nav?: React.ReactNode;    // BottomNavigation 컴포넌트
 }
 
-const MainLayout: React.FC<Props> = ({ children, header, nav }) => {
+const MainLayout: React.FC<Props> = ({ children, header, nav, className = '' }) => {
+  const contentPaddingTop = header ? 'pt-(--header-h)' : 'pt-0';
+  const contentPaddingBottom = nav ? 'pb-[calc(var(--nav-h)+20px)]' : 'pb-6';
+
   return (
-    <div className="min-h-screen w-full max-w-[600px] mx-auto bg-bg-light shadow-2xl relative flex flex-col font-['Pretendard_Variable']">
+    <div className={`min-h-screen w-full max-w-[600px] mx-auto bg-bg-light shadow-2xl relative flex flex-col font-pretendard ${className}`}>
       
       {header}
 
       {/* 2. 콘텐츠 영역 */}
       <main className="
         flex-1 w-full 
-        px-(--side-padding) 
-        pt-(--header-h) 
-        pb-[calc(var(--nav-h)+20px)]
+        px-(--side-padding)
       ">
         {/* 페이지 내부 요소들은 여기서부터 gap만 신경 쓰면 됩니다 */}
-        <div className="flex flex-col gap-4 py-6">
+        <div className={`flex flex-col gap-4 py-6 ${contentPaddingTop} ${contentPaddingBottom}`}>
           {children}
         </div>
       </main>

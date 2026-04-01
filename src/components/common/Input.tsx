@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     label?: string;          // 인풋 위 라벨 텍스트
@@ -18,14 +18,21 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 
 const Input: React.FC<InputProps> = ({
     label,
-    requiredMark,
+    requiredMark = false,
     helperText,
     errorText,
-    isVerified,
+    isVerified = false,
     id,
     className = '',
+    'aria-describedby': ariaDescribedBy,
+    'aria-invalid': ariaInvalid,
     ...props
 }) => {
+    const generatedId = useId();
+    const inputId = id ?? generatedId;
+    const feedbackId = helperText || errorText ? `${inputId}-description` : undefined;
+    const describedBy = [ariaDescribedBy, feedbackId].filter(Boolean).join(' ') || undefined;
+    const showVerified = isVerified && !errorText;
     const inputBorderColor = errorText
         ? 'border-error focus:border-error'
         : 'border-gray-400 focus:border-primary-500';
@@ -34,7 +41,7 @@ const Input: React.FC<InputProps> = ({
         <div className={`w-full flex flex-col gap-[6px]`}>
             {/* 1. 라벨 영역 */}
             {label && (
-                <label htmlFor={id} className="text-sm font-medium text-font-main flex items-center gap-1">
+                <label htmlFor={inputId} className="text-sm font-medium text-font-main flex items-center gap-1">
                     {label}
                     {requiredMark && <span className="text-error">*</span>}
                 </label>
@@ -43,10 +50,12 @@ const Input: React.FC<InputProps> = ({
             {/* 2. 인풋 박스 영역 */}
             <div className="relative w-full">
                 <input
-                    id={id}
+                    id={inputId}
+                    aria-describedby={describedBy}
+                    aria-invalid={ariaInvalid ?? Boolean(errorText)}
                     className={`
-                      w-full h-[48px] py-[14px] pl-4 ${isVerified ? 'pr-10' : 'pr-4'}
-                      bg-white border rounded-[8px]
+                      w-full h-[48px] py-[14px] pl-4 ${showVerified ? 'pr-10' : 'pr-4'}
+                      bg-white border rounded-control
                       text-base font-medium text-font-main tracking-tight-sm
                       placeholder:text-font-sub
                       outline-none transition-colors
@@ -57,7 +66,7 @@ const Input: React.FC<InputProps> = ({
                 />
                 
                 {/* 3. 입력/확인 완료 체크마크 (isVerified가 true일 때만 렌더링) */}
-                {isVerified && (
+                {showVerified && (
                     <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M16.6666 5L7.49992 14.1667L3.33325 10" stroke="#10B981" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -68,9 +77,9 @@ const Input: React.FC<InputProps> = ({
 
             {/* 4. 하단 메시지 영역 (에러 텍스트 우선 표시) */}
             {errorText ? (
-                <p className="text-xs text-error font-normal tracking-tight-sm">{errorText}</p>
+                <p id={feedbackId} className="text-xs text-error font-normal tracking-tight-sm">{errorText}</p>
             ) : helperText ? (
-                <p className="text-xs text-font-sub font-normal tracking-tight-sm">{helperText}</p>
+                <p id={feedbackId} className="text-xs text-font-sub font-normal tracking-tight-sm">{helperText}</p>
             ) : null}
         </div>
     );

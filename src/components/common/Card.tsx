@@ -18,27 +18,52 @@ import React from 'react';
 
 
 
-interface CardProps {
-  children: React.ReactNode;
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   title?: string;
-  className?: string;
-  onClick?: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ children, title, className = '', onClick }) => {
+const Card: React.FC<CardProps> = ({
+  children,
+  title,
+  className = '',
+  onClick,
+  onKeyDown,
+  role,
+  tabIndex,
+  ...props
+}) => {
+  const isInteractive = Boolean(onClick);
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    onKeyDown?.(event);
+
+    if (event.defaultPrevented || !isInteractive) {
+      return;
+    }
+
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      event.currentTarget.click();
+    }
+  };
+
   return (
     <div
       onClick={onClick}
+      onKeyDown={handleKeyDown}
+      role={role ?? (isInteractive ? 'button' : undefined)}
+      tabIndex={tabIndex ?? (isInteractive ? 0 : undefined)}
       className={`
-        w-full bg-white rounded-[8px] p-[20px] shadow-sm border border-gray-100
+        w-full bg-white rounded-control p-[20px] shadow-sm border border-gray-100
         flex flex-col gap-[10px]
         transition-all duration-200
-        ${onClick ? 'cursor-pointer active:scale-[0.98]' : ''}
+        ${isInteractive ? 'cursor-pointer active:scale-[0.98]' : ''}
         ${className} 
       `}
+      {...props}
     >
       {title && (
-        <h3 className="text-[18px] font-bold text-font-main">{title}</h3>
+        <h3 className="text-card-title font-bold text-font-main">{title}</h3>
       )}
       <div className="w-full">
         {children}

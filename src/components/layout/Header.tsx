@@ -14,17 +14,18 @@ interface HeaderProps {
     title?: string;
     right?: React.ReactNode;
     bgColor?: string;
+    className?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ left, title, right, bgColor = 'bg-white' }) => {
+const Header: React.FC<HeaderProps> = ({ left, title, right, bgColor = 'bg-white', className = '' }) => {
     return (
         <header className={`fixed top-0 left-1/2 -translate-x-1/2 z-50 
       w-full max-w-[600px] h-(--header-h) px-(--side-padding) py-[12px] 
-      flex items-center justify-between ${bgColor}
+      flex items-center justify-between ${bgColor} ${className}
     `}>
             <div className="flex items-center gap-[8px] min-h-[32px]">
                 {left && (
-                    <div className="flex items-center justify-center min-w-[24px] cursor-pointer">
+                    <div className="flex items-center justify-center min-w-[24px]">
                         {left}
                     </div>
                 )}

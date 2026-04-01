@@ -1,78 +1,69 @@
 @import "tailwindcss";
+@import "./styles/reset.css";
+@import "./styles/globals.css";
 
 @theme {
   --radius-badge: 4px;
   --radius-control: 8px;
-  --header-h: 56px;           /* 상단바 높이 표준 */
-  --nav-h: 66px;              /* 하단바 높이 표준 */
-  --side-padding: 1rem;       /* 16px (px-4) 전체 공통 여백 */
+  --radius-card: 16px;
 
-  /* 브랜드 컬러 (Primary) */
-  --color-primary-50: #E5ECFF;
-  --color-primary-100: #CCDAFF;
-  --color-primary-200: #99B5FF;
-  --color-primary-300: #6690FF; /* 서브 컬러 */
-  --color-primary-400: #336BFF;
-  --color-primary-500: #0046FF; /* 메인 컬러 */
-  --color-primary-600: #0038CC;
-  --color-primary-700: #002A99;
-  --color-primary-800: #001C66;
-  --color-primary-900: #000E33;
+  --header-h: 56px;
+  --nav-h: 66px;
+  --side-padding: 1rem;
+
+  --color-primary-50: #e5ecff;
+  --color-primary-100: #ccdaff;
+  --color-primary-200: #99b5ff;
+  --color-primary-300: #6690ff;
+  --color-primary-400: #336bff;
+  --color-primary-500: #0046ff;
+  --color-primary-600: #0038cc;
+  --color-primary-700: #002a99;
+  --color-primary-800: #001c66;
+  --color-primary-900: #000e33;
   --color-primary-950: #000719;
 
-  /* CoolGray 팔레트 */
-  --color-gray-50: #F8FAFC;  /* 배경색1 */
-  --color-gray-100: #F1F5F9; /* 배경색2 */
-  --color-gray-200: #E2E8F0;
-  --color-gray-300: #CBD5E1;
-  --color-gray-400: #94A3B8; /* 폰트 서브 */
-  --color-gray-500: #64748B;
+  --color-gray-50: #f8fafc;
+  --color-gray-100: #f1f5f9;
+  --color-gray-200: #e2e8f0;
+  --color-gray-300: #cbd5e1;
+  --color-gray-400: #94a3b8;
+  --color-gray-500: #64748b;
   --color-gray-600: #475569;
-  --color-gray-700: #334155; /* 폰트 메인 */
-  --color-gray-800: #1E293B;
-  --color-gray-900: #0F172A;
+  --color-gray-700: #334155;
+  --color-gray-800: #1e293b;
+  --color-gray-900: #0f172a;
   --color-gray-950: #020617;
 
-  --color-error: #FC5555; /* 에러 텍스트 및 테두리 색상 */
-
-  /* 별칭 설정 */
+  --color-error: #fc5555;
   --color-sh-main: var(--color-primary-500);
   --color-sh-sub: var(--color-primary-300);
   --color-font-main: var(--color-gray-700);
   --color-font-sub: var(--color-gray-400);
   --color-bg-light: var(--color-gray-100);
+  --color-surface: #ffffff;
+  --color-border-muted: var(--color-gray-200);
 
+  --font-pretendard: "Pretendard Variable", "Pretendard", sans-serif;
 
-  /* 글꼴 정의 */
-  --font-pretendard: "Pretendard Variable", sans-serif;
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-title: 20px;
 
-  /* 폰트 사이즈 토큰 */
-  --text-xs: 12px;    /* 하단 바 라벨, 상단 수치 등 */
-  --text-sm: 14px;    /* 보조 설명, 카드 내부 작은 글씨 */
-  --text-base: 16px;  /* 기본 본문 텍스트 */
-  --text-lg: 18px;    /* 카드 제목 등 주요 강조 텍스트 */
-  --text-xl: 20px;    /* 'S 활동하기' 같은 큰 버튼 제목 */
-  
-  /* 별칭 (Semantic Tokens) */
   --text-nav-label: var(--text-xs);
   --text-card-title: var(--text-lg);
 
-  /* 폰트 굵기 정의 (Pretendard 기준) */
   --font-weight-thin: 100;
   --font-weight-light: 300;
-  --font-weight-normal: 400;   /* 기본 본문 */
-  --font-weight-medium: 500;   /* 강조된 본문, 숫자 */
-  --font-weight-semibold: 600; /* 소제목, 카드 제목, 버튼 */
-  --font-weight-bold: 700;     /* 메인 타이틀 */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
 
-  /* 헤더 폰트 정의 */
-  --text-title: 20px; 
-  --font-weight-semibold: 600; /* SemiBold */
-  --tracking-tight-sm: -0.02em; /* 자간 -2% */
-}
-
-@layer base {
-  body {
-    @apply bg-bg-light text-font-main font-pretendard;
-  }
+  --tracking-tight-sm: -0.02em;
+  --shadow-card: 0 8px 24px rgba(51, 65, 85, 0.08);
 }

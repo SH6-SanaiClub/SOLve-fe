@@ -1,8 +1,12 @@
 @import "tailwindcss";
+@import "./styles/reset.css";
+@import "./styles/globals.css";
 
 @theme {
   --radius-badge: 4px;
   --radius-control: 8px;
+  --radius-card: 16px;
+
   --header-h: 56px;           /* 상단바 높이 표준 */
   --nav-h: 66px;              /* 하단바 높이 표준 */
   --side-padding: 1rem;       /* 16px (px-4) 전체 공통 여백 */
@@ -41,10 +45,11 @@
   --color-font-main: var(--color-gray-700);
   --color-font-sub: var(--color-gray-400);
   --color-bg-light: var(--color-gray-100);
-
+  --color-surface: #ffffff;
+  --color-border-muted: var(--color-gray-200);
 
   /* 글꼴 정의 */
-  --font-pretendard: "Pretendard Variable", sans-serif;
+  --font-pretendard: "Pretendard Variable", "Pretendard", sans-serif;
 
   /* 폰트 사이즈 토큰 */
   --text-xs: 12px;    /* 하단 바 라벨, 상단 수치 등 */
@@ -52,7 +57,8 @@
   --text-base: 16px;  /* 기본 본문 텍스트 */
   --text-lg: 18px;    /* 카드 제목 등 주요 강조 텍스트 */
   --text-xl: 20px;    /* 'S 활동하기' 같은 큰 버튼 제목 */
-  
+  --text-2xl: 24px;
+
   /* 별칭 (Semantic Tokens) */
   --text-nav-label: var(--text-xs);
   --text-card-title: var(--text-lg);
@@ -66,9 +72,11 @@
   --font-weight-bold: 700;     /* 메인 타이틀 */
 
   /* 헤더 폰트 정의 */
-  --text-title: 20px; 
+  --text-title: 20px;
   --font-weight-semibold: 600; /* SemiBold */
   --tracking-tight-sm: -0.02em; /* 자간 -2% */
+
+  --shadow-card: 0 8px 24px rgba(51, 65, 85, 0.08);
 }
 
 @layer base {

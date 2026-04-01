@@ -1,0 +1,33 @@
+:root {
+  font-family: var(--font-pretendard);
+  color: var(--color-font-main);
+  background: var(--color-bg-light);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  min-width: 320px;
+  background:
+    linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  width: min(100%, 600px);
+  margin: 0 auto;
+  padding: 24px 16px 96px;
+}
+
+.page-card {
+  border-radius: 16px;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+}

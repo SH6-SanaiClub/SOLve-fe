@@ -1,70 +1,46 @@
 import React from 'react';
 
-// 피그마 추출 스타일 기반 정의
-const s: { [key: string]: React.CSSProperties } = {
-  hero: { width: '342px', height: '128px', padding: '32px 0', margin: '16px', position: 'absolute', top: '80px', left: '24px', overflow: 'hidden' },
-  heroTitle: { width: '342px', color: 'rgba(25,28,30,1)', fontFamily: 'Pretendard', fontWeight: 'bold', fontSize: '30px', textAlign: 'left', margin: 0, whiteSpace: 'pre-wrap' },
-  heroIcon: { width: '73px', height: '77px', backgroundColor: '#f0f0f0', borderRadius: '12px', position: 'absolute', top: '2px', left: '269px' },
-  
-  rateCard: { width: '342px', height: '138px', background: 'rgba(255,255,255,1)', padding: '32px', borderRadius: '24px', boxShadow: '0px 10px 40px rgba(25, 28, 30, 0.06)', position: 'absolute', top: '208px', left: '24px', overflow: 'hidden' },
-  rateSub: { color: 'rgba(67,70,87,1)', fontSize: '14px', fontWeight: 600, marginBottom: '4px' },
-  rateValue: { color: 'rgba(41,98,253,1)', fontSize: '48px', fontWeight: 600, marginLeft: '8px' },
+// 공통 상단 헤더 (Header) 컴포넌트
+// 최대 너비 600px로 중앙 정렬되며 상단에 고정
 
-  grayBox: { width: '342px', backgroundColor: 'rgba(242,243,246,1)', borderRadius: '24px', padding: '24px', position: 'absolute', left: '24px' },
-  boxTitle: { color: 'rgba(25,28,30,1)', fontSize: '18px', fontWeight: 'bold', margin: 0, marginBottom: '12px' },
-  boxDesc: { color: 'rgba(67,70,87,1)', fontSize: '14px', lineHeight: '1.4', margin: 0 },
+// @param {React.ReactNode} left - 헤더 좌측 요소 (주로 뒤로가기 버튼, 로고 등)
+// @param {string} title - 헤더 타이틀 (left 요소 바로 우측에 나란히 배치됨)
+// @param {React.ReactNode} right - 헤더 우측 요소 (검색, 햄버거 메뉴, 알림 아이콘 등)
+// @param {string} bgColor - 배경색 커스텀 (기본값: 'bg-white', 필요시 투명 배경 등 적용 가능)
 
-  detailSection: { width: '342px', position: 'absolute', top: '537px', left: '24px' },
-  detailRow: { display: 'flex', justifyContent: 'space-between', marginBottom: '16px', fontSize: '14px' },
 
-  noticeBox: { width: '342px', background: 'rgba(242,243,246,1)', borderRadius: '24px', padding: '24px', position: 'absolute', top: '725px', left: '24px' },
-  noticeItem: { display: 'flex', gap: '8px', marginBottom: '12px', fontSize: '13px', color: 'rgba(67,70,87,1)', lineHeight: '1.5' }
+interface HeaderProps {
+    left?: React.ReactNode;
+    title?: string;
+    right?: React.ReactNode;
+    bgColor?: string;
+}
+
+const Header: React.FC<HeaderProps> = ({ left, title, right, bgColor = 'bg-white' }) => {
+    return (
+        <header className={`fixed top-0 left-1/2 -translate-x-1/2 z-50 
+      w-full max-w-[600px] h-(--header-h) px-(--side-padding) py-[12px] 
+      flex items-center justify-between ${bgColor}
+    `}>
+            <div className="flex items-center gap-[8px] min-h-[32px]">
+                {left && (
+                    <div className="flex items-center justify-center min-w-[24px] cursor-pointer">
+                        {left}
+                    </div>
+                )}
+                {title && (
+                    /* 텍스트 색상을 토큰화된 font-main으로 변경 */
+                    <h1 className="text-title font-semibold text-font-main tracking-tight-sm leading-none">
+                        {title}
+                    </h1>
+                )}
+            </div>
+
+            <div className="flex items-center gap-[16px] text-font-main min-h-[32px]">
+                {right}
+            </div>
+        </header>
+    );
 };
 
-export const SavingHero = ({ title }: { title: string }) => (
-  <div style={s.hero}><p style={s.heroTitle}>{title}</p><div style={s.heroIcon} /></div>
-);
-
-export const InterestCard = ({ sub, total }: { sub: string, total: string }) => (
-  <div style={s.rateCard}>
-    <p style={s.rateSub}>{sub}</p>
-    <div style={{ display: 'flex', alignItems: 'baseline' }}>
-      <span style={{ fontSize: '18px', color: 'rgba(67,70,87,1)' }}>최고</span>
-      <span style={s.rateValue}>{total}</span>
-    </div>
-  </div>
-);
-
-export const ConditionCard = ({ title, desc }: { title: string, desc: string }) => (
-  <div style={{ ...s.grayBox, top: '384px', height: '127px' }}>
-    <p style={s.boxTitle}>{title}</p>
-    <p style={s.boxDesc}>{desc}</p>
-  </div>
-);
-
-export const DetailSection = ({ items }: { items: { l: string, v: string }[] }) => (
-  <div style={s.detailSection}>
-    <p style={{ color: 'rgba(67,70,87,1)', fontWeight: 'bold', marginBottom: '24px' }}>Product Details</p>
-    {items.map((item, i) => (
-      <div key={i} style={s.detailRow}>
-        <span style={{ color: 'rgba(67,70,87,1)' }}>{item.l}</span>
-        <span style={{ color: 'rgba(25,28,30,1)', fontWeight: 500 }}>{item.v}</span>
-      </div>
-    ))}
-  </div>
-);
-
-export const NoticeSection = ({ items }: { items: string[] }) => (
-  <div style={s.noticeBox}>
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-      <div style={{ width: '11px', height: '11px', backgroundColor: 'rgba(67,70,87,1)' }} />
-      <span style={{ fontWeight: 'bold', fontSize: '12px', color: 'rgba(67,70,87,1)' }}>알아두세요</span>
-    </div>
-    {items.map((item, i) => (
-      <div key={i} style={s.noticeItem}>
-        <div style={{ minWidth: '4px', height: '4px', backgroundColor: 'rgba(196,197,218,1)', borderRadius: '50%', marginTop: '6px' }} />
-        <span>{item}</span>
-      </div>
-    ))}
-  </div>
-);
+export default Header;

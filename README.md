@@ -1,73 +1,52 @@
-# React + TypeScript + Vite
+# SOLve Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+SOLve 프론트엔드 프로젝트입니다. React, TypeScript, Vite, Tailwind CSS 기반으로 구성되어 있고,
+라우팅, 기본 인증 상태 관리, Axios API 클라이언트, 공통 UI 컴포넌트를 포함합니다.
 
-Currently, two official plugins are available:
+## Requirements
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Node.js `22`
+- npm `10+`
 
-## React Compiler
+홀수 버전 Node.js(예: 23)는 일부 패키지에서 `EBADENGINE` 경고가 날 수 있어 `22 LTS` 사용을 권장합니다.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Getting Started
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+nvm use
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+브라우저에서 `http://localhost:5173`으로 접속하면 됩니다.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Available Scripts
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run dev
+npm run build
+npm run lint
+npm run preview
 ```
+
+## API / Environment
+
+기본 API 프록시는 [vite.config.ts](./vite.config.ts)에서
+`/api -> http://localhost:8080`으로 연결되어 있습니다.
+
+환경변수는 선택 사항이며, 없으면 기본값을 사용합니다.
+
+```env
+VITE_API_BASE_URL=/api
+VITE_API_TIMEOUT_MS=10000
+VITE_ENABLE_DEV_AUTH_BYPASS=true
+```
+
+실제 기본값은 [config.ts](./src/constants/config.ts)에서 관리합니다.
+
+## Project Notes
+
+- 앱 진입점은 [App.tsx](./src/App.tsx)입니다.
+- 라우팅은 [Router.tsx](./src/routes/Router.tsx)에서 관리합니다.
+- API 클라이언트는 [apiClient.ts](./src/services/apiClient.ts)에 있습니다.
+- 전역 스타일 토큰은 [index.css](./src/index.css)에 있습니다.

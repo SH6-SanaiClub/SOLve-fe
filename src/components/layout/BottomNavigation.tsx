@@ -12,22 +12,27 @@ const BottomNavigation: React.FC = () => {
   ];
 
   return (
-    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-[600px] h-[66px] bg-[#FFFFFF] border-t border-[#E2E8F0] flex items-center justify-around px-[20px] py-[8px] z-50 font-['Pretendard_Variable']">
+    <nav className="
+      fixed bottom-0 left-1/2 -translate-x-1/2 z-50 
+      w-full max-w-[600px] h-(--nav-h) bg-white border-t border-gray-200 
+      flex items-center justify-around px-(--side-padding) py-[8px] 
+      font-['Pretendard_Variable']
+    ">
       {navItems.map((item) => {
         const isActive = activeTab === item.label;
         return (
           <div
             key={item.label}
             onClick={() => setActiveTab(item.label)}
-            className="flex flex-col items-center justify-center cursor-pointer min-w-[64px] gap-1"
+            className="flex flex-col items-center justify-center cursor-pointer min-w-[64px]"
           >
-            <div className={isActive ? 'text-[#334155]' : 'text-[#94A3B8]'}>
+            <div className={`h-[24px] flex items-center justify-center ${isActive ? 'text-font-main' : 'text-font-sub'}`}>
               {item.icon}
             </div>
-            
-            <span 
-              className={`text-[11px] leading-none ${
-                isActive ? 'text-[#334155] font-semibold' : 'text-[#94A3B8] font-medium'
+
+            <span
+              className={`text-xs tracking-tight-sm leading-none mt-[6px] ${
+                isActive ? 'text-font-main font-semibold' : 'text-font-sub font-medium'
               }`}
             >
               {item.label}

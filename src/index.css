@@ -1,112 +1,70 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
-
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
-}
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
-}
 @import "tailwindcss";
+
+@theme {
+  --header-h: 56px;           /* 상단바 높이 표준 */
+  --nav-h: 66px;              /* 하단바 높이 표준 */
+  --side-padding: 1rem;       /* 16px (px-4) 전체 공통 여백 */
+
+  /* 브랜드 컬러 (Primary) */
+  --color-primary-50: #E5ECFF;
+  --color-primary-100: #CCDAFF;
+  --color-primary-200: #99B5FF;
+  --color-primary-300: #6690FF; /* 서브 컬러 */
+  --color-primary-400: #336BFF;
+  --color-primary-500: #0046FF; /* 메인 컬러 */
+  --color-primary-600: #0038CC;
+  --color-primary-700: #002A99;
+  --color-primary-800: #001C66;
+  --color-primary-900: #000E33;
+  --color-primary-950: #000719;
+
+  /* CoolGray 팔레트 */
+  --color-gray-50: #F8FAFC;  /* 배경색1 */
+  --color-gray-100: #F1F5F9; /* 배경색2 */
+  --color-gray-200: #E2E8F0;
+  --color-gray-300: #CBD5E1;
+  --color-gray-400: #94A3B8; /* 폰트 서브 */
+  --color-gray-500: #64748B;
+  --color-gray-600: #475569;
+  --color-gray-700: #334155; /* 폰트 메인 */
+  --color-gray-800: #1E293B;
+  --color-gray-900: #0F172A;
+  --color-gray-950: #020617;
+
+  --color-error: #FC5555; /* 에러 텍스트 및 테두리 색상 */
+
+  /* 별칭 설정 */
+  --color-sh-main: var(--color-primary-500);
+  --color-sh-sub: var(--color-primary-300);
+  --color-font-main: var(--color-gray-700);
+  --color-font-sub: var(--color-gray-400);
+  --color-bg-light: var(--color-gray-100);
+
+
+  /* 글꼴 정의 */
+  --font-pretendard: "Pretendard Variable", sans-serif;
+
+  /* 폰트 사이즈 토큰 */
+  --text-xs: 12px;    /* 하단 바 라벨, 상단 수치 등 */
+  --text-sm: 14px;    /* 보조 설명, 카드 내부 작은 글씨 */
+  --text-base: 16px;  /* 기본 본문 텍스트 */
+  --text-lg: 18px;    /* 카드 제목 등 주요 강조 텍스트 */
+  --text-xl: 20px;    /* 'S 활동하기' 같은 큰 버튼 제목 */
+  
+  /* 별칭 (Semantic Tokens) */
+  --text-nav-label: var(--text-xs);
+  --text-card-title: var(--text-lg);
+
+  /* 폰트 굵기 정의 (Pretendard 기준) */
+  --font-weight-thin: 100;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;   /* 기본 본문 */
+  --font-weight-medium: 500;   /* 강조된 본문, 숫자 */
+  --font-weight-semibold: 600; /* 소제목, 카드 제목 */
+  --font-weight-bold: 700;     /* 메인 타이틀, 버튼 */
+
+  /* 헤더 폰트 정의 */
+  --text-title: 20px; 
+  --font-weight-semibold: 600; /* SemiBold */
+  --tracking-tight-sm: -0.02em; /* 자간 -2% */
+}

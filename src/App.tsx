@@ -1,26 +1,31 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
+import { AppRouter } from './routes/Router'
+import { useNetworkStatus } from './hooks/useNetworkStatus'
+import { usePwaInstall } from './hooks/usePwaInstall'
 
 function App() {
-  const [items, setItems] = useState([])
+  useNetworkStatus()
+  usePwaInstall()
 
   useEffect(() => {
-    fetch('/api/test')
-      .then(res => res.json())
-      .then(data => setItems(data))
-      .catch(err => console.error(err))
+    if (!('serviceWorker' in navigator)) {
+      return
+    }
+
+    const registerServiceWorker = () => {
+      navigator.serviceWorker
+        .register('/sw.js')
+        .catch((error: unknown) => console.error('Service worker registration failed', error))
+    }
+
+    window.addEventListener('load', registerServiceWorker, { once: true })
+
+    return () => {
+      window.removeEventListener('load', registerServiceWorker)
+    }
   }, [])
 
-  return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">ESG Platform - 연결 테스트</h1>
-      <p className="mb-2">API 응답 데이터:</p>
-      <ul>
-        {items.map((item: any) => (
-          <li key={item.id}>{item.name} - {item.description}</li>
-        ))}
-      </ul>
-    </div>
-  )
+  return <AppRouter />
 }
 
 export default App

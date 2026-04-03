@@ -7,6 +7,7 @@ export const ROUTE_PATHS = {
   activities: '/activities',
   activityEnvironment: '/activities/environment',
   activitySocial: '/activities/social',
+  activitySocialDonation: '/esg/social/donation',
   activityGovernance: '/activities/governance',
   finance: '/finance',
   my: '/my',

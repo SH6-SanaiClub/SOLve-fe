@@ -49,7 +49,7 @@ export function LoginPage() {
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px', padding: '16px' }}>
         <Input label="아이디" name="loginId" value={loginData.loginId} onChange={handleChange} required />
         <Input label="비밀번호" name="password" type="password" value={loginData.password} onChange={handleChange} required />
-        <Button type="submit" variant="primary">로그인</Button>
+        <Button type="submit" variant="primary" fullWidth={true}>로그인</Button>
       </form>
     </PageScaffold>
   );

@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { ROUTE_PATHS } from '../constants/routePaths'
 import { GovernancePage } from '../pages/activities/GovernancePage'
 import { ActivitiesPage } from '../pages/activities/ActivitiesPage'
+import { DonationPage } from '../pages/activities/DonationPage'
 import { EnvironmentPage } from '../pages/activities/EnvironmentPage'
 import { SocialPage } from '../pages/activities/SocialPage'
 import { LoginPage } from '../pages/auth/LoginPage'
@@ -32,6 +33,7 @@ export function AppRouter() {
           <Route path={ROUTE_PATHS.activities} element={<ActivitiesPage />} />
           <Route path={ROUTE_PATHS.activityEnvironment} element={<EnvironmentPage />} />
           <Route path={ROUTE_PATHS.activitySocial} element={<SocialPage />} />
+          <Route path={ROUTE_PATHS.activitySocialDonation} element={<DonationPage />} />
           <Route path={ROUTE_PATHS.activityGovernance} element={<GovernancePage />} />
           <Route path={ROUTE_PATHS.finance} element={<FinancePage />} />
           <Route path={ROUTE_PATHS.my} element={<MyPage />} />

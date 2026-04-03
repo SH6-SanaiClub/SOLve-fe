@@ -1,9 +1,13 @@
 import { useNavigate } from 'react-router-dom'
 import { Card, IconButton, Icons, InfoRow, ProgressBar, SectionHeader } from '../../components/common'
-import BottomNavigation, { type BottomNavigationItem } from '../../components/layout/BottomNavigation'
+import BottomNavigation from '../../components/layout/BottomNavigation'
 import Header from '../../components/layout/Header'
 import MainLayout from '../../components/layout/MainLayout'
 import headerLogo from '../../assets/home/logo.png'
+import {
+  BOTTOM_NAVIGATION_ITEMS,
+  BOTTOM_NAVIGATION_ROUTE_BY_KEY,
+} from '../../constants/bottomNavigation'
 import { ROUTE_PATHS } from '../../constants/routePaths'
 import { useAuth } from '../../hooks/useAuth'
 import type { UserGrade } from '../../types/user'
@@ -17,20 +21,6 @@ import {
 } from './homeDashboardData'
 
 const numberFormatter = new Intl.NumberFormat('ko-KR')
-
-const bottomNavigationItems: BottomNavigationItem[] = [
-  { key: 'home', label: '홈', icon: <Icons.Home /> },
-  { key: 'activities', label: '포인트샵', icon: <Icons.Shop /> },
-  { key: 'finance', label: '금융상품', icon: <Icons.Bank /> },
-  { key: 'my', label: '마이페이지', icon: <Icons.MyPage /> },
-]
-
-const routeByTabKey = {
-  home: ROUTE_PATHS.home,
-  activities: ROUTE_PATHS.activities,
-  finance: ROUTE_PATHS.finance,
-  my: ROUTE_PATHS.my,
-} as const
 
 function getGradeLabel(grade?: UserGrade | null) {
   if (!grade) {
@@ -50,7 +40,8 @@ export function HomePage() {
   const formattedPoints = `${numberFormatter.format(totalPoints)}p`
 
   const handleBottomNavigation = (key: string) => {
-    const nextPath = routeByTabKey[key as keyof typeof routeByTabKey]
+    const nextPath =
+      BOTTOM_NAVIGATION_ROUTE_BY_KEY[key as keyof typeof BOTTOM_NAVIGATION_ROUTE_BY_KEY]
 
     if (nextPath) {
       navigate(nextPath)
@@ -83,7 +74,7 @@ export function HomePage() {
       }
       nav={
         <BottomNavigation
-          items={bottomNavigationItems}
+          items={BOTTOM_NAVIGATION_ITEMS}
           value="home"
           onChange={handleBottomNavigation}
         />
@@ -146,7 +137,7 @@ export function HomePage() {
               <DashboardActionTile
                 title="오늘의 퀴즈"
                 variant="outline"
-                onClick={() => navigate(ROUTE_PATHS.activities)}
+                onClick={() => navigate(ROUTE_PATHS.shop)}
               />
             </div>
           </section>

@@ -46,7 +46,7 @@ const Badge: React.FC<BadgeProps> = ({
       <span
       className={`
         inline-flex items-center justify-center rounded-badge px-2 py-1
-        text-xs font-semibold leading-none
+        text-xs font-medium leading-none
         ${toneStyles[tone][variant]}
         ${className}
       `}

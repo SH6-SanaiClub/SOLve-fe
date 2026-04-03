@@ -1,15 +1,38 @@
-// 중괄호 { } 를 추가해서 가져오세요!
-import { apiClient } from './apiClient'; 
+import { apiClient } from './apiClient';
+import { APP_CONFIG } from '../constants/config';
 import { type AuthJoinRequest, type AuthLoginRequest, type LoginResponse } from '../types/auth';
 
+const mockLoginResponse: LoginResponse = {
+  accessToken: 'dev-token',
+  user: {
+    userId: 1,
+    loginId: 'testuser',
+    name: '테스트 유저',
+    userType: 'ALL-ROUNDER',
+    currentGrade: 'SEED',
+    totalPoints: 0,
+    isLinked: false,
+  },
+};
+
 export const authService = {
-  // 회원가입
-  signup: (data: AuthJoinRequest) => 
-    apiClient.post('/auth/join', data),
+  signup: async (data: AuthJoinRequest) => {
+    if (APP_CONFIG.enableDevAuthBypass) {
+      console.warn('개발 모드: authService.signup API 호출을 우회합니다.', data);
+      return Promise.resolve({ data: { message: '회원가입 성공 (로컬 모드)' } });
+    }
+
+    return apiClient.post('/auth/join', data);
+  },
 
   // 로그인
-  login: async (data:AuthLoginRequest): Promise<LoginResponse> => {
+  login: async (data: AuthLoginRequest): Promise<LoginResponse> => {
+    if (APP_CONFIG.enableDevAuthBypass) {
+      console.warn('개발 모드: authService.login API 호출을 우회합니다.', data);
+      return Promise.resolve(mockLoginResponse);
+    }
+
     const response = await apiClient.post<LoginResponse>('/auth/login', data);
     return response.data;
-  }
+  },
 };

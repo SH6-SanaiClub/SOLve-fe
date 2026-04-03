@@ -3,7 +3,12 @@ const APP_SHELL = ['/', '/index.html', '/manifest.webmanifest', '/pwa-icon.svg',
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => cache.addAll(APP_SHELL)),
+    caches.open(STATIC_CACHE)
+      .then((cache) => cache.addAll(APP_SHELL))
+      .catch((error) => {
+        console.error('SW install 캐시 저장 실패:', error)
+        // 설치 실패 시에도 진행되도록 설정 (오프라인 fallback을 위해 이후 재시도 가능)
+      }),
   )
   self.skipWaiting()
 })

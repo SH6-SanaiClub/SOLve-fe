@@ -63,7 +63,7 @@ export const ShopListPage = () => {
               onClick={() => navigate(ROUTE_PATHS.shopHistory)}
               className="text-sm font-medium text-primary-500"
             >
-              구매 내역
+              구매한 상품
             </button>
           }
         />

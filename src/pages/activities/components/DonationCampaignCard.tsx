@@ -4,6 +4,7 @@ import type { DonationCampaign } from "../../../types/donation";
 
 interface DonationCampaignCardProps {
   donation: DonationCampaign;
+  onClick?: () => void;
 }
 
 const formatCurrency = (amount: number) =>
@@ -14,11 +15,15 @@ const formatNumber = (value: number) =>
 
 export const DonationCampaignCard = ({
   donation,
+  onClick,
 }: DonationCampaignCardProps) => {
   const [hasImageError, setHasImageError] = useState(false);
 
   return (
-    <Card className="h-[151px] gap-0 overflow-hidden rounded-control !p-4 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+    <Card
+      className="h-[151px] gap-0 overflow-hidden rounded-control !p-4 shadow-[0_2px_8px_rgba(0,0,0,0.05)]"
+      onClick={onClick}
+    >
       <div className="flex h-full items-center gap-4">
         <div className="h-[119px] w-[119px] shrink-0 overflow-hidden rounded-[4px] bg-white">
           {hasImageError ? (

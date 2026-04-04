@@ -6,7 +6,7 @@ import BottomNavigation from '../../components/layout/BottomNavigation'
 import Header from '../../components/layout/Header'
 import MainLayout from '../../components/layout/MainLayout'
 import characterFriendsImage from '../../assets/character_friends.png'
-import { ROUTE_PATHS } from '../../constants/routePaths'
+import { getDonationDetailPath, ROUTE_PATHS } from '../../constants/routePaths'
 import { DonationCampaignCard } from './components/DonationCampaignCard'
 import { DonationSummaryBanner } from './components/DonationSummaryBanner'
 import { SocialActivityTabs } from './components/SocialActivityTabs'
@@ -145,7 +145,11 @@ export function DonationPage() {
             ) : (
               <div className="space-y-3">
                 {donationData.donations.map((donation) => (
-                  <DonationCampaignCard key={donation.donationId} donation={donation} />
+                  <DonationCampaignCard
+                    key={donation.donationId}
+                    donation={donation}
+                    onClick={() => navigate(getDonationDetailPath(donation.donationId))}
+                  />
                 ))}
               </div>
             )}

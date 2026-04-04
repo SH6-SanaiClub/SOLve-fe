@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { IconButton } from '../../components/common'
 import { Icons } from '../../components/common'
 import Header from '../../components/layout/Header'
@@ -6,7 +6,6 @@ import MainLayout from '../../components/layout/MainLayout'
 
 export function DonationDetailPage() {
   const navigate = useNavigate()
-  const { donationId } = useParams()
 
   return (
     <MainLayout
@@ -22,13 +21,9 @@ export function DonationDetailPage() {
           title="기부"
         />
       }
+      className="bg-gray-50"
     >
-      <section className="pt-2">
-        <div className="rounded-card bg-white p-6 shadow-card">
-          <h2 className="text-lg font-semibold text-font-main">기부 상세페이지</h2>
-          <p className="mt-2 text-sm leading-6 text-font-sub">donationId: {donationId}</p>
-        </div>
-      </section>
+      <section className="mx-[-16px] min-h-[calc(100vh-var(--header-h)-48px)] bg-gray-50" />
     </MainLayout>
   )
 }

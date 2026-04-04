@@ -9,6 +9,7 @@ export const ROUTE_PATHS = {
   shopDetail: '/shop/:id',
   activityEnvironment: '/activities/environment',
   activitySocial: '/activities/social',
+  activitySocialDonation: '/esg/social/donation',
   activityGovernance: '/activities/governance',
   finance: '/finance',
   my: '/my',

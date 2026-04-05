@@ -4,7 +4,9 @@ export const ROUTE_PATHS = {
   signup: '/signup',
   onboarding: '/onboarding',
   home: '/home',
-  activities: '/activities',
+  shop: '/shop',
+  shopHistory: '/shop/history',
+  shopDetail: '/shop/:id',
   activityEnvironment: '/activities/environment',
   activitySocial: '/activities/social',
   activitySocialDonation: '/esg/social/donation',
@@ -15,5 +17,9 @@ export const ROUTE_PATHS = {
   chatbot: '/chatbot',
 } as const
 
+<<<<<<< HEAD
 export const getDonationDetailPath = (donationId: number | string) =>
   `/esg/social/donations/${donationId}`
+=======
+export const getShopDetailPath = (productId: string) => `/shop/${productId}`
+>>>>>>> origin/develop

@@ -7,7 +7,7 @@ export interface DonationSummary {
 export interface DonationCampaign {
   donationId: number
   name: string
-  description: string
+  summary: string
   targetAmount: number
   currentAmount: number
   imageUrl: string
@@ -20,4 +20,19 @@ export interface DonationCampaign {
 export interface DonationListResponse {
   summary: DonationSummary
   donations: DonationCampaign[]
+}
+
+export interface DonationDetail {
+  donationId: number
+  name: string
+  summary: string
+  description: string
+  targetAmount: number
+  currentAmount: number
+  imageUrl: string
+  participantCount: number
+  progressPercentage: number
+  remainingDays: number
+  startDate: string
+  endDate: string
 }

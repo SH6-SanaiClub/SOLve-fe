@@ -43,7 +43,7 @@ export function DonationPage() {
   }, [])
 
   const handleBack = () => {
-    navigate(-1)
+    navigate(ROUTE_PATHS.home)
   }
 
   const handleBottomNavigation = (key: string) => {

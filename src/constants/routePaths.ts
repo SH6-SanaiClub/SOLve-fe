@@ -4,7 +4,9 @@ export const ROUTE_PATHS = {
   signup: '/signup',
   onboarding: '/onboarding',
   home: '/home',
-  activities: '/activities',
+  shop: '/shop',
+  shopHistory: '/shop/history',
+  shopDetail: '/shop/:id',
   activityEnvironment: '/activities/environment',
   activitySocial: '/activities/social',
   activitySocialDonation: '/esg/social/donation',
@@ -13,3 +15,5 @@ export const ROUTE_PATHS = {
   my: '/my',
   chatbot: '/chatbot',
 } as const
+
+export const getShopDetailPath = (productId: string) => `/shop/${productId}`

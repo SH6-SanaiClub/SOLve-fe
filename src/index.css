@@ -3,6 +3,13 @@
 @import "./styles/globals.css";
 
 @theme {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+
   --radius-badge: 4px;
   --radius-control: 8px;
   --radius-card: 16px;

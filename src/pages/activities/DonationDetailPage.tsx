@@ -1,13 +1,30 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { BottomActionBar, IconButton } from '../../components/common'
+import { BottomActionBar, Card, IconButton, ProgressBar } from '../../components/common'
 import { Icons } from '../../components/common'
 import Header from '../../components/layout/Header'
 import MainLayout from '../../components/layout/MainLayout'
 import { getDonationDetail } from '../../services/donationService'
 import type { DonationDetail } from '../../types/donation'
 
+const formatCurrency = (amount: number) => `${new Intl.NumberFormat('ko-KR').format(amount)}원`
 const formatNumber = (value: number) => new Intl.NumberFormat('ko-KR').format(value)
+
+const resolveImageUrl = (imageUrl: string) => {
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl
+  }
+
+  const baseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api'
+  const normalizedBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl
+  const normalizedImageUrl = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`
+
+  if (normalizedBaseUrl.startsWith('http://') || normalizedBaseUrl.startsWith('https://')) {
+    return `${normalizedBaseUrl}${normalizedImageUrl}`
+  }
+
+  return normalizedImageUrl
+}
 
 export function DonationDetailPage() {
   const navigate = useNavigate()
@@ -70,7 +87,103 @@ export function DonationDetailPage() {
         </section>
       ) : (
         <>
-          <section className="mx-[-16px] min-h-[calc(100vh-var(--header-h)-48px)] bg-gray-50 pb-[120px]" />
+          <section className="mx-[-16px] min-h-[calc(100vh-var(--header-h)-48px)] bg-gray-50 pb-[120px]">
+            {isLoading ? (
+              <>
+                <div className="relative h-[260px] animate-pulse bg-gray-300">
+                  <div className="absolute inset-x-[30px] bottom-[25px]">
+                    <div className="h-7 w-3/4 rounded-full bg-gray-800" />
+                    <div className="mt-[10px] h-5 w-1/2 rounded-full bg-gray-700" />
+                  </div>
+                </div>
+                <div className="px-4 pt-6">
+                  <Card className="gap-0 rounded-control !p-[25px] shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+                    <div className="flex flex-col gap-[15px]">
+                      <div className="flex flex-col gap-[5px]">
+                        <div className="h-4 w-16 animate-pulse rounded-full bg-gray-200" />
+                        <div className="flex items-center justify-between">
+                          <div className="h-8 w-40 animate-pulse rounded-full bg-primary-100" />
+                          <div className="h-8 w-14 animate-pulse rounded-full bg-primary-100" />
+                        </div>
+                      </div>
+                      <div className="h-2 w-full animate-pulse rounded-full bg-gray-200" />
+                      <div className="flex items-center justify-between">
+                        <div className="h-4 w-24 animate-pulse rounded-full bg-gray-200" />
+                        <div className="h-4 w-12 animate-pulse rounded-full bg-gray-200" />
+                      </div>
+                    </div>
+                  </Card>
+                </div>
+              </>
+            ) : donationDetail ? (
+              <>
+                <section className="relative h-[260px] overflow-hidden bg-black">
+                  <img
+                    src={resolveImageUrl(donationDetail.imageUrl)}
+                    alt={donationDetail.name}
+                    className="h-full w-full object-cover"
+                  />
+
+                  <div className="absolute inset-x-0 bottom-0 h-[120px] bg-linear-to-t from-black to-transparent" />
+
+                  <div className="absolute bottom-[25px] left-[30px] flex w-[248px] flex-col gap-[10px]">
+                    <h2 className="text-2xl leading-4 font-bold text-white">{donationDetail.name}</h2>
+                    <p className="text-base leading-4 font-light text-gray-300">{donationDetail.summary}</p>
+                  </div>
+                </section>
+
+                <section className="px-4 pt-6">
+                  <Card className="gap-0 rounded-control !p-[25px] shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+                    <div className="flex flex-col gap-[15px]">
+                      <div className="flex flex-col gap-[5px]">
+                        <p className="text-base leading-[120%] tracking-[-0.03em] text-gray-700">현재 모금액</p>
+
+                        <div className="flex items-center justify-between">
+                          <p className="text-left">
+                            <span className="text-[24px] font-bold tracking-[-0.02em] text-primary-500">
+                              {new Intl.NumberFormat('ko-KR').format(donationDetail.currentAmount)}
+                            </span>
+                            <span className="ml-1 text-base font-semibold tracking-[-0.02em] text-gray-700">
+                              원
+                            </span>
+                          </p>
+                          <p className="text-[24px] font-bold tracking-[-0.02em] text-primary-500">
+                            {donationDetail.progressPercentage}%
+                          </p>
+                        </div>
+                      </div>
+
+                      <ProgressBar
+                        value={donationDetail.progressPercentage}
+                        className="h-2 rounded-full bg-gray-200"
+                        barClassName="bg-primary-500"
+                      />
+
+                      <div className="flex items-center justify-between">
+                        <p className="text-base leading-[120%] font-semibold tracking-[-0.03em] text-gray-600">
+                          목표 {formatCurrency(donationDetail.targetAmount)}
+                        </p>
+                        <p className="text-base leading-[120%] font-semibold tracking-[-0.03em] text-gray-600">
+                          D - {donationDetail.remainingDays}
+                        </p>
+                      </div>
+                    </div>
+                  </Card>
+                </section>
+
+                <section className="px-[24px] pt-6">
+                  <div className="flex flex-col gap-[11px]">
+                    <h3 className="text-[20px] leading-7 font-semibold text-gray-800">
+                      함께 나무를 심어주세요
+                    </h3>
+                    <p className="whitespace-pre-line text-base leading-[26px] font-normal text-gray-500">
+                      {donationDetail.description}
+                    </p>
+                  </div>
+                </section>
+              </>
+            ) : null}
+          </section>
 
           <BottomActionBar
             leftText={

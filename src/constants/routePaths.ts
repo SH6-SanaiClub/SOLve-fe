@@ -17,9 +17,7 @@ export const ROUTE_PATHS = {
   chatbot: '/chatbot',
 } as const
 
-<<<<<<< HEAD
 export const getDonationDetailPath = (donationId: number | string) =>
   `/esg/social/donations/${donationId}`
-=======
+
 export const getShopDetailPath = (productId: string) => `/shop/${productId}`
->>>>>>> origin/develop

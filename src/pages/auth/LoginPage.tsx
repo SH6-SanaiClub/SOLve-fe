@@ -71,7 +71,7 @@ export function LoginPage() {
           <Button type="submit" variant="primary" fullWidth>
             로그인
           </Button>
-          <Link to={ROUTE_PATHS.signup}>
+          <Link to={ROUTE_PATHS.signupAgreement}>
             <Button type="button" variant="outline" fullWidth>
               회원가입
             </Button>

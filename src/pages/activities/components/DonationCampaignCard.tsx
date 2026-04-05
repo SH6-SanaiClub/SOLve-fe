@@ -51,7 +51,7 @@ export const DonationCampaignCard = ({
                 {donation.name}
               </h2>
               <p className="text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-500">
-                {donation.description}
+                {donation.summary}
               </p>
             </div>
           </div>

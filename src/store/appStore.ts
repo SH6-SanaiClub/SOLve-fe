@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-type AppTab = 'home' | 'activities' | 'finance' | 'my' | 'chatbot' | null
+type AppTab = 'home' | 'shop' | 'finance' | 'my' | 'chatbot' | null
 
 interface AppState {
   activeTab: AppTab

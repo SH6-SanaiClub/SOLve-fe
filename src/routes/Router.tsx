@@ -3,6 +3,7 @@ import { ROUTE_PATHS } from '../constants/routePaths'
 import { GovernancePage } from '../pages/activities/GovernancePage'
 
 import { DonationDetailPage } from '../pages/activities/DonationDetailPage'
+import { DonationPaymentPage } from '../pages/activities/DonationPaymentPage'
 
 import { DonationPage } from '../pages/activities/DonationPage'
 import { EnvironmentPage } from '../pages/activities/EnvironmentPage'
@@ -66,6 +67,10 @@ export function AppRouter() {
           <Route
             path={ROUTE_PATHS.donationDetail}
             element={<DonationDetailPage />}
+          />
+          <Route
+            path={ROUTE_PATHS.donationPayment}
+            element={<DonationPaymentPage />}
           />
           <Route
             path={ROUTE_PATHS.activityGovernance}

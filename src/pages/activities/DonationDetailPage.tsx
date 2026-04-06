@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { BottomActionBar, Card, IconButton, ProgressBar } from '../../components/common'
 import { Icons } from '../../components/common'
+import { getDonationPaymentPath } from '../../constants/routePaths'
 import Header from '../../components/layout/Header'
 import MainLayout from '../../components/layout/MainLayout'
 import { getDonationDetail } from '../../services/donationService'
@@ -194,6 +195,9 @@ export function DonationDetailPage() {
                   : '참여 정보 없음'
             }
             buttonLabel="후원하기"
+            onButtonClick={
+              donationDetail ? () => navigate(getDonationPaymentPath(donationDetail.donationId)) : undefined
+            }
           />
         </>
       )}

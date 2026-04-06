@@ -30,7 +30,6 @@ export function LoginPage() {
         accessToken: response.accessToken,
         user: response.user
       });
-      alert('로그인 성공! 환영합니다.');
       navigate('/');
     } catch (err) {
       if (err instanceof AxiosError) {

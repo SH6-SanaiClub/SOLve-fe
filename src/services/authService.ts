@@ -4,6 +4,7 @@ import { type AuthJoinRequest, type AuthLoginRequest, type LoginResponse } from 
 
 const mockLoginResponse: LoginResponse = {
   accessToken: 'dev-token',
+  refreshToken: 'dev-refresh-token',
   user: {
     userId: 1,
     loginId: 'testuser',
@@ -22,8 +23,16 @@ export const authService = {
       return Promise.resolve({ data: { message: '회원가입 성공 (로컬 모드)' } });
     }
 
-    return apiClient.post('/auth/join', data);
+    return apiClient.post('/api/auth/join', data);
   },
+
+  checkLoginId: async (loginId: string) => {
+  // 위에서 만든 GET /api/auth/check-id?loginId=... 를 호출함
+  const response = await apiClient.get<boolean>(`/api/auth/check-id`, {
+    params: { loginId }
+  });
+  return response.data; // 중복이면 true, 아니면 false
+},
 
   // 로그인
   login: async (data: AuthLoginRequest): Promise<LoginResponse> => {
@@ -32,7 +41,12 @@ export const authService = {
       return Promise.resolve(mockLoginResponse);
     }
 
-    const response = await apiClient.post<LoginResponse>('/auth/login', data);
+    const response = await apiClient.post<LoginResponse>('/api/auth/login', data);
+    const { accessToken, refreshToken } = response.data; 
+  
+  if (accessToken) localStorage.setItem('accessToken', accessToken);
+  if (refreshToken) localStorage.setItem('refreshToken', refreshToken);
     return response.data;
   },
 };
+

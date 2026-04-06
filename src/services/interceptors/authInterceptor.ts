@@ -2,7 +2,11 @@ import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios'
 import { useAuthStore } from '../../store'
 
 function attachAuthHeader(config: InternalAxiosRequestConfig) {
-  const { accessToken } = useAuthStore.getState()
+  let { accessToken } = useAuthStore.getState()
+
+  if (!accessToken) {
+    accessToken = localStorage.getItem('accessToken')
+  }
 
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`

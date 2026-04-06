@@ -12,3 +12,5 @@ export interface ValueStoreProduct {
 export interface ValueStoreProductListResponse {
   products: ValueStoreProduct[]
 }
+
+export type ValueStoreProductDetail = ValueStoreProduct

@@ -125,7 +125,7 @@ export function HomePage() {
               descriptionItems={['기부', '가치가게', '봉사']}
               variant="primary"
               size="lg"
-              onClick={() => navigate(ROUTE_PATHS.activitySocial)}
+              onClick={() => navigate(ROUTE_PATHS.activitySocialDonation)}
             />
 
             <div className="grid grid-cols-2 gap-4">

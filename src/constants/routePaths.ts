@@ -10,6 +10,7 @@ export const ROUTE_PATHS = {
   activityEnvironment: '/activities/environment',
   activitySocial: '/activities/social',
   activitySocialDonation: '/esg/social/donation',
+  activitySocialStore: '/esg/social/store',
   donationDetail: '/esg/social/donations/:donationId',
   activityGovernance: '/activities/governance',
   finance: '/finance',

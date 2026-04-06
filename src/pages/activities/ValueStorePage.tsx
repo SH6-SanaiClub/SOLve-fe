@@ -5,7 +5,7 @@ import { Icons } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import Header from '../../components/layout/Header'
 import MainLayout from '../../components/layout/MainLayout'
-import { ROUTE_PATHS } from '../../constants/routePaths'
+import { getValueStoreProductDetailPath, ROUTE_PATHS } from '../../constants/routePaths'
 import { getValueStoreProducts } from '../../services/productService'
 import type { ValueStoreProductListResponse } from '../../types/product'
 import { SocialActivityTabs } from './components/SocialActivityTabs'
@@ -129,7 +129,11 @@ export function ValueStorePage() {
             ) : (
               <div className="grid grid-cols-2 gap-3">
                 {productData.products.map((product) => (
-                  <ValueStoreProductCard key={product.productId} product={product} />
+                  <ValueStoreProductCard
+                    key={product.productId}
+                    product={product}
+                    onClick={(productId) => navigate(getValueStoreProductDetailPath(productId))}
+                  />
                 ))}
               </div>
             )}

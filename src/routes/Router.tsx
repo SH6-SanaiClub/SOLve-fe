@@ -7,6 +7,7 @@ import { DonationDetailPage } from '../pages/activities/DonationDetailPage'
 import { DonationPage } from '../pages/activities/DonationPage'
 import { EnvironmentPage } from '../pages/activities/EnvironmentPage'
 import { SocialPage } from '../pages/activities/SocialPage'
+import { ValueStoreDetailPage } from '../pages/activities/ValueStoreDetailPage'
 import { ValueStorePage } from '../pages/activities/ValueStorePage'
 import { LoginPage } from '../pages/auth/LoginPage'
 import { OnboardingPage } from '../pages/auth/OnboardingPage'
@@ -57,6 +58,10 @@ export function AppRouter() {
           <Route
             path={ROUTE_PATHS.activitySocialStore}
             element={<ValueStorePage />}
+          />
+          <Route
+            path={ROUTE_PATHS.activitySocialProductDetail}
+            element={<ValueStoreDetailPage />}
           />
           <Route
             path={ROUTE_PATHS.donationDetail}

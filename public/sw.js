@@ -1,5 +1,13 @@
-const STATIC_CACHE = 'solve-static-v1'
-const APP_SHELL = ['/', '/index.html', '/manifest.webmanifest', '/pwa-icon.svg', '/pwa-maskable.svg']
+const STATIC_CACHE = 'solve-static-v2'
+const APP_SHELL = [
+  '/',
+  '/index.html',
+  '/manifest.webmanifest',
+  '/favicon.svg',
+  '/icons.svg',
+  '/pwa-icon.svg',
+  '/pwa-maskable.svg',
+]
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
@@ -37,6 +45,16 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
+  if (
+    requestUrl.hostname === 'localhost' ||
+    requestUrl.pathname.startsWith('/@') ||
+    requestUrl.pathname.startsWith('/src/') ||
+    requestUrl.pathname.startsWith('/node_modules/') ||
+    requestUrl.search.includes('import')
+  ) {
+    return
+  }
+
   if (event.request.mode === 'navigate') {
     event.respondWith(
       fetch(event.request).catch(async () => {
@@ -48,6 +66,20 @@ self.addEventListener('fetch', (event) => {
   }
 
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => cachedResponse || fetch(event.request)),
+    caches.match(event.request).then(async (cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse
+      }
+
+      try {
+        return await fetch(event.request)
+      } catch (error) {
+        if (event.request.destination === 'image') {
+          return (await caches.match('/favicon.svg')) || Response.error()
+        }
+
+        return Response.error()
+      }
+    }),
   )
 })

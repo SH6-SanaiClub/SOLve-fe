@@ -118,7 +118,7 @@ export function DonationDetailPage() {
                 </div>
                 <div className="px-4 pt-6">
                   <Card className="gap-0 rounded-control !p-[25px] shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
-                    <div className="flex flex-col gap-[15px]">
+                    <div className="flex flex-col gap-[6px]">
                       <div className="flex flex-col gap-[5px]">
                         <div className="h-4 w-16 animate-pulse rounded-full bg-gray-200" />
                         <div className="flex items-center justify-between">
@@ -147,7 +147,7 @@ export function DonationDetailPage() {
                   <div className="absolute inset-x-0 bottom-0 h-[120px] bg-linear-to-t from-black to-transparent" />
 
                   <div className="absolute bottom-[25px] left-[30px] flex w-[248px] flex-col gap-[10px]">
-                    <h2 className="text-2xl leading-4 font-bold text-white">
+                    <h2 className="text-[20px] leading-4 font-bold text-white">
                       {donationDetail.name}
                     </h2>
                     <p className="text-base leading-4 font-light text-gray-300">
@@ -158,24 +158,24 @@ export function DonationDetailPage() {
 
                 <section className="px-4 pt-6">
                   <Card className="gap-0 rounded-control !p-[25px] shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
-                    <div className="flex flex-col gap-[15px]">
+                    <div className="flex flex-col gap-[6px]">
                       <div className="flex flex-col gap-[5px]">
-                        <p className="text-base leading-[120%] tracking-[-0.03em] text-gray-700">
+                        <p className="text-xs leading-[120%] tracking-[-0.03em] text-gray-700">
                           현재 모금액
                         </p>
 
                         <div className="flex items-center justify-between">
                           <p className="text-left">
-                            <span className="text-[24px] font-bold tracking-[-0.02em] text-primary-500">
+                            <span className="text-[20px] font-bold tracking-[-0.02em] text-primary-500">
                               {new Intl.NumberFormat('ko-KR').format(
                                 donationDetail.currentAmount,
                               )}
                             </span>
-                            <span className="ml-1 text-base font-semibold tracking-[-0.02em] text-gray-700">
+                            <span className="ml-1 text-xs font-semibold tracking-[-0.02em] text-gray-700">
                               원
                             </span>
                           </p>
-                          <p className="text-[24px] font-bold tracking-[-0.02em] text-primary-500">
+                          <p className="text-[20px] font-bold tracking-[-0.02em] text-primary-500">
                             {donationDetail.progressPercentage}%
                           </p>
                         </div>
@@ -187,11 +187,11 @@ export function DonationDetailPage() {
                         barClassName="bg-primary-500"
                       />
 
-                      <div className="flex items-center justify-between">
-                        <p className="text-base leading-[120%] font-semibold tracking-[-0.03em] text-gray-600">
+                      <div className="mt-2 flex items-center justify-between">
+                        <p className="text-xs leading-[120%] font-semibold tracking-[-0.03em] text-gray-600">
                           목표 {formatCurrency(donationDetail.targetAmount)}
                         </p>
-                        <p className="text-base leading-[120%] font-semibold tracking-[-0.03em] text-gray-600">
+                        <p className="text-xs leading-[120%] font-semibold tracking-[-0.03em] text-gray-600">
                           D - {donationDetail.remainingDays}
                         </p>
                       </div>
@@ -201,7 +201,7 @@ export function DonationDetailPage() {
 
                 <section className="px-[24px] pt-6">
                   <div className="flex flex-col gap-[11px]">
-                    <h3 className="text-[20px] leading-7 font-semibold text-gray-800">
+                    <h3 className="text-base leading-7 font-semibold text-gray-800">
                       함께 나무를 심어주세요
                     </h3>
                     <p className="whitespace-pre-line text-base leading-[26px] font-normal text-gray-500">

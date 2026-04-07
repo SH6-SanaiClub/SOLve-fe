@@ -10,6 +10,7 @@ export interface EnvironmentVerificationResponse {
 export interface EnvironmentVerificationAvailabilityResponse {
   activityType: EnvActivityType
   attemptedToday: boolean
+  approved: boolean | null
 }
 
 export interface SubmitEnvironmentVerificationRequest {

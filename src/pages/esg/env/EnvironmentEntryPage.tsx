@@ -13,6 +13,7 @@ export function EnvironmentEntryPage() {
   const location = useLocation()
   const navigate = useNavigate()
   const [blockedActivityTypes, setBlockedActivityTypes] = useState<EnvActivityType[]>([])
+  const [activityResults, setActivityResults] = useState<Partial<Record<EnvActivityType, boolean>>>({})
   const routeState = location.state as EnvLocationState | undefined
 
   useEffect(() => {
@@ -30,6 +31,16 @@ export function EnvironmentEntryPage() {
           availability
             .filter((activity) => activity.attemptedToday)
             .map((activity) => activity.activityType),
+        )
+
+        setActivityResults(
+          availability.reduce<Partial<Record<EnvActivityType, boolean>>>((result, activity) => {
+            if (activity.attemptedToday && activity.approved !== null) {
+              result[activity.activityType] = activity.approved
+            }
+
+            return result
+          }, {}),
         )
       } catch (error) {
         console.error(error)
@@ -61,6 +72,7 @@ export function EnvironmentEntryPage() {
       <EnvironmentEntryModal
         open
         blockedActivityTypes={blockedActivityTypes}
+        activityResults={activityResults}
         onClose={handleClose}
         onSelect={handleSelect}
       />

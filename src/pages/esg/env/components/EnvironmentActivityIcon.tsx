@@ -10,7 +10,7 @@ export function EnvironmentActivityIcon({ icon }: EnvironmentActivityIconProps) 
     icon === 'tumbler' ? Icons.Tumbler : icon === 'bike' ? Icons.Bicycle : Icons.EvCharger
 
   return (
-    <div className="flex h-14 w-14 items-center justify-center rounded-[18px] bg-white text-primary-400 shadow-sm">
+    <div className="flex h-14 w-14 items-center justify-center rounded-[12px] bg-white text-primary-400 shadow-sm">
       <IconComponent size={24} strokeWidth={2.1} />
     </div>
   )

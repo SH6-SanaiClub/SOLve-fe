@@ -1,4 +1,6 @@
-export type EnvActivityType = 'tumbler' | 'shared-bike' | 'ev-rental'
+import type { EnvActivityType } from '../../../types/environmentVerification'
+
+export type { EnvActivityType } from '../../../types/environmentVerification'
 
 export interface EnvActivityItem {
   type: EnvActivityType

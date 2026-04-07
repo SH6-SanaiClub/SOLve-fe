@@ -8,8 +8,8 @@ interface EnvironmentGuideCardProps {
 export function EnvironmentGuideCard({ guide }: EnvironmentGuideCardProps) {
   const isGood = guide.tone === 'good'
   const GuideIcon = isGood ? Check : X
-  const accentColor = isGood ? '#29CC6A' : '#BA1A1A'
-  const iconBackground = isGood ? '#EAF8F0' : '#FDEDED'
+  const accentColor = isGood ? 'var(--color-primary-500)' : '#BA1A1A'
+  const iconBackground = isGood ? 'var(--color-primary-50)' : '#FDEDED'
 
   return (
     <section className="rounded-card bg-white px-5 py-5 shadow-card">
@@ -29,26 +29,12 @@ export function EnvironmentGuideCard({ guide }: EnvironmentGuideCardProps) {
       </div>
 
       <ul
-        className="space-y-1 pl-4 text-xs leading-5 font-medium text-gray-700"
-        style={{ marginTop: '10px' }}
+        className="mt-[10px] list-disc space-y-2 pl-5 text-xs leading-5 font-medium text-gray-700 marker:text-gray-400"
       >
         {guide.items.map((item) => (
           <li key={item}>{item}</li>
         ))}
       </ul>
-
-      <div
-        className="mt-4 flex h-[134px] items-end overflow-hidden rounded-[14px] bg-gray-100 px-4 py-3"
-        style={{
-          background: isGood
-            ? 'linear-gradient(180deg, #6B7280 0%, #D1D5DB 55%, #6B7280 100%)'
-            : 'linear-gradient(135deg, #F8FAFC 0%, #E2E8F0 45%, #CBD5E1 100%)',
-        }}
-      >
-        <p className="text-[11px] leading-4 font-medium text-white/90">
-          {guide.previewLabel}
-        </p>
-      </div>
     </section>
   )
 }

@@ -8,8 +8,11 @@ import {
 } from 'react-router-dom'
 import { ROUTE_PATHS } from '../constants/routePaths'
 import { GovernancePage } from '../pages/activities/GovernancePage'
+import { DonationDetailPage } from '../pages/activities/DonationDetailPage'
 import { DonationPage } from '../pages/activities/DonationPage'
 import { SocialPage } from '../pages/activities/SocialPage'
+import { ValueStoreDetailPage } from '../pages/activities/ValueStoreDetailPage'
+import { ValueStorePage } from '../pages/activities/ValueStorePage'
 import { LoginPage } from '../pages/auth/LoginPage'
 import { OnboardingPage } from '../pages/auth/OnboardingPage'
 import { SignupPage } from '../pages/auth/SignupPage'
@@ -52,10 +55,20 @@ function AppRoutes() {
           <Route path={ROUTE_PATHS.shopHistory} element={<ShopHistoryPage />} />
           <Route path={ROUTE_PATHS.shopDetail} element={<ShopProductDetailPage />} />
           <Route path={ROUTE_PATHS.esgEnv} element={<EnvironmentEntryPage />} />
+          <Route path={ROUTE_PATHS.activityEnvironment} element={<EnvironmentEntryPage />} />
           <Route path={ROUTE_PATHS.esgEnvVerify} element={<EnvironmentVerifyPage />} />
           <Route path={ROUTE_PATHS.esgSocial} element={<SocialPage />} />
+          <Route path={ROUTE_PATHS.activitySocial} element={<SocialPage />} />
           <Route path={ROUTE_PATHS.esgSocialDonation} element={<DonationPage />} />
+          <Route path={ROUTE_PATHS.activitySocialDonation} element={<DonationPage />} />
+          <Route path={ROUTE_PATHS.activitySocialStore} element={<ValueStorePage />} />
+          <Route
+            path={ROUTE_PATHS.activitySocialProductDetail}
+            element={<ValueStoreDetailPage />}
+          />
+          <Route path={ROUTE_PATHS.donationDetail} element={<DonationDetailPage />} />
           <Route path={ROUTE_PATHS.esgQuiz} element={<GovernancePage />} />
+          <Route path={ROUTE_PATHS.activityGovernance} element={<GovernancePage />} />
           <Route path={ROUTE_PATHS.finance} element={<FinancePage />} />
           <Route path={ROUTE_PATHS.my} element={<MyPage />} />
           <Route path={ROUTE_PATHS.chatbot} element={<ChatbotPage />} />

@@ -93,7 +93,6 @@ export function HomePage() {
             </p>
           </div>
         </section>
-        
 
         <div className="flex flex-col gap-6">
           <Card className="!h-[136px]">
@@ -126,7 +125,7 @@ export function HomePage() {
               descriptionItems={['기부', '가치가게', '봉사']}
               variant="primary"
               size="lg"
-              onClick={() => navigate(ROUTE_PATHS.esgSocial)}
+              onClick={() => navigate(ROUTE_PATHS.activitySocialDonation)}
             />
 
             <div className="grid grid-cols-2 gap-4">

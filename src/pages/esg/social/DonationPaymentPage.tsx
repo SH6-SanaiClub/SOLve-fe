@@ -153,7 +153,7 @@ export function DonationPaymentPage() {
                 </h3>
 
                 <div className="flex flex-col gap-[25px]">
-                  <div className="flex flex-col gap-[18px]">
+                  <div className="flex flex-col">
                     <div className="grid grid-cols-2 gap-4">
                       {PRESET_AMOUNTS.map((amount) => {
                         const isSelected =
@@ -183,7 +183,7 @@ export function DonationPaymentPage() {
                     </div>
 
                     <div
-                      className={`h-12 overflow-hidden rounded-control bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05)] ${
+                      className={`mt-4 h-12 overflow-hidden rounded-control bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05)] ${
                         isCustomInputActive
                           ? 'border border-primary-500'
                           : 'border border-transparent'
@@ -229,7 +229,7 @@ export function DonationPaymentPage() {
                       </label>
                     </div>
 
-                    <div className="flex items-center justify-between px-3">
+                    <div className="mt-3 flex items-center justify-between px-3">
                       <p className="text-xs leading-7 font-normal text-gray-800">
                         예상 적립 포인트
                       </p>

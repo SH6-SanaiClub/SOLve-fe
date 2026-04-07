@@ -128,20 +128,22 @@ export function DonationPaymentPage() {
         ) : donationDetail ? (
           <div className="space-y-[27px]">
             <div className="px-[21px]">
-              <img
-                src={resolveImageUrl(donationDetail.imageUrl)}
-                alt={donationDetail.name}
-                className="h-[308px] w-full rounded-control border border-gray-200 object-cover"
-              />
-            </div>
-
-            <div className="flex flex-col gap-[10px] px-7">
-              <h2 className="text-[20px] leading-[120%] font-bold text-font-main">
-                {donationDetail.name}
-              </h2>
-              <p className="text-base leading-[120%] font-light text-gray-500">
-                {donationDetail.summary}
-              </p>
+              <div className="relative overflow-hidden rounded-control border border-gray-200 bg-black">
+                <img
+                  src={resolveImageUrl(donationDetail.imageUrl)}
+                  alt={donationDetail.name}
+                  className="h-[308px] w-full object-cover"
+                />
+                <div className="absolute inset-x-0 bottom-0 h-[120px] bg-linear-to-t from-black to-transparent" />
+                <div className="absolute right-[28px] bottom-[25px] left-[28px] flex flex-col gap-[10px]">
+                  <h2 className="text-[20px] leading-4 font-bold text-white">
+                    {donationDetail.name}
+                  </h2>
+                  <p className="text-base leading-4 font-light text-gray-300">
+                    {donationDetail.summary}
+                  </p>
+                </div>
+              </div>
             </div>
 
             <section className="px-[21px]">

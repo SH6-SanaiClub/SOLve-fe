@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Button, IconButton } from '../../components/common'
+import { Button, IconButton, Radio } from '../../components/common'
 import { Icons } from '../../components/common'
 import Header from '../../components/layout/Header'
 import MainLayout from '../../components/layout/MainLayout'
@@ -41,6 +41,7 @@ export function DonationPaymentPage() {
   const [selectedAmount, setSelectedAmount] = useState<number | null>(30000)
   const [customAmountInput, setCustomAmountInput] = useState('')
   const [isCustomInputActive, setIsCustomInputActive] = useState(false)
+  const [paymentMethod, setPaymentMethod] = useState<'solpay' | 'card'>('card')
 
   const handleBack = () => {
     if (window.history.length > 1) {
@@ -136,33 +137,33 @@ export function DonationPaymentPage() {
                 <h3 className="text-base leading-7 font-semibold text-gray-800">기부 금액 선택</h3>
 
                 <div className="flex flex-col gap-[25px]">
-                    <div className="flex flex-col gap-[18px]">
-                      <div className="grid grid-cols-2 gap-4">
-                        {PRESET_AMOUNTS.map((amount) => {
-                          const isSelected = !isCustomInputActive && selectedAmount === amount
+                  <div className="flex flex-col gap-[18px]">
+                    <div className="grid grid-cols-2 gap-4">
+                      {PRESET_AMOUNTS.map((amount) => {
+                        const isSelected = !isCustomInputActive && selectedAmount === amount
 
-                          return (
-                            <Button
-                              key={amount}
-                              type="button"
-                              variant="outline"
-                              fullWidth
-                              onClick={() => {
-                                setSelectedAmount(amount)
-                                setCustomAmountInput('')
-                                setIsCustomInputActive(false)
-                              }}
-                              className={`!border-solid !bg-transparent shadow-[0_2px_8px_rgba(0,0,0,0.05)] ${
-                                isSelected
-                                  ? '!border-primary-500 !text-primary-500'
-                                  : '!border-gray-400 !text-gray-400'
-                              }`}
-                            >
-                              {formatAmountOption(amount)}
-                            </Button>
-                          )
-                        })}
-                      </div>
+                        return (
+                          <Button
+                            key={amount}
+                            type="button"
+                            variant="outline"
+                            fullWidth
+                            onClick={() => {
+                              setSelectedAmount(amount)
+                              setCustomAmountInput('')
+                              setIsCustomInputActive(false)
+                            }}
+                            className={`!border-solid !bg-transparent shadow-[0_2px_8px_rgba(0,0,0,0.05)] ${
+                              isSelected
+                                ? '!border-primary-500 !text-primary-500'
+                                : '!border-gray-400 !text-gray-400'
+                            }`}
+                          >
+                            {formatAmountOption(amount)}
+                          </Button>
+                        )
+                      })}
+                    </div>
 
                     <div
                       className={`h-12 overflow-hidden rounded-control bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05)] ${
@@ -205,6 +206,42 @@ export function DonationPaymentPage() {
                       <p className="text-xs leading-7 font-semibold text-gray-800">
                         {formatPoint(expectedPoint)}
                       </p>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-[6px]">
+                    <h3 className="text-base leading-7 font-semibold text-gray-800">결제 수단</h3>
+
+                    <div className="flex flex-col gap-3">
+                      <div className="rounded-control border border-gray-200 bg-white px-4 py-4 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+                        <Radio
+                          name="paymentMethod"
+                          value="solpay"
+                          checked={paymentMethod === 'solpay'}
+                          onChange={() => setPaymentMethod('solpay')}
+                          className="p-0"
+                          label={
+                            <span className="text-base leading-4 font-semibold text-font-main">
+                              SOL Pay
+                            </span>
+                          }
+                        />
+                      </div>
+
+                      <div className="rounded-control border border-gray-200 bg-white px-4 py-4 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+                        <Radio
+                          name="paymentMethod"
+                          value="card"
+                          checked={paymentMethod === 'card'}
+                          onChange={() => setPaymentMethod('card')}
+                          className="p-0"
+                          label={
+                            <span className="text-base leading-4 font-semibold text-font-main">
+                              신용/체크카드
+                            </span>
+                          }
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

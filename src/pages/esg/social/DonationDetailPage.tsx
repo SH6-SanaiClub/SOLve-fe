@@ -1,15 +1,22 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { BottomActionBar, Card, IconButton, ProgressBar } from '../../components/common'
-import { Icons } from '../../components/common'
-import { getDonationPaymentPath } from '../../constants/routePaths'
-import Header from '../../components/layout/Header'
-import MainLayout from '../../components/layout/MainLayout'
-import { getDonationDetail } from '../../services/donationService'
-import type { DonationDetail } from '../../types/donation'
+import {
+  BottomActionBar,
+  Card,
+  IconButton,
+  ProgressBar,
+} from '../../../components/common'
+import { Icons } from '../../../components/common'
+import { getDonationPaymentPath } from '../../../constants/routePaths'
+import Header from '../../../components/layout/Header'
+import MainLayout from '../../../components/layout/MainLayout'
+import { getDonationDetail } from '../../../services/donationService'
+import type { DonationDetail } from '../../../types/donation'
 
-const formatCurrency = (amount: number) => `${new Intl.NumberFormat('ko-KR').format(amount)}원`
-const formatNumber = (value: number) => new Intl.NumberFormat('ko-KR').format(value)
+const formatCurrency = (amount: number) =>
+  `${new Intl.NumberFormat('ko-KR').format(amount)}원`
+const formatNumber = (value: number) =>
+  new Intl.NumberFormat('ko-KR').format(value)
 
 const resolveImageUrl = (imageUrl: string) => {
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
@@ -17,10 +24,17 @@ const resolveImageUrl = (imageUrl: string) => {
   }
 
   const baseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api'
-  const normalizedBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl
-  const normalizedImageUrl = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`
+  const normalizedBaseUrl = baseUrl.endsWith('/')
+    ? baseUrl.slice(0, -1)
+    : baseUrl
+  const normalizedImageUrl = imageUrl.startsWith('/')
+    ? imageUrl
+    : `/${imageUrl}`
 
-  if (normalizedBaseUrl.startsWith('http://') || normalizedBaseUrl.startsWith('https://')) {
+  if (
+    normalizedBaseUrl.startsWith('http://') ||
+    normalizedBaseUrl.startsWith('https://')
+  ) {
     return `${normalizedBaseUrl}${normalizedImageUrl}`
   }
 
@@ -31,7 +45,9 @@ export function DonationDetailPage() {
   const navigate = useNavigate()
   const { donationId } = useParams()
   const parsedDonationId = Number(donationId)
-  const [donationDetail, setDonationDetail] = useState<DonationDetail | null>(null)
+  const [donationDetail, setDonationDetail] = useState<DonationDetail | null>(
+    null,
+  )
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -80,9 +96,12 @@ export function DonationDetailPage() {
       {error ? (
         <section className="mx-[-16px] flex min-h-[calc(100vh-var(--header-h)-48px)] items-center bg-gray-50 px-4 pb-6">
           <div className="w-full rounded-card border border-red-100 bg-white px-5 py-6 text-center shadow-card">
-            <h2 className="text-lg font-semibold text-font-main">서버에 연결할 수 없어요</h2>
+            <h2 className="text-lg font-semibold text-font-main">
+              서버에 연결할 수 없어요
+            </h2>
             <p className="mt-2 text-sm leading-6 text-font-sub">
-              {error || '기부 상세 정보를 불러오지 못했습니다. 서버 연결 상태를 확인해주세요.'}
+              {error ||
+                '기부 상세 정보를 불러오지 못했습니다. 서버 연결 상태를 확인해주세요.'}
             </p>
           </div>
         </section>
@@ -128,8 +147,12 @@ export function DonationDetailPage() {
                   <div className="absolute inset-x-0 bottom-0 h-[120px] bg-linear-to-t from-black to-transparent" />
 
                   <div className="absolute bottom-[25px] left-[30px] flex w-[248px] flex-col gap-[10px]">
-                    <h2 className="text-2xl leading-4 font-bold text-white">{donationDetail.name}</h2>
-                    <p className="text-base leading-4 font-light text-gray-300">{donationDetail.summary}</p>
+                    <h2 className="text-2xl leading-4 font-bold text-white">
+                      {donationDetail.name}
+                    </h2>
+                    <p className="text-base leading-4 font-light text-gray-300">
+                      {donationDetail.summary}
+                    </p>
                   </div>
                 </section>
 
@@ -137,12 +160,16 @@ export function DonationDetailPage() {
                   <Card className="gap-0 rounded-control !p-[25px] shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
                     <div className="flex flex-col gap-[15px]">
                       <div className="flex flex-col gap-[5px]">
-                        <p className="text-base leading-[120%] tracking-[-0.03em] text-gray-700">현재 모금액</p>
+                        <p className="text-base leading-[120%] tracking-[-0.03em] text-gray-700">
+                          현재 모금액
+                        </p>
 
                         <div className="flex items-center justify-between">
                           <p className="text-left">
                             <span className="text-[24px] font-bold tracking-[-0.02em] text-primary-500">
-                              {new Intl.NumberFormat('ko-KR').format(donationDetail.currentAmount)}
+                              {new Intl.NumberFormat('ko-KR').format(
+                                donationDetail.currentAmount,
+                              )}
                             </span>
                             <span className="ml-1 text-base font-semibold tracking-[-0.02em] text-gray-700">
                               원
@@ -196,7 +223,10 @@ export function DonationDetailPage() {
             }
             buttonLabel="후원하기"
             onButtonClick={
-              donationDetail ? () => navigate(getDonationPaymentPath(donationDetail.donationId)) : undefined
+              donationDetail
+                ? () =>
+                    navigate(getDonationPaymentPath(donationDetail.donationId))
+                : undefined
             }
           />
         </>

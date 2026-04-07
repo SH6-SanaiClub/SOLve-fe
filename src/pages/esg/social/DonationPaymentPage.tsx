@@ -1,20 +1,25 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Button, IconButton, Radio } from '../../components/common'
-import { Icons } from '../../components/common'
-import Header from '../../components/layout/Header'
-import MainLayout from '../../components/layout/MainLayout'
-import { getDonationDetailPath, ROUTE_PATHS } from '../../constants/routePaths'
-import { getDonationDetail } from '../../services/donationService'
-import type { DonationDetail } from '../../types/donation'
+import { Button, IconButton, Radio } from '../../../components/common'
+import { Icons } from '../../../components/common'
+import Header from '../../../components/layout/Header'
+import MainLayout from '../../../components/layout/MainLayout'
+import {
+  getDonationDetailPath,
+  ROUTE_PATHS,
+} from '../../../constants/routePaths'
+import { getDonationDetail } from '../../../services/donationService'
+import type { DonationDetail } from '../../../types/donation'
 
 const PRESET_AMOUNTS = [30000, 50000, 70000, 100000] as const
 const MIN_DONATION_AMOUNT = 30000
 
-const formatAmountOption = (amount: number) => `${new Intl.NumberFormat('ko-KR').format(amount)} 원`
+const formatAmountOption = (amount: number) =>
+  `${new Intl.NumberFormat('ko-KR').format(amount)} 원`
 const formatAmountInput = (value: string) =>
   value ? new Intl.NumberFormat('ko-KR').format(Number(value)) : ''
-const formatPoint = (point: number) => `${new Intl.NumberFormat('ko-KR').format(point)}P`
+const formatPoint = (point: number) =>
+  `${new Intl.NumberFormat('ko-KR').format(point)}P`
 
 const resolveImageUrl = (imageUrl: string) => {
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
@@ -22,10 +27,17 @@ const resolveImageUrl = (imageUrl: string) => {
   }
 
   const baseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api'
-  const normalizedBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl
-  const normalizedImageUrl = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`
+  const normalizedBaseUrl = baseUrl.endsWith('/')
+    ? baseUrl.slice(0, -1)
+    : baseUrl
+  const normalizedImageUrl = imageUrl.startsWith('/')
+    ? imageUrl
+    : `/${imageUrl}`
 
-  if (normalizedBaseUrl.startsWith('http://') || normalizedBaseUrl.startsWith('https://')) {
+  if (
+    normalizedBaseUrl.startsWith('http://') ||
+    normalizedBaseUrl.startsWith('https://')
+  ) {
     return `${normalizedBaseUrl}${normalizedImageUrl}`
   }
 
@@ -36,7 +48,9 @@ export function DonationPaymentPage() {
   const navigate = useNavigate()
   const { donationId } = useParams()
   const parsedDonationId = Number(donationId)
-  const [donationDetail, setDonationDetail] = useState<DonationDetail | null>(null)
+  const [donationDetail, setDonationDetail] = useState<DonationDetail | null>(
+    null,
+  )
   const [isLoading, setIsLoading] = useState(true)
   const [selectedAmount, setSelectedAmount] = useState<number | null>(30000)
   const [customAmountInput, setCustomAmountInput] = useState('')
@@ -82,9 +96,7 @@ export function DonationPaymentPage() {
   }, [requestDonationDetail])
 
   const customAmount = customAmountInput ? Number(customAmountInput) : 0
-  const finalAmount = isCustomInputActive
-    ? customAmount
-    : (selectedAmount ?? 0)
+  const finalAmount = isCustomInputActive ? customAmount : (selectedAmount ?? 0)
   const expectedPoint = Math.floor(finalAmount * 0.03)
   const isPaymentDisabled = finalAmount < MIN_DONATION_AMOUNT
 
@@ -134,13 +146,16 @@ export function DonationPaymentPage() {
 
             <section className="px-[21px]">
               <div className="flex flex-col gap-[6px]">
-                <h3 className="text-base leading-7 font-semibold text-gray-800">기부 금액 선택</h3>
+                <h3 className="text-base leading-7 font-semibold text-gray-800">
+                  기부 금액 선택
+                </h3>
 
                 <div className="flex flex-col gap-[25px]">
                   <div className="flex flex-col gap-[18px]">
                     <div className="grid grid-cols-2 gap-4">
                       {PRESET_AMOUNTS.map((amount) => {
-                        const isSelected = !isCustomInputActive && selectedAmount === amount
+                        const isSelected =
+                          !isCustomInputActive && selectedAmount === amount
 
                         return (
                           <Button
@@ -167,7 +182,9 @@ export function DonationPaymentPage() {
 
                     <div
                       className={`h-12 overflow-hidden rounded-control bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05)] ${
-                        isCustomInputActive ? 'border border-primary-500' : 'border border-transparent'
+                        isCustomInputActive
+                          ? 'border border-primary-500'
+                          : 'border border-transparent'
                       }`}
                     >
                       <label className="flex h-full items-center justify-between px-[18px]">
@@ -180,15 +197,24 @@ export function DonationPaymentPage() {
                             setSelectedAmount(null)
                           }}
                           onChange={(event) => {
-                            const numericValue = event.target.value.replace(/[^0-9]/g, '')
-                            const normalizedValue = numericValue.replace(/^0+/, '')
+                            const numericValue = event.target.value.replace(
+                              /[^0-9]/g,
+                              '',
+                            )
+                            const normalizedValue = numericValue.replace(
+                              /^0+/,
+                              '',
+                            )
 
                             setCustomAmountInput(normalizedValue)
                             setIsCustomInputActive(true)
                             setSelectedAmount(null)
                           }}
                           onBlur={() => {
-                            if (customAmountInput && Number(customAmountInput) < MIN_DONATION_AMOUNT) {
+                            if (
+                              customAmountInput &&
+                              Number(customAmountInput) < MIN_DONATION_AMOUNT
+                            ) {
                               setCustomAmountInput(String(MIN_DONATION_AMOUNT))
                             }
                           }}
@@ -202,7 +228,9 @@ export function DonationPaymentPage() {
                     </div>
 
                     <div className="flex items-center justify-between px-3">
-                      <p className="text-xs leading-7 font-normal text-gray-800">예상 적립 포인트</p>
+                      <p className="text-xs leading-7 font-normal text-gray-800">
+                        예상 적립 포인트
+                      </p>
                       <p className="text-xs leading-7 font-semibold text-gray-800">
                         {formatPoint(expectedPoint)}
                       </p>
@@ -210,7 +238,9 @@ export function DonationPaymentPage() {
                   </div>
 
                   <div className="flex flex-col gap-[6px]">
-                    <h3 className="text-base leading-7 font-semibold text-gray-800">결제 수단</h3>
+                    <h3 className="text-base leading-7 font-semibold text-gray-800">
+                      결제 수단
+                    </h3>
 
                     <div className="flex flex-col gap-3">
                       <div className="rounded-control border border-gray-200 bg-white px-4 py-4 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">

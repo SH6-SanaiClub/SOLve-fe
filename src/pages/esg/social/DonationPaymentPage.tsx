@@ -219,14 +219,14 @@ export function DonationPaymentPage() {
                           <Button
                             key={amount}
                             type="button"
-                            variant="outline"
+                            variant="gray"
                             fullWidth
                             onClick={() => {
                               setSelectedAmount(amount)
                               setCustomAmountInput('')
                               setIsCustomInputActive(false)
                             }}
-                            className={`!border-solid !bg-transparent shadow-[0_2px_8px_rgba(0,0,0,0.05)] ${
+                            className={`!border !border-solid !bg-transparent shadow-[0_2px_8px_rgba(0,0,0,0.05)] ${
                               isSelected
                                 ? '!border-primary-500 !text-primary-500'
                                 : '!border-gray-400 !text-gray-400'

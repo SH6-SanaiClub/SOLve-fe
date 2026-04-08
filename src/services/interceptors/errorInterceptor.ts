@@ -4,6 +4,7 @@
   type InternalAxiosRequestConfig,
 } from 'axios'
 import { ROUTE_PATHS } from '../../constants/routePaths'
+
 import { APP_CONFIG } from '../../constants/config'
 import { useAuthStore } from '../../store'
 
@@ -44,7 +45,7 @@ export function applyErrorInterceptor(apiClient: AxiosInstance) {
           if (originalRequest.headers) {
             originalRequest.headers.Authorization = `Bearer ${accessToken}`
           }
-
+     
           return apiClient(originalRequest)
         } catch (reissueError) {
           useAuthStore.getState().clearSession()

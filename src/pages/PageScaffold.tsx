@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../store/authStore'
+import headerLogo from '../assets/home/logo.png'
 interface PageScaffoldProps {
   title: string
   description: string
@@ -29,7 +30,7 @@ export function PageScaffold({ title, description, children }: PageScaffoldProps
         </button>
       )}
       <section className="page-card flex flex-col gap-4">
-        <span className="text-sm font-semibold text-primary-500">SOLve</span>
+        <img src={headerLogo} alt="SOLve" className="h-9 w-fit object-contain" />
         <h1 className="text-2xl font-bold text-font-main">{title}</h1>
         <p className="text-base text-font-sub">{description}</p>
         {children}

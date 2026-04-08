@@ -22,7 +22,7 @@ const MainLayout: React.FC<Props> = ({ children, header, nav, className = '' }) 
   const contentPaddingBottom = nav ? 'pb-[calc(var(--nav-h)+20px)]' : 'pb-6';
 
   return (
-    <div className={`min-h-screen w-full max-w-[600px] mx-auto bg-bg-light shadow-2xl relative flex flex-col font-pretendard ${className}`}>
+    <div className={`min-h-screen w-full max-w-[600px] mx-auto bg-bg-light relative flex flex-col font-pretendard ${className}`}>
       
       {header}
 

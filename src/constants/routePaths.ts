@@ -2,6 +2,8 @@ export const ROUTE_PATHS = {
   root: '/',
   login: '/login',
   signup: '/signup',
+  signupAgreement: '/signup-agreement',
+  signupComplete: '/signup-complete',
   onboarding: '/onboarding',
   home: '/home',
   shop: '/shop',

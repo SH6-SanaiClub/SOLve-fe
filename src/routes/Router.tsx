@@ -20,6 +20,8 @@ import { ValueStorePage } from '../pages/esg/social/ValueStorePage'
 import { LoginPage } from '../pages/auth/LoginPage'
 import { OnboardingPage } from '../pages/auth/OnboardingPage'
 import { SignupPage } from '../pages/auth/SignupPage'
+import { SignupAgreementPage } from '../pages/auth/SignupAgreementPage'
+import { SignupCompletePage } from '../pages/auth/SignupCompletePage'
 import { ChatbotPage } from '../pages/chatbot/ChatbotPage'
 import { FinancePage } from '../pages/finance/FinancePage'
 import { HomePage } from '../pages/home/HomePage'
@@ -52,7 +54,9 @@ function AppRoutes() {
 
         <Route element={<PublicOnlyRoute />}>
           <Route path={ROUTE_PATHS.login} element={<LoginPage />} />
+          <Route path={ROUTE_PATHS.signupAgreement} element={<SignupAgreementPage />} />
           <Route path={ROUTE_PATHS.signup} element={<SignupPage />} />
+          <Route path={ROUTE_PATHS.signupComplete} element={<SignupCompletePage />} />
         </Route>
 
         <Route element={<ProtectedRoute />}>

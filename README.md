@@ -39,7 +39,6 @@ npm run preview
 ```env
 VITE_API_BASE_URL=/api
 VITE_API_TIMEOUT_MS=10000
-VITE_ENABLE_DEV_AUTH_BYPASS=true
 ```
 
 실제 기본값은 [config.ts](./src/constants/config.ts)에서 관리합니다.

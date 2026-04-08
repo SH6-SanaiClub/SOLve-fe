@@ -27,7 +27,7 @@ export function applyErrorInterceptor(apiClient: AxiosInstance) {
             throw new Error('No refresh token available')
           }
 
-          const res = await axios.post(`${APP_CONFIG.apiBaseUrl}/api/auth/reissue`, {
+          const res = await axios.post(`${APP_CONFIG.apiBaseUrl}/auth/reissue`, {
             refreshToken,
           })
 

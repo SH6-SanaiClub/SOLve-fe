@@ -23,11 +23,11 @@ export const authService = {
       return Promise.resolve({ data: { message: '회원가입 성공 (개발 모드)' } })
     }
 
-    return apiClient.post('/api/auth/join', data)
+    return apiClient.post('/auth/join', data)
   },
 
   checkLoginId: async (loginId: string) => {
-    const response = await apiClient.get<boolean>('/api/auth/check-id', {
+    const response = await apiClient.get<boolean>('/auth/check-id', {
       params: { loginId },
     })
 
@@ -40,7 +40,7 @@ export const authService = {
       return Promise.resolve(mockLoginResponse)
     }
 
-    const response = await apiClient.post<LoginResponse>('/api/auth/login', data)
+    const response = await apiClient.post<LoginResponse>('/auth/login', data)
     const { accessToken, refreshToken } = response.data
 
     if (accessToken) {

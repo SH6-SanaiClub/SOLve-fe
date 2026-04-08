@@ -35,6 +35,7 @@ export function AppRouter() {
         <Route element={<PublicOnlyRoute />}>
           <Route path={ROUTE_PATHS.login} element={<LoginPage />} />
           <Route path={ROUTE_PATHS.signupAgreement} element={<SignupAgreementPage />} />
+          <Route path={ROUTE_PATHS.verify} element={<SignupAgreementPage />} />
           <Route path={ROUTE_PATHS.signup} element={<SignupPage />} />
           <Route path={ROUTE_PATHS.signupComplete} element={<SignupCompletePage />} />
         </Route>

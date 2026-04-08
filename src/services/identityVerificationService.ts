@@ -81,7 +81,7 @@ async function requestImpCertification(): Promise<string> {
 export const identityVerificationService = {
   verify: async (): Promise<VerifyIdentityResponse> => {
     const impUid = await requestImpCertification()
-    const response = await apiClient.post<VerifyIdentityResponse>('/api/auth/verify-identity', {
+    const response = await apiClient.post<VerifyIdentityResponse>('/auth/verify-identity', {
       impUid,
     })
     return response.data

@@ -12,13 +12,27 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean
 }
 
+function shouldSkipRefresh(url?: string) {
+  return Boolean(
+    url &&
+      ['/v1/auth/login', '/v1/auth/signup', '/v1/auth/check-id', '/v1/auth/verify-identity', '/v1/auth/reissue'].some(
+        (path) => url.includes(path),
+      ),
+  )
+}
+
 export function applyErrorInterceptor(apiClient: AxiosInstance) {
   apiClient.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {
       const originalRequest = error.config as CustomAxiosRequestConfig
 
-      if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+      if (
+        error.response?.status === 401 &&
+        originalRequest &&
+        !originalRequest._retry &&
+        !shouldSkipRefresh(originalRequest.url)
+      ) {
         originalRequest._retry = true
 
         try {
@@ -28,7 +42,7 @@ export function applyErrorInterceptor(apiClient: AxiosInstance) {
             throw new Error('No refresh token available')
           }
 
-          const res = await axios.post(`${APP_CONFIG.apiBaseUrl}/auth/reissue`, {
+          const res = await axios.post(`${APP_CONFIG.apiBaseUrl}/v1/auth/reissue`, {
             refreshToken,
           })
 

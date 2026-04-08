@@ -1,4 +1,4 @@
-import { PageScaffold } from '../PageScaffold'
+import { PageScaffold } from '../../PageScaffold'
 
 export function SocialPage() {
   return (

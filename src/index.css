@@ -87,6 +87,10 @@
 }
 
 @layer base {
+  html {
+    overflow-y: scroll;
+  }
+
   body {
     @apply bg-bg-light text-font-main font-pretendard;
   }

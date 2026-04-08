@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Card, IconButton, Icons, InfoRow, ProgressBar, SectionHeader } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import Header from '../../components/layout/Header'
@@ -31,6 +31,7 @@ function getGradeLabel(grade?: UserGrade | null) {
 }
 
 export function HomePage() {
+  const location = useLocation()
   const navigate = useNavigate()
   const { user } = useAuth()
 
@@ -92,7 +93,6 @@ export function HomePage() {
             </p>
           </div>
         </section>
-        
 
         <div className="flex flex-col gap-6">
           <Card className="!h-[136px]">
@@ -132,7 +132,9 @@ export function HomePage() {
               <DashboardActionTile
                 title="친환경 활동"
                 variant="outline"
-                onClick={() => navigate(ROUTE_PATHS.activityEnvironment)}
+                onClick={() =>
+                  navigate(ROUTE_PATHS.esgEnv, { state: { backgroundLocation: location } })
+                }
               />
               <DashboardActionTile
                 title="오늘의 퀴즈"

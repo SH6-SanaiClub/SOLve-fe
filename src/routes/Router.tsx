@@ -1,4 +1,11 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  type Location,
+} from 'react-router-dom'
 import { ROUTE_PATHS } from '../constants/routePaths'
 import { GovernancePage } from '../pages/activities/GovernancePage'
 
@@ -18,20 +25,27 @@ import { FinancePage } from '../pages/finance/FinancePage'
 import { HomePage } from '../pages/home/HomePage'
 import { MyPage } from '../pages/my/MyPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
+import { EnvironmentEntryModalRoute } from '../pages/esg/env/EnvironmentEntryModalRoute'
+import { EnvironmentEntryPage } from '../pages/esg/env/EnvironmentEntryPage'
+import { EnvironmentVerifyPage } from '../pages/esg/env/EnvironmentVerifyPage'
 import { ShopHistoryPage } from '../pages/shop/ShopHistoryPage'
 import { ShopListPage } from '../pages/shop/ShopListPage'
 import { ShopProductDetailPage } from '../pages/shop/ShopProductDetailPage'
 import { ProtectedRoute } from './ProtectedRoute'
 import { PublicOnlyRoute } from './PublicOnlyRoute'
 
-export function AppRouter() {
+interface RouterLocationState {
+  backgroundLocation?: Location
+}
+
+function AppRoutes() {
+  const location = useLocation()
+  const routeState = location.state as RouterLocationState | undefined
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route
-          path={ROUTE_PATHS.root}
-          element={<Navigate replace to={ROUTE_PATHS.home} />}
-        />
+    <>
+      <Routes location={routeState?.backgroundLocation ?? location}>
+        <Route path={ROUTE_PATHS.root} element={<Navigate replace to={ROUTE_PATHS.home} />} />
 
         <Route element={<PublicOnlyRoute />}>
           <Route path={ROUTE_PATHS.login} element={<LoginPage />} />
@@ -43,23 +57,15 @@ export function AppRouter() {
           <Route path={ROUTE_PATHS.home} element={<HomePage />} />
           <Route path={ROUTE_PATHS.shop} element={<ShopListPage />} />
           <Route path={ROUTE_PATHS.shopHistory} element={<ShopHistoryPage />} />
-          <Route
-            path={ROUTE_PATHS.shopDetail}
-            element={<ShopProductDetailPage />}
-          />
-          <Route
-            path={ROUTE_PATHS.activityEnvironment}
-            element={<EnvironmentPage />}
-          />
+          <Route path={ROUTE_PATHS.shopDetail} element={<ShopProductDetailPage />} />
+          <Route path={ROUTE_PATHS.esgEnv} element={<EnvironmentEntryPage />} />
+          <Route path={ROUTE_PATHS.activityEnvironment} element={<EnvironmentEntryPage />} />
+          <Route path={ROUTE_PATHS.esgEnvVerify} element={<EnvironmentVerifyPage />} />
+          <Route path={ROUTE_PATHS.esgSocial} element={<SocialPage />} />
           <Route path={ROUTE_PATHS.activitySocial} element={<SocialPage />} />
-          <Route
-            path={ROUTE_PATHS.activitySocialDonation}
-            element={<DonationPage />}
-          />
-          <Route
-            path={ROUTE_PATHS.activitySocialStore}
-            element={<ValueStorePage />}
-          />
+          <Route path={ROUTE_PATHS.esgSocialDonation} element={<DonationPage />} />
+          <Route path={ROUTE_PATHS.activitySocialDonation} element={<DonationPage />} />
+          <Route path={ROUTE_PATHS.activitySocialStore} element={<ValueStorePage />} />
           <Route
             path={ROUTE_PATHS.activitySocialProductDetail}
             element={<ValueStoreDetailPage />}
@@ -83,6 +89,22 @@ export function AppRouter() {
 
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
+
+      {routeState?.backgroundLocation ? (
+        <Routes>
+          <Route element={<ProtectedRoute />}>
+            <Route path={ROUTE_PATHS.esgEnv} element={<EnvironmentEntryModalRoute />} />
+          </Route>
+        </Routes>
+      ) : null}
+    </>
+  )
+}
+
+export function AppRouter() {
+  return (
+    <BrowserRouter>
+      <AppRoutes />
     </BrowserRouter>
   )
 }

@@ -1,11 +1,10 @@
-﻿import axios, {
+import axios, {
   type AxiosError,
   type AxiosInstance,
   type InternalAxiosRequestConfig,
 } from 'axios'
 import { useAuthStore } from '../../store'
 import { ROUTE_PATHS } from '../../constants/routePaths'
-import { APP_CONFIG } from '../../constants/config'
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean
@@ -28,9 +27,7 @@ export function applyErrorInterceptor(apiClient: AxiosInstance) {
           }
 
           const res = await axios.post(`${APP_CONFIG.apiBaseUrl}/auth/reissue`, {
-            refreshToken,
-          })
-
+  
           const { accessToken, refreshToken: newRefreshToken } = res.data
 
           localStorage.setItem('accessToken', accessToken)

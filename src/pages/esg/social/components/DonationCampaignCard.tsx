@@ -1,23 +1,23 @@
-import { useState } from "react";
-import { Card, ProgressBar } from "../../../components/common";
-import type { DonationCampaign } from "../../../types/donation";
+import { useState } from 'react'
+import { Card, ProgressBar } from '../../../../components/common'
+import type { DonationCampaign } from '../../../../types/donation'
 
 interface DonationCampaignCardProps {
-  donation: DonationCampaign;
-  onClick?: () => void;
+  donation: DonationCampaign
+  onClick?: () => void
 }
 
 const formatCurrency = (amount: number) =>
-  `${new Intl.NumberFormat("ko-KR").format(amount)}원`;
+  `${new Intl.NumberFormat('ko-KR').format(amount)}원`
 
 const formatNumber = (value: number) =>
-  new Intl.NumberFormat("ko-KR").format(value);
+  new Intl.NumberFormat('ko-KR').format(value)
 
 export const DonationCampaignCard = ({
   donation,
   onClick,
 }: DonationCampaignCardProps) => {
-  const [hasImageError, setHasImageError] = useState(false);
+  const [hasImageError, setHasImageError] = useState(false)
 
   return (
     <Card
@@ -59,7 +59,7 @@ export const DonationCampaignCard = ({
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
               <p className="text-[10px] leading-[120%] font-medium tracking-[-0.03em] text-gray-400">
-                {formatCurrency(donation.currentAmount)} /{" "}
+                {formatCurrency(donation.currentAmount)} /{' '}
                 {formatCurrency(donation.targetAmount)}
               </p>
               <p className="text-[10px] leading-[120%] font-semibold tracking-[-0.01em] text-primary-400">
@@ -76,5 +76,5 @@ export const DonationCampaignCard = ({
         </div>
       </div>
     </Card>
-  );
-};
+  )
+}

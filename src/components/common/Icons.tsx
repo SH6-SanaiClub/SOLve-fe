@@ -8,6 +8,9 @@ import {
   Menu, 
   BotMessageSquare, 
   ChevronLeft,
+  CupSoda,
+  Bike,
+  CarFront,
 } from 'lucide-react';
 
 type IconProps = React.ComponentPropsWithoutRef<typeof House>;
@@ -24,4 +27,7 @@ export const Icons = {
   Menu: (props: IconProps) => <Menu size={24} {...props} />,              // 전체 메뉴(햄버거)
   ArrowRight: (props: IconProps) => <ChevronRight size={20} {...props} />, // 이동 화살표
   Back: (props: IconProps) => <ChevronLeft size={24} {...props} />, // 뒤로가기 아이콘
+  Tumbler: (props: IconProps) => <CupSoda size={24} {...props} />,
+  Bicycle: (props: IconProps) => <Bike size={24} {...props} />,
+  EvCharger: (props: IconProps) => <CarFront size={24} {...props} />,
 };

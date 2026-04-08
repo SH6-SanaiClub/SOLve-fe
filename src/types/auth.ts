@@ -18,7 +18,7 @@ export interface AuthJoinRequest {
 // 만약 서버가 토큰만 준다면 아래처럼, 유저정보도 같이 준다면 UserSummary를 포함하세요.
 export interface LoginResponse {
   accessToken: string;
-  refreshToken?: string;
+  refreshToken: string;
   user: UserSummary; 
 }
 

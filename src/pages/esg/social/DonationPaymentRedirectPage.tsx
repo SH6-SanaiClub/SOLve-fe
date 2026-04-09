@@ -1,14 +1,8 @@
 import { isAxiosError } from 'axios'
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { Button } from '../../../components/common'
-import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
-import {
-  getDonationPaymentCompletePath,
-  getDonationPaymentPath,
-  ROUTE_PATHS,
-} from '../../../constants/routePaths'
+import { getDonationPaymentCompletePath } from '../../../constants/routePaths'
 import { verifyDonationPayment } from '../../../services/paymentService'
 
 export function DonationPaymentRedirectPage() {
@@ -30,6 +24,11 @@ export function DonationPaymentRedirectPage() {
         : !impUid || !merchantUid
           ? '결제 검증에 필요한 정보가 없어요.'
           : ''
+  const currentMessage = immediateError || error
+  const title = currentMessage
+    ? '결제 확인 중 문제가 발생했어요'
+    : '결제 정보를 확인하고 있어요'
+  const description = currentMessage || '잠시만 기다려주세요.'
 
   useEffect(() => {
     if (immediateError || !impUid || !merchantUid) {
@@ -75,42 +74,22 @@ export function DonationPaymentRedirectPage() {
   }, [immediateError, impUid, merchantUid, navigate, parsedDonationId])
 
   return (
-    <MainLayout header={<Header title="결제 확인 중" />} className="bg-gray-50">
-      <section className="mx-[-16px] flex min-h-[calc(100vh-var(--header-h)-48px)] items-center justify-center bg-gray-50 px-6">
-        <div className="w-full max-w-[420px] rounded-card bg-white p-6 text-center shadow-card">
-          {immediateError || error ? (
-            <>
-              <h2 className="text-lg font-semibold text-font-main">
-                결제 확인 중 문제가 발생했어요
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-font-sub">
-                {immediateError || error}
-              </p>
-              <div className="mt-5">
-                <Button
-                  onClick={() =>
-                    navigate(
-                      donationId
-                        ? getDonationPaymentPath(donationId)
-                        : ROUTE_PATHS.activitySocialDonation,
-                      { replace: true },
-                    )
-                  }
-                >
-                  결제 페이지로 돌아가기
-                </Button>
-              </div>
-            </>
-          ) : (
-            <>
-              <h2 className="text-lg font-semibold text-font-main">
-                결제 정보를 확인하고 있어요
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-font-sub">
-                잠시만 기다려주세요.
-              </p>
-            </>
-          )}
+    <MainLayout className="bg-white">
+      <section className="mx-[-16px] flex min-h-[calc(100vh-48px)] items-center justify-center bg-white px-8">
+        <div className="flex w-full max-w-[320px] flex-col items-center justify-center text-center">
+          <div className="space-y-3">
+            <h2 className="text-[22px] leading-[140%] font-semibold tracking-[-0.02em] text-font-main">
+              {title}
+            </h2>
+            <p className="text-[15px] leading-[160%] font-normal tracking-[-0.02em] text-font-sub">
+              {description}
+            </p>
+          </div>
+
+          <div
+            className="mt-8 h-10 w-10 animate-spin rounded-full border-[3px] border-gray-200 border-t-primary-500"
+            aria-label="결제 확인 중"
+          />
         </div>
       </section>
     </MainLayout>

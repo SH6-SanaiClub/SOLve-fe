@@ -1,34 +1,10 @@
 ﻿import { apiClient } from './apiClient'
 import { APP_CONFIG } from '../constants/config'
+import type { PortOneCertificationResponse } from '../types/portone'
 
 type VerifyIdentityResponse = {
   verified: boolean
   verificationToken?: string
-}
-
-declare global {
-  interface Window {
-    IMP?: {
-      init: (impCode: string) => void
-      certification: (
-        data: {
-          channelKey?: string
-          pg?: string
-          merchant_uid: string
-          company: string
-          name?: string
-          phone?: string
-          carrier?: string
-          popup?: boolean
-        },
-        callback: (response: {
-          success?: boolean
-          imp_uid?: string
-          error_msg?: string
-        } | null) => void,
-      ) => void
-    }
-  }
 }
 
 async function requestImpCertification(): Promise<string> {
@@ -55,7 +31,7 @@ async function requestImpCertification(): Promise<string> {
         carrier: '',
         popup: true,
       },
-      (response) => {
+      (response: PortOneCertificationResponse | null) => {
         if (!response) {
           reject(new Error('본인인증 응답이 없습니다.'))
           return

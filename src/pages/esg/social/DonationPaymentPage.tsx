@@ -6,10 +6,21 @@ import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
 import {
   getDonationDetailPath,
+  getDonationPaymentCallbackPath,
+  getDonationPaymentCompletePath,
   ROUTE_PATHS,
 } from '../../../constants/routePaths'
 import { getDonationDetail } from '../../../services/donationService'
+import {
+  prepareDonationPayment,
+  verifyDonationPayment,
+} from '../../../services/paymentService'
+import {
+  PortOnePaymentError,
+  requestDonationPortOnePayment,
+} from '../../../services/portoneService'
 import type { DonationDetail } from '../../../types/donation'
+import type { VerifyDonationPaymentResponse } from '../../../types/payment'
 
 const PRESET_AMOUNTS = [30000, 50000, 70000, 100000] as const
 const MIN_DONATION_AMOUNT = 30000
@@ -34,14 +45,7 @@ const resolveImageUrl = (imageUrl: string) => {
     ? imageUrl
     : `/${imageUrl}`
 
-  if (
-    normalizedBaseUrl.startsWith('http://') ||
-    normalizedBaseUrl.startsWith('https://')
-  ) {
-    return `${normalizedBaseUrl}${normalizedImageUrl}`
-  }
-
-  return normalizedImageUrl
+  return `${normalizedBaseUrl}${normalizedImageUrl}`
 }
 
 export function DonationPaymentPage() {
@@ -56,6 +60,8 @@ export function DonationPaymentPage() {
   const [customAmountInput, setCustomAmountInput] = useState('')
   const [isCustomInputActive, setIsCustomInputActive] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<'solpay' | 'card'>('card')
+  const [isSubmittingPayment, setIsSubmittingPayment] = useState(false)
+  const [verifyError, setVerifyError] = useState('')
 
   const handleBack = () => {
     if (window.history.length > 1) {
@@ -95,10 +101,86 @@ export function DonationPaymentPage() {
     void requestDonationDetail()
   }, [requestDonationDetail])
 
+  const verifyAndMoveToCompletePage = useCallback(
+    async (impUid: string, merchantUid: string) => {
+      const verifiedPayment: VerifyDonationPaymentResponse =
+        await verifyDonationPayment({
+          donationId: parsedDonationId,
+          impUid,
+          merchantUid,
+        })
+
+      navigate(getDonationPaymentCompletePath(parsedDonationId), {
+        replace: true,
+        state: {
+          paymentResult: verifiedPayment,
+        },
+      })
+    },
+    [navigate, parsedDonationId],
+  )
+
   const customAmount = customAmountInput ? Number(customAmountInput) : 0
   const finalAmount = isCustomInputActive ? customAmount : (selectedAmount ?? 0)
   const expectedPoint = Math.floor(finalAmount * 0.03)
-  const isPaymentDisabled = finalAmount < MIN_DONATION_AMOUNT
+  const isPaymentDisabled =
+    finalAmount < MIN_DONATION_AMOUNT ||
+    isSubmittingPayment ||
+    !donationDetail
+
+  const handlePayment = async () => {
+    if (!donationDetail || isPaymentDisabled) {
+      return
+    }
+
+    setIsSubmittingPayment(true)
+    setVerifyError('')
+
+    try {
+      const preparedPayment = await prepareDonationPayment({
+        donationId: donationDetail.donationId,
+        amount: finalAmount,
+      })
+
+      const paymentResponse = await requestDonationPortOnePayment({
+        merchantUid: preparedPayment.merchantUid,
+        donationName: preparedPayment.donationName,
+        amount: preparedPayment.amount,
+        paymentMethod,
+        redirectUrl: `${window.location.origin}${getDonationPaymentCallbackPath(donationDetail.donationId)}`,
+      })
+
+      console.info('포트원 결제 성공 콜백', {
+        imp_uid: paymentResponse.imp_uid,
+        merchant_uid: paymentResponse.merchant_uid,
+        response: paymentResponse,
+      })
+
+      if (!paymentResponse.imp_uid || !paymentResponse.merchant_uid) {
+        throw new Error('결제 검증에 필요한 정보가 누락되었어요.')
+      }
+
+      await verifyAndMoveToCompletePage(
+        paymentResponse.imp_uid,
+        paymentResponse.merchant_uid,
+      )
+    } catch (error) {
+      if (error instanceof PortOnePaymentError) {
+        console.error('포트원 결제 실패 콜백', {
+          imp_uid: error.response.imp_uid,
+          merchant_uid: error.response.merchant_uid,
+          response: error.response,
+        })
+        window.alert(error.response.error_msg ?? '결제가 완료되지 않았어요.')
+      } else {
+        console.error('결제 준비 또는 검증 실패', error)
+        setVerifyError('결제 검증에 실패했어요. 잠시 후 다시 시도해주세요.')
+        window.alert('결제 준비 또는 검증에 실패했어요. 잠시 후 다시 시도해주세요.')
+      }
+    } finally {
+      setIsSubmittingPayment(false)
+    }
+  }
 
   return (
     <MainLayout
@@ -116,10 +198,10 @@ export function DonationPaymentPage() {
       }
       className="bg-gray-50"
     >
-      <section className="mx-[-16px] min-h-[calc(100vh-var(--header-h)-48px)] bg-gray-50 pt-6 pb-[104px]">
+      <section className="mx-[-16px] mb-[-24px] bg-gray-50 pt-6 pb-[104px]">
         {isLoading ? (
           <div className="space-y-5 px-[21px]">
-            <div className="h-[308px] animate-pulse rounded-control bg-gray-300" />
+            <div className="h-[216px] animate-pulse rounded-control bg-gray-300" />
             <div className="space-y-3">
               <div className="h-8 w-3/4 animate-pulse rounded-full bg-gray-300" />
               <div className="h-5 w-1/2 animate-pulse rounded-full bg-gray-200" />
@@ -132,10 +214,10 @@ export function DonationPaymentPage() {
                 <img
                   src={resolveImageUrl(donationDetail.imageUrl)}
                   alt={donationDetail.name}
-                  className="h-[308px] w-full object-cover"
+                  className="h-[216px] w-full object-contain"
                 />
-                <div className="absolute inset-x-0 bottom-0 h-[120px] bg-linear-to-t from-black to-transparent" />
-                <div className="absolute right-[28px] bottom-[25px] left-[28px] flex flex-col gap-[10px]">
+                <div className="absolute inset-x-0 bottom-0 h-[96px] bg-linear-to-t from-black to-transparent" />
+                <div className="absolute right-[24px] bottom-[20px] left-[24px] flex flex-col gap-[8px]">
                   <h2 className="text-[20px] leading-4 font-bold text-white">
                     {donationDetail.name}
                   </h2>
@@ -163,14 +245,14 @@ export function DonationPaymentPage() {
                           <Button
                             key={amount}
                             type="button"
-                            variant="outline"
+                            variant="gray"
                             fullWidth
                             onClick={() => {
                               setSelectedAmount(amount)
                               setCustomAmountInput('')
                               setIsCustomInputActive(false)
                             }}
-                            className={`!border-solid !bg-transparent shadow-[0_2px_8px_rgba(0,0,0,0.05)] ${
+                            className={`!border !border-solid !bg-transparent shadow-[0_2px_8px_rgba(0,0,0,0.05)] ${
                               isSelected
                                 ? '!border-primary-500 !text-primary-500'
                                 : '!border-gray-400 !text-gray-400'
@@ -237,6 +319,10 @@ export function DonationPaymentPage() {
                         {formatPoint(expectedPoint)}
                       </p>
                     </div>
+
+                    {verifyError ? (
+                      <p className="mt-2 px-1 text-xs text-red-500">{verifyError}</p>
+                    ) : null}
                   </div>
 
                   <div className="flex flex-col gap-[6px]">
@@ -285,7 +371,7 @@ export function DonationPaymentPage() {
 
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
         <section className="pointer-events-auto mx-auto w-full max-w-[600px] bg-white px-5 pt-4 pb-[calc(20px+env(safe-area-inset-bottom))]">
-          <Button fullWidth disabled={isPaymentDisabled}>
+          <Button fullWidth disabled={isPaymentDisabled} onClick={() => void handlePayment()}>
             결제하기
           </Button>
         </section>

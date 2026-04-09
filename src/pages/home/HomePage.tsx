@@ -3,11 +3,11 @@ import { Card, IconButton, Icons, InfoRow, ProgressBar, SectionHeader } from '..
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import Header from '../../components/layout/Header'
 import MainLayout from '../../components/layout/MainLayout'
-import headerLogo from '../../assets/home/logo.png'
 import {
   BOTTOM_NAVIGATION_ITEMS,
   BOTTOM_NAVIGATION_ROUTE_BY_KEY,
 } from '../../constants/bottomNavigation'
+import { getS3AssetUrl } from '../../constants/assetUrls'
 import { ROUTE_PATHS } from '../../constants/routePaths'
 import { useAuth } from '../../hooks/useAuth'
 import type { UserGrade } from '../../types/user'
@@ -39,6 +39,7 @@ export function HomePage() {
   const gradeLabel = getGradeLabel(user?.currentGrade)
   const totalPoints = user?.totalPoints ?? defaultPoints
   const formattedPoints = `${numberFormatter.format(totalPoints)}p`
+  const headerLogo = getS3AssetUrl('logo.webp')
 
   const handleBottomNavigation = (key: string) => {
     const nextPath =

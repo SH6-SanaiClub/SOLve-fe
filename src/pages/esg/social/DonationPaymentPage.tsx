@@ -45,14 +45,7 @@ const resolveImageUrl = (imageUrl: string) => {
     ? imageUrl
     : `/${imageUrl}`
 
-  if (
-    normalizedBaseUrl.startsWith('http://') ||
-    normalizedBaseUrl.startsWith('https://')
-  ) {
-    return `${normalizedBaseUrl}${normalizedImageUrl}`
-  }
-
-  return normalizedImageUrl
+  return `${normalizedBaseUrl}${normalizedImageUrl}`
 }
 
 export function DonationPaymentPage() {
@@ -205,10 +198,10 @@ export function DonationPaymentPage() {
       }
       className="bg-gray-50"
     >
-      <section className="mx-[-16px] min-h-[calc(100vh-var(--header-h)-48px)] bg-gray-50 pt-6 pb-[104px]">
+      <section className="mx-[-16px] mb-[-24px] bg-gray-50 pt-6 pb-[104px]">
         {isLoading ? (
           <div className="space-y-5 px-[21px]">
-            <div className="h-[308px] animate-pulse rounded-control bg-gray-300" />
+            <div className="h-[216px] animate-pulse rounded-control bg-gray-300" />
             <div className="space-y-3">
               <div className="h-8 w-3/4 animate-pulse rounded-full bg-gray-300" />
               <div className="h-5 w-1/2 animate-pulse rounded-full bg-gray-200" />
@@ -221,10 +214,10 @@ export function DonationPaymentPage() {
                 <img
                   src={resolveImageUrl(donationDetail.imageUrl)}
                   alt={donationDetail.name}
-                  className="h-[308px] w-full object-cover"
+                  className="h-[216px] w-full object-contain"
                 />
-                <div className="absolute inset-x-0 bottom-0 h-[120px] bg-linear-to-t from-black to-transparent" />
-                <div className="absolute right-[28px] bottom-[25px] left-[28px] flex flex-col gap-[10px]">
+                <div className="absolute inset-x-0 bottom-0 h-[96px] bg-linear-to-t from-black to-transparent" />
+                <div className="absolute right-[24px] bottom-[20px] left-[24px] flex flex-col gap-[8px]">
                   <h2 className="text-[20px] leading-4 font-bold text-white">
                     {donationDetail.name}
                   </h2>

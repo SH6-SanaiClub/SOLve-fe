@@ -1,4 +1,4 @@
-import financeMascotImageSrc from '../../assets/finance/finance-mascot.png'
+﻿import financeMascotImageSrc from '../../assets/finance/finance-mascot.png'
 import type { FinanceProduct, FinancialProductType } from '../../types/finance'
 
 const commonNoticeLines = [
@@ -17,9 +17,9 @@ export const financeProducts: FinanceProduct[] = [
     id: 'esg-master-savings',
     type: 'SAVINGS',
     name: 'ESG 마스터 적금',
-    listDescription: '만기까지 900점 유지 성공 시 최고 10% 우대 제공',
+    listDescription: '만기까지 900점 유지 성공 시\n최종 10% 혜택 제공',
     listRateLabel: '연 10.0%',
-    heroDescription: '목표를 끝까지 지키면 큰 혜택이 따라와요',
+    heroDescription: '목표를 끝까지 지켜내면 가장 큰 혜택이 따라와요',
     heroImageSrc: financeMascotImageSrc,
     heroRateSummary: '기본 연 4.0% + 만기 유지 우대 6.0%',
     heroRateHighlight: '최고 연 10.0%',
@@ -29,7 +29,7 @@ export const financeProducts: FinanceProduct[] = [
       { label: '가입 금액', value: '300,000원' },
     ],
     benefitTitle: '상품 안내',
-    benefitDescription: '만기 시점까지 900점 이상을 유지하면 우대 금리가 적용됩니다.',
+    benefitDescription: '만기 시점까지 900점 이상의 ESG 점수를 유지하면 우대 금리가 적용됩니다.',
     noticeLines: commonNoticeLines,
     actionLabel: '가입하기',
     applyTitle: '적금 가입하기',
@@ -40,7 +40,7 @@ export const financeProducts: FinanceProduct[] = [
     ],
     completion: {
       title: '가입이 완료되었습니다!',
-      description: '지속 가능한 내일을 위한 당신의 선택을 응원합니다.',
+      description: '지속 가능한 내일을 위한\n당신의 선택을 응원합니다.',
       fields: [
         { label: '가입 상품', value: 'ESG 마스터 적금' },
         { label: '적용 금리', value: '최고 연 10.0%' },
@@ -55,7 +55,7 @@ export const financeProducts: FinanceProduct[] = [
     id: 'green-step-up-savings',
     type: 'SAVINGS',
     name: '그린 스텝업 적금',
-    listDescription: '점수가 50점 오를 때마다 연 1% 추가',
+    listDescription: '점수가 50점 오를 때마다\n금리 1% 추가',
     listRateLabel: '연 5.0%',
     heroDescription: '내 점수가 자랄수록 금리도 함께 자라나요',
     heroImageSrc: financeMascotImageSrc,
@@ -68,7 +68,7 @@ export const financeProducts: FinanceProduct[] = [
     ],
     benefitTitle: '상품 안내',
     benefitDescription:
-      '가입 시점 대비 ESG 총점이 50점씩 오를 때마다 다음 달 추가 금리 1.0%를 제공합니다.',
+      '가입 시점 점수 대비 점수가 50점씩 오를 때마다 다음 달 추가 금리 1.0%를 제공합니다.',
     noticeLines: commonNoticeLines,
     actionLabel: '가입하기',
     applyTitle: '적금 가입하기',
@@ -79,7 +79,7 @@ export const financeProducts: FinanceProduct[] = [
     ],
     completion: {
       title: '가입이 완료되었습니다!',
-      description: '지속 가능한 내일을 위한 당신의 가치 있는 선택을 응원합니다.',
+      description: '지속 가능한 내일을 위한\n당신의 가치 있는 선택을 응원합니다.',
       fields: [
         { label: '가입 상품', value: '그린 스텝업 적금' },
         { label: '적용 금리', value: '최고 연 5.2%' },
@@ -94,9 +94,9 @@ export const financeProducts: FinanceProduct[] = [
     id: 'earth-guardian-savings',
     type: 'SAVINGS',
     name: '지구 수호대 적금',
-    listDescription: '월별 E 영역 목표 달성 시 추가 금리 제공',
+    listDescription: '매월 E 영역 목표 달성 시\n추가 금리 제공',
     listRateLabel: '연 5.0%',
-    heroDescription: '환경 실천을 꾸준히 이어갈수록 혜택도 커집니다',
+    heroDescription: '환경 실천을 이어갈수록 혜택도 커져요',
     heroImageSrc: financeMascotImageSrc,
     heroRateSummary: '기본 연 3.0% + 우대 최고 2.0%',
     heroRateHighlight: '최고 연 5.0%',
@@ -117,7 +117,7 @@ export const financeProducts: FinanceProduct[] = [
     ],
     completion: {
       title: '가입이 완료되었습니다!',
-      description: '지속 가능한 내일을 위한 당신의 선택을 응원합니다.',
+      description: '지속 가능한 내일을 위한\n당신의 선택을 응원합니다.',
       fields: [
         { label: '가입 상품', value: '지구 수호대 적금' },
         { label: '적용 금리', value: '최고 연 5.0%' },
@@ -132,9 +132,9 @@ export const financeProducts: FinanceProduct[] = [
     id: 'warm-companion-savings',
     type: 'SAVINGS',
     name: '따뜻한 동행 적금',
-    listDescription: '정기 후원 및 사회적 소비 시 최고 0.5%씩 우대',
+    listDescription: '정기 후원 및 사회적 소비 시\n금리 0.5%씩 우대',
     listRateLabel: '연 7.0%',
-    heroDescription: '좋은 소비와 기부가 쌓일수록 더 높은 금리를 받으세요',
+    heroDescription: '좋은 소비가 이어질수록 더 높은 금리를 받아요',
     heroImageSrc: financeMascotImageSrc,
     heroRateSummary: '기본 연 3.0% + 우대 최고 4.0%',
     heroRateHighlight: '최고 연 7.0%',
@@ -155,7 +155,7 @@ export const financeProducts: FinanceProduct[] = [
     ],
     completion: {
       title: '가입이 완료되었습니다!',
-      description: '지속 가능한 내일을 위한 당신의 선택을 응원합니다.',
+      description: '지속 가능한 내일을 위한\n당신의 선택을 응원합니다.',
       fields: [
         { label: '가입 상품', value: '따뜻한 동행 적금' },
         { label: '적용 금리', value: '최고 연 7.0%' },
@@ -170,9 +170,9 @@ export const financeProducts: FinanceProduct[] = [
     id: 'smart-finance-savings',
     type: 'SAVINGS',
     name: '바른 금융 스마트 적금',
-    listDescription: '퀴즈 목표 달성 및 연체 없을 시 추가 금리',
+    listDescription: '퀴즈 목표 달성 및 연체 없을 시\n추가 금리',
     listRateLabel: '연 5.5%',
-    heroDescription: '금융 습관과 꾸준한 실천이 금리 혜택으로 이어집니다',
+    heroDescription: '금융 습관을 꾸준히 실천하면 금리 혜택으로 이어집니다',
     heroImageSrc: financeMascotImageSrc,
     heroRateSummary: '기본 연 3.0% + 우대 최고 2.5%',
     heroRateHighlight: '최고 연 5.5%',
@@ -183,7 +183,7 @@ export const financeProducts: FinanceProduct[] = [
     ],
     benefitTitle: '상품 안내',
     benefitDescription:
-      '매월 G 영역 퀴즈 목표 달성 시 우대 금리를 제공하고, 만기까지 연체와 패널티가 없으면 추가 혜택이 붙습니다.',
+      '매월 G 영역 퀴즈 목표 달성 시 우대 금리를 제공하며, 만기까지 연체와 패널티가 없으면 추가 혜택이 적용됩니다.',
     noticeLines: commonNoticeLines,
     actionLabel: '가입하기',
     applyTitle: '적금 가입하기',
@@ -194,7 +194,7 @@ export const financeProducts: FinanceProduct[] = [
     ],
     completion: {
       title: '가입이 완료되었습니다!',
-      description: '지속 가능한 내일을 위한 당신의 선택을 응원합니다.',
+      description: '지속 가능한 내일을 위한\n당신의 선택을 응원합니다.',
       fields: [
         { label: '가입 상품', value: '바른 금융 스마트 적금' },
         { label: '적용 금리', value: '최고 연 5.5%' },
@@ -231,7 +231,7 @@ export const financeProducts: FinanceProduct[] = [
       { scoreLabel: '800점 이상', limitLabel: '200만', rateLabel: '연 7.0%' },
       { scoreLabel: '700점 이상', limitLabel: '100만', rateLabel: '연 8.5%' },
     ],
-    applyTitle: 'ESG 소액대출 신청하기',
+    applyTitle: 'ESG 소액대출 신청',
     applyFields: [
       { label: '대출 한도', value: '3,000,000원' },
       { label: '대출 기간', value: '12개월' },
@@ -239,7 +239,7 @@ export const financeProducts: FinanceProduct[] = [
     ],
     completion: {
       title: '신청이 완료되었습니다!',
-      description: '지속 가능한 내일을 위한 당신의 가치 있는 선택을 응원합니다.',
+      description: '지속 가능한 내일을 위한\n당신의 가치 있는 선택을 응원합니다.',
       fields: [
         { label: '신청 상품', value: 'ESG 소액대출' },
         { label: '확정 금리', value: '연 7.0%' },

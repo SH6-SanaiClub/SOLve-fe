@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from 'react-router-dom'
+﻿import { useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, InfoRow } from '../../components/common'
 import MainLayout from '../../components/layout/MainLayout'
 import { ROUTE_PATHS, getFinanceApplyPath } from '../../constants/routePaths'
@@ -17,7 +17,7 @@ const renderNoticeBlock = (noticeLines: string[]) => (
   </div>
 )
 
-export const SavingsDetailTuned = () => {
+export const FinanceDetailPage = () => {
   const navigate = useNavigate()
   const { id } = useParams()
 

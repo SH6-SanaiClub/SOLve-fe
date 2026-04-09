@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, SectionHeader } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
@@ -8,30 +8,68 @@ import {
   BOTTOM_NAVIGATION_ROUTE_BY_KEY,
 } from '../../constants/bottomNavigation'
 import { ROUTE_PATHS, getShopDetailPath } from '../../constants/routePaths'
-import { useAuth } from '../../hooks/useAuth'
+import { getPointShopItems } from '../../services/pointShopService'
+import type { PointShopItem } from '../../types/pointShop'
 import { ShopHeader } from './components/ShopHeader'
 import { ShopProductCard } from './components/ShopProductCard'
 import { ShopTabs } from './components/ShopTabs'
-import {
-  fallbackPointBalance,
-  shopProducts,
-  shopTabs,
-  type ShopCategoryValue,
-} from './shopData'
+import { usePointShopSummary } from './hooks/usePointShopSummary'
+import { shopTabs, type ShopCategoryValue } from './shopData'
 
 const numberFormatter = new Intl.NumberFormat('ko-KR')
 
+const formatPoints = (points: number) => `${numberFormatter.format(points)}P`
+
+const getPlaceholderLabel = (name: string) => {
+  const [firstToken] = name.trim().split(/\s+/)
+  return firstToken || 'ITEM'
+}
+
+const getCategoryLabel = (category: string) => {
+  if (category === 'certificate') {
+    return '자격증'
+  }
+  if (category === 'education') {
+    return '교육'
+  }
+  if (category === 'etc') {
+    return '기타'
+  }
+  return category
+}
+
 export const ShopListPage = () => {
   const navigate = useNavigate()
-  const { user } = useAuth()
   const [selectedTab, setSelectedTab] = useState<ShopCategoryValue>('all')
+  const [items, setItems] = useState<PointShopItem[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState('')
+  const { totalPoints } = usePointShopSummary()
 
-  const totalPoints = user?.totalPoints ?? fallbackPointBalance
-  const formattedPoints = `${numberFormatter.format(totalPoints)}P`
+  useEffect(() => {
+    const fetchItems = async () => {
+      setIsLoading(true)
+      setError('')
+
+      try {
+        const response = await getPointShopItems()
+        setItems(response.items)
+      } catch (fetchError) {
+        console.error(fetchError)
+        setError('포인트샵 상품 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    void fetchItems()
+  }, [])
+
+  const formattedPoints = formatPoints(totalPoints)
   const visibleProducts =
     selectedTab === 'all'
-      ? shopProducts
-      : shopProducts.filter((product) => product.category === selectedTab)
+      ? items
+      : items.filter((item) => item.category === selectedTab)
 
   const handleBottomNavigation = (key: string) => {
     const nextPath =
@@ -91,20 +129,27 @@ export const ShopListPage = () => {
             }
           />
 
-          {visibleProducts.length > 0 ? (
+          {isLoading ? (
+            <Card className="items-center !rounded-control !p-[var(--space-4)] text-center">
+              <span className="text-sm font-medium text-font-sub">
+                상품 목록을 불러오는 중입니다.
+              </span>
+            </Card>
+          ) : error ? (
+            <Card className="items-center !rounded-control !p-[var(--space-4)] text-center">
+              <span className="text-sm font-medium text-font-sub">{error}</span>
+            </Card>
+          ) : visibleProducts.length > 0 ? (
             <div className="grid auto-rows-fr grid-cols-2 gap-[var(--space-3)]">
-              {visibleProducts.map((product) => (
+              {visibleProducts.map((item) => (
                 <ShopProductCard
-                  key={product.id}
-                  title={product.title}
-                  priceLabel={product.priceLabel}
-                  imageSrc={product.imageSrc}
-                  imageAlt={product.imageAlt}
-                  mediaBackgroundClassName={product.mediaBackgroundClassName}
-                  mediaTextClassName={product.mediaTextClassName}
-                  placeholderLabel={product.placeholderLabel}
-                  placeholderSubLabel={product.placeholderSubLabel}
-                  onClick={() => navigate(getShopDetailPath(product.id))}
+                  key={item.itemId}
+                  title={item.name}
+                  priceLabel={formatPoints(item.requiredPoints)}
+                  imageSrc={item.imageUrl ?? undefined}
+                  placeholderLabel={getPlaceholderLabel(item.name)}
+                  placeholderSubLabel={getCategoryLabel(item.category)}
+                  onClick={() => navigate(getShopDetailPath(String(item.itemId)))}
                 />
               ))}
             </div>

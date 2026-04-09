@@ -2,6 +2,8 @@ import { apiClient } from './apiClient'
 import type {
   PrepareDonationPaymentRequest,
   PrepareDonationPaymentResponse,
+  VerifyDonationPaymentRequest,
+  VerifyDonationPaymentResponse,
 } from '../types/payment'
 
 export const prepareDonationPayment = async (
@@ -15,3 +17,13 @@ export const prepareDonationPayment = async (
   return response.data
 }
 
+export const verifyDonationPayment = async (
+  payload: VerifyDonationPaymentRequest,
+): Promise<VerifyDonationPaymentResponse> => {
+  const response = await apiClient.post<VerifyDonationPaymentResponse>(
+    '/v1/payments/verify',
+    payload,
+  )
+
+  return response.data
+}

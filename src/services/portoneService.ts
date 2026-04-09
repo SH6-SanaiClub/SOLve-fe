@@ -61,6 +61,7 @@ export interface RequestDonationPortOnePaymentParams {
   donationName: string
   amount: number
   paymentMethod: 'solpay' | 'card'
+  redirectUrl?: string
 }
 
 export class PortOnePaymentError extends Error {
@@ -78,6 +79,7 @@ const buildRequestParams = ({
   donationName,
   amount,
   paymentMethod,
+  redirectUrl,
 }: RequestDonationPortOnePaymentParams): PortOneRequestPayParams => {
   if (!PORTONE_CHANNEL_KEY) {
     throw new Error('포트원 채널 키가 설정되지 않았어요.')
@@ -89,6 +91,7 @@ const buildRequestParams = ({
     merchant_uid: merchantUid,
     name: donationName,
     amount,
+    m_redirect_url: redirectUrl,
   }
 }
 
@@ -109,4 +112,3 @@ export const requestDonationPortOnePayment = async (
     })
   })
 }
-

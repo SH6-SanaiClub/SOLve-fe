@@ -6,16 +6,21 @@ import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
 import {
   getDonationDetailPath,
+  getDonationPaymentCallbackPath,
+  getDonationPaymentCompletePath,
   ROUTE_PATHS,
 } from '../../../constants/routePaths'
 import { getDonationDetail } from '../../../services/donationService'
-import { prepareDonationPayment } from '../../../services/paymentService'
+import {
+  prepareDonationPayment,
+  verifyDonationPayment,
+} from '../../../services/paymentService'
 import {
   PortOnePaymentError,
   requestDonationPortOnePayment,
 } from '../../../services/portoneService'
 import type { DonationDetail } from '../../../types/donation'
-import type { PortOnePaymentResponse } from '../../../types/portone'
+import type { VerifyDonationPaymentResponse } from '../../../types/payment'
 
 const PRESET_AMOUNTS = [30000, 50000, 70000, 100000] as const
 const MIN_DONATION_AMOUNT = 30000
@@ -63,9 +68,7 @@ export function DonationPaymentPage() {
   const [isCustomInputActive, setIsCustomInputActive] = useState(false)
   const [paymentMethod, setPaymentMethod] = useState<'solpay' | 'card'>('card')
   const [isSubmittingPayment, setIsSubmittingPayment] = useState(false)
-  const [, setLastPaymentResponse] = useState<PortOnePaymentResponse | null>(
-    null,
-  )
+  const [verifyError, setVerifyError] = useState('')
 
   const handleBack = () => {
     if (window.history.length > 1) {
@@ -105,11 +108,32 @@ export function DonationPaymentPage() {
     void requestDonationDetail()
   }, [requestDonationDetail])
 
+  const verifyAndMoveToCompletePage = useCallback(
+    async (impUid: string, merchantUid: string) => {
+      const verifiedPayment: VerifyDonationPaymentResponse =
+        await verifyDonationPayment({
+          donationId: parsedDonationId,
+          impUid,
+          merchantUid,
+        })
+
+      navigate(getDonationPaymentCompletePath(parsedDonationId), {
+        replace: true,
+        state: {
+          paymentResult: verifiedPayment,
+        },
+      })
+    },
+    [navigate, parsedDonationId],
+  )
+
   const customAmount = customAmountInput ? Number(customAmountInput) : 0
   const finalAmount = isCustomInputActive ? customAmount : (selectedAmount ?? 0)
   const expectedPoint = Math.floor(finalAmount * 0.03)
   const isPaymentDisabled =
-    finalAmount < MIN_DONATION_AMOUNT || isSubmittingPayment || !donationDetail
+    finalAmount < MIN_DONATION_AMOUNT ||
+    isSubmittingPayment ||
+    !donationDetail
 
   const handlePayment = async () => {
     if (!donationDetail || isPaymentDisabled) {
@@ -117,7 +141,7 @@ export function DonationPaymentPage() {
     }
 
     setIsSubmittingPayment(true)
-    setLastPaymentResponse(null)
+    setVerifyError('')
 
     try {
       const preparedPayment = await prepareDonationPayment({
@@ -130,17 +154,25 @@ export function DonationPaymentPage() {
         donationName: preparedPayment.donationName,
         amount: preparedPayment.amount,
         paymentMethod,
+        redirectUrl: `${window.location.origin}${getDonationPaymentCallbackPath(donationDetail.donationId)}`,
       })
 
-      setLastPaymentResponse(paymentResponse)
       console.info('포트원 결제 성공 콜백', {
         imp_uid: paymentResponse.imp_uid,
         merchant_uid: paymentResponse.merchant_uid,
         response: paymentResponse,
       })
+
+      if (!paymentResponse.imp_uid || !paymentResponse.merchant_uid) {
+        throw new Error('결제 검증에 필요한 정보가 누락되었어요.')
+      }
+
+      await verifyAndMoveToCompletePage(
+        paymentResponse.imp_uid,
+        paymentResponse.merchant_uid,
+      )
     } catch (error) {
       if (error instanceof PortOnePaymentError) {
-        setLastPaymentResponse(error.response)
         console.error('포트원 결제 실패 콜백', {
           imp_uid: error.response.imp_uid,
           merchant_uid: error.response.merchant_uid,
@@ -148,8 +180,9 @@ export function DonationPaymentPage() {
         })
         window.alert(error.response.error_msg ?? '결제가 완료되지 않았어요.')
       } else {
-        console.error('결제 준비 실패', error)
-        window.alert('결제 준비에 실패했어요. 잠시 후 다시 시도해주세요.')
+        console.error('결제 준비 또는 검증 실패', error)
+        setVerifyError('결제 검증에 실패했어요. 잠시 후 다시 시도해주세요.')
+        window.alert('결제 준비 또는 검증에 실패했어요. 잠시 후 다시 시도해주세요.')
       }
     } finally {
       setIsSubmittingPayment(false)
@@ -293,6 +326,10 @@ export function DonationPaymentPage() {
                         {formatPoint(expectedPoint)}
                       </p>
                     </div>
+
+                    {verifyError ? (
+                      <p className="mt-2 px-1 text-xs text-red-500">{verifyError}</p>
+                    ) : null}
                   </div>
 
                   <div className="flex flex-col gap-[6px]">

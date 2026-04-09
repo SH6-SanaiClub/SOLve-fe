@@ -10,3 +10,18 @@ export interface PrepareDonationPaymentResponse {
   amount: number
 }
 
+export interface VerifyDonationPaymentRequest {
+  donationId: number
+  impUid: string
+  merchantUid: string
+}
+
+export interface VerifyDonationPaymentResponse {
+  paymentId: number
+  donationId: number
+  donationName: string
+  amount: number
+  paymentStatus: 'paid' | string
+  awardedPoint: number
+  currentPoint: number
+}

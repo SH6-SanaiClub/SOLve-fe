@@ -11,6 +11,8 @@ import { GovernancePage } from '../pages/activities/GovernancePage'
 
 import { DonationDetailPage } from '../pages/esg/social/DonationDetailPage'
 import { DonationPaymentPage } from '../pages/esg/social/DonationPaymentPage'
+import { DonationPaymentRedirectPage } from '../pages/esg/social/DonationPaymentRedirectPage'
+import { DonationPaymentCompletePage } from '../pages/esg/social/DonationPaymentCompletePage'
 
 import { DonationPage } from '../pages/esg/social/DonationPage'
 import { SocialPage } from '../pages/esg/social/SocialPage'
@@ -103,6 +105,14 @@ function AppRoutes() {
           <Route
             path={ROUTE_PATHS.donationPayment}
             element={<DonationPaymentPage />}
+          />
+          <Route
+            path={ROUTE_PATHS.donationPaymentCallback}
+            element={<DonationPaymentRedirectPage />}
+          />
+          <Route
+            path={ROUTE_PATHS.donationPaymentComplete}
+            element={<DonationPaymentCompletePage />}
           />
 
           <Route path={ROUTE_PATHS.esgQuiz} element={<GovernancePage />} />

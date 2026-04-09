@@ -17,7 +17,10 @@ import { LoginPage } from '../pages/auth/LoginPage'
 import { OnboardingPage } from '../pages/auth/OnboardingPage'
 import { SignupPage } from '../pages/auth/SignupPage'
 import { ChatbotPage } from '../pages/chatbot/ChatbotPage'
-import { FinancePage } from '../pages/finance/FinancePage'
+import { FinanceApplyPage } from '../pages/finance/FinanceApplyPage'
+import { FinanceDonePage } from '../pages/finance/FinanceDonePage'
+import { FinanceListView } from '../pages/finance/FinanceListView'
+import { SavingsDetailTuned } from '../pages/finance/SavingsDetailTuned'
 import { HomePage } from '../pages/home/HomePage'
 import { MyPage } from '../pages/my/MyPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
@@ -69,7 +72,10 @@ function AppRoutes() {
           <Route path={ROUTE_PATHS.donationDetail} element={<DonationDetailPage />} />
           <Route path={ROUTE_PATHS.esgQuiz} element={<GovernancePage />} />
           <Route path={ROUTE_PATHS.activityGovernance} element={<GovernancePage />} />
-          <Route path={ROUTE_PATHS.finance} element={<FinancePage />} />
+          <Route path={ROUTE_PATHS.financeDone} element={<FinanceDonePage />} />
+          <Route path={ROUTE_PATHS.financeApply} element={<FinanceApplyPage />} />
+          <Route path={ROUTE_PATHS.financeDetail} element={<SavingsDetailTuned />} />
+          <Route path={ROUTE_PATHS.finance} element={<FinanceListView />} />
           <Route path={ROUTE_PATHS.my} element={<MyPage />} />
           <Route path={ROUTE_PATHS.chatbot} element={<ChatbotPage />} />
         </Route>

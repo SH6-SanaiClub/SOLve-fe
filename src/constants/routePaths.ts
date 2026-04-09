@@ -20,6 +20,9 @@ export const ROUTE_PATHS = {
   donationDetail: '/esg/social/donations/:donationId',
   activityGovernance: '/activities/governance',
   finance: '/finance',
+  financeDetail: '/finance/:id',
+  financeApply: '/finance/apply/:id',
+  financeDone: '/finance/done',
   my: '/my',
   chatbot: '/chatbot',
 } as const
@@ -29,6 +32,12 @@ export const getDonationDetailPath = (donationId: number | string) =>
 
 export const getValueStoreProductDetailPath = (productId: number | string) =>
   `/esg/social/products/${productId}`
+
+export const getFinanceDetailPath = (productId: number | string) =>
+  `/finance/${productId}`
+
+export const getFinanceApplyPath = (productId: number | string) =>
+  `/finance/apply/${productId}`
 
 export const getShopDetailPath = (productId: string) => `/shop/${productId}`
 

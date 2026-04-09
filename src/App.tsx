@@ -12,6 +12,17 @@ function App() {
       return
     }
 
+    if (import.meta.env.DEV) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        registrations.forEach((registration) => {
+          registration.unregister().catch((error: unknown) => {
+            console.error('Service worker unregister failed', error)
+          })
+        })
+      })
+      return
+    }
+
     const registerServiceWorker = () => {
       navigator.serviceWorker
         .register('/sw.js')

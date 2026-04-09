@@ -27,19 +27,19 @@ const Button: React.FC<ButtonProps> = ({
     type = 'button',
     ...props
 }) => {
-    // 1. 상태별 컬러 정의 (지정하신 규격 그대로 반영)
+    // 1. 상태별 컬러 정의 (Fallback으로 절대 색상을 함께 적용하여 항상 명확히 보이도록)
     const variantStyles = {
-        // 메인 버튼: primary-500 배경 + 화이트 폰트
-        primary: 'bg-primary-500 text-white disabled:bg-gray-200 disabled:text-gray-400',
-        
-        // 내 적금 확인하기 등: primary-100 배경 + primary-400 폰트
-        sub: 'bg-primary-100 text-primary-400 disabled:bg-gray-200 disabled:text-gray-400',
-        
-        // 회원가입 등: 화이트 배경 + primary-500 외곽선 & 폰트
-        outline: 'bg-white border border-primary-500 text-primary-500 disabled:border-gray-200 disabled:text-gray-400',
-        
-        // 기타/회색 버튼
-        gray: 'bg-gray-100 text-font-main disabled:bg-gray-200 disabled:text-gray-400',
+        // 메인 버튼: primary
+        primary: '!bg-primary-500 !bg-[#0046FF] !text-white !border-0 disabled:!bg-gray-200 disabled:!text-gray-400',
+
+        // 서브 버튼: subtle primary
+        sub: '!bg-primary-100 !bg-[#CCDAFF] !text-primary-400 disabled:!bg-gray-200 disabled:!text-gray-400',
+
+        // 아웃라인 버튼
+        outline: '!bg-white !border !border-primary-500 !text-primary-500 disabled:!border-gray-200 disabled:!text-gray-400',
+
+        // 회색 버튼
+        gray: '!bg-gray-100 !text-font-main disabled:!bg-gray-200 disabled:!text-gray-400',
     };
 
     // 2. 크기 및 폰트 규격 정의 (16px + Semibold 고정)

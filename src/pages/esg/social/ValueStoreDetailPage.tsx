@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Badge, Button, IconButton } from '../../components/common'
-import { Icons } from '../../components/common'
-import Header from '../../components/layout/Header'
-import MainLayout from '../../components/layout/MainLayout'
-import { ROUTE_PATHS } from '../../constants/routePaths'
-import { getValueStoreProductDetail } from '../../services/productService'
-import type { ValueStoreProductDetail } from '../../types/product'
+import { Badge, Button, IconButton } from '../../../components/common'
+import { Icons } from '../../../components/common'
+import Header from '../../../components/layout/Header'
+import MainLayout from '../../../components/layout/MainLayout'
+import { ROUTE_PATHS } from '../../../constants/routePaths'
+import { getValueStoreProductDetail } from '../../../services/productService'
+import type { ValueStoreProductDetail } from '../../../types/product'
 
-const formatPrice = (price: number) => `${new Intl.NumberFormat('ko-KR').format(price)}원`
+const formatPrice = (price: number) =>
+  `${new Intl.NumberFormat('ko-KR').format(price)}원`
 
 const resolveImageUrl = (imageUrl: string) => {
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
@@ -16,10 +17,17 @@ const resolveImageUrl = (imageUrl: string) => {
   }
 
   const baseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api'
-  const normalizedBaseUrl = baseUrl.endsWith('/') ? baseUrl.slice(0, -1) : baseUrl
-  const normalizedImageUrl = imageUrl.startsWith('/') ? imageUrl : `/${imageUrl}`
+  const normalizedBaseUrl = baseUrl.endsWith('/')
+    ? baseUrl.slice(0, -1)
+    : baseUrl
+  const normalizedImageUrl = imageUrl.startsWith('/')
+    ? imageUrl
+    : `/${imageUrl}`
 
-  if (normalizedBaseUrl.startsWith('http://') || normalizedBaseUrl.startsWith('https://')) {
+  if (
+    normalizedBaseUrl.startsWith('http://') ||
+    normalizedBaseUrl.startsWith('https://')
+  ) {
     return `${normalizedBaseUrl}${normalizedImageUrl}`
   }
 
@@ -30,7 +38,8 @@ export function ValueStoreDetailPage() {
   const navigate = useNavigate()
   const { productId } = useParams()
   const parsedProductId = Number(productId)
-  const [productDetail, setProductDetail] = useState<ValueStoreProductDetail | null>(null)
+  const [productDetail, setProductDetail] =
+    useState<ValueStoreProductDetail | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -89,9 +98,15 @@ export function ValueStoreDetailPage() {
       {error ? (
         <section className="mx-[-16px] flex min-h-[calc(100vh-var(--header-h)-48px)] items-center bg-gray-50 px-4 pb-6">
           <div className="w-full rounded-card border border-red-100 bg-white px-5 py-6 text-center shadow-card">
-            <h2 className="text-lg font-semibold text-font-main">상품 정보를 불러오지 못했어요</h2>
+            <h2 className="text-lg font-semibold text-font-main">
+              상품 정보를 불러오지 못했어요
+            </h2>
             <p className="mt-2 text-sm leading-6 text-font-sub">{error}</p>
-            <Button className="mt-5" fullWidth onClick={() => void fetchProductDetail()}>
+            <Button
+              className="mt-5"
+              fullWidth
+              onClick={() => void fetchProductDetail()}
+            >
               다시 시도
             </Button>
           </div>
@@ -144,7 +159,9 @@ export function ValueStoreDetailPage() {
                         <div className="flex items-center gap-2">
                           <p
                             className={`text-[24px] leading-[120%] font-bold ${
-                              isSoldOut ? 'text-gray-400 line-through' : 'text-font-main'
+                              isSoldOut
+                                ? 'text-gray-400 line-through'
+                                : 'text-font-main'
                             }`}
                           >
                             {formatPrice(productDetail.price)}
@@ -174,7 +191,9 @@ export function ValueStoreDetailPage() {
             ) : (
               <section className="flex min-h-[calc(100vh-var(--header-h)-48px)] items-center px-4 pb-6">
                 <div className="w-full rounded-card border border-gray-200 bg-white px-5 py-6 text-center shadow-card">
-                  <h2 className="text-lg font-semibold text-font-main">상품 정보를 찾을 수 없어요</h2>
+                  <h2 className="text-lg font-semibold text-font-main">
+                    상품 정보를 찾을 수 없어요
+                  </h2>
                   <p className="mt-2 text-sm leading-6 text-font-sub">
                     존재하지 않거나 삭제된 상품입니다.
                   </p>

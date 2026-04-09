@@ -1,7 +1,10 @@
 export const ROUTE_PATHS = {
   root: '/',
-  login: '/login',
-  signup: '/signup',
+  login: '/auth/login',
+  signup: '/auth/signup-info',
+  signupAgreement: '/auth/signup-agreement',
+  verify: '/auth/verify',
+  signupComplete: '/auth/signup-complete',
   onboarding: '/onboarding',
   home: '/home',
   shop: '/shop',
@@ -18,6 +21,7 @@ export const ROUTE_PATHS = {
   activitySocialStore: '/esg/social/store',
   activitySocialProductDetail: '/esg/social/products/:productId',
   donationDetail: '/esg/social/donations/:donationId',
+  donationPayment: '/esg/social/donations/:donationId/payment',
   activityGovernance: '/activities/governance',
   finance: '/finance',
   financeDetail: '/finance/:id',
@@ -37,6 +41,9 @@ export const ROUTE_PATHS = {
 
 export const getDonationDetailPath = (donationId: number | string) =>
   `/esg/social/donations/${donationId}`
+
+export const getDonationPaymentPath = (donationId: number | string) =>
+  `/esg/social/donations/${donationId}/payment`
 
 export const getValueStoreProductDetailPath = (productId: number | string) =>
   `/esg/social/products/${productId}`

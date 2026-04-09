@@ -17,11 +17,32 @@ export interface PortOnePaymentResponse {
   paid_amount?: number | null
 }
 
+export interface PortOneCertificationRequestParams {
+  channelKey?: string
+  pg?: string
+  merchant_uid: string
+  company: string
+  name?: string
+  phone?: string
+  carrier?: string
+  popup?: boolean
+}
+
+export interface PortOneCertificationResponse {
+  success?: boolean
+  imp_uid?: string
+  error_msg?: string
+}
+
 export interface PortOneGlobal {
   init: (userCode: string) => void
   request_pay: (
     params: PortOneRequestPayParams,
     callback: (response: PortOnePaymentResponse) => void,
+  ) => void
+  certification: (
+    params: PortOneCertificationRequestParams,
+    callback: (response: PortOneCertificationResponse | null) => void,
   ) => void
 }
 
@@ -32,4 +53,3 @@ declare global {
 }
 
 export {}
-

@@ -28,6 +28,8 @@ export const ROUTE_PATHS = {
   myGrade: '/my/grade',
   myHistory: '/my/history',
   myFinance: '/my/finance',
+  myFinanceSavingsHistory: '/my/finance/savings',
+  myFinanceLoanHistory: '/my/finance/loan',
   myPointManage: '/my/point-manage',
   myReport: '/my/report',
   chatbot: '/chatbot',

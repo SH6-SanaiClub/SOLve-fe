@@ -7,7 +7,7 @@ import {
   BOTTOM_NAVIGATION_ITEMS,
   BOTTOM_NAVIGATION_ROUTE_BY_KEY,
 } from '../../constants/bottomNavigation'
-import { ROUTE_PATHS, getFinanceDetailPath } from '../../constants/routePaths'
+import { ROUTE_PATHS } from '../../constants/routePaths'
 import { loanProducts, savingsProducts } from '../finance/financeData'
 import { ShopHeader } from '../shop/components/ShopHeader'
 
@@ -46,7 +46,7 @@ export const MyFinancePage = () => {
           />
 
           <Card
-            onClick={() => navigate(getFinanceDetailPath(joinedSavings.id))}
+            onClick={() => navigate(ROUTE_PATHS.myFinanceSavingsHistory)}
             className="!gap-0 !rounded-control !border-0 !px-5 !py-4 shadow-sm"
           >
             <div className="flex items-start justify-between gap-3">
@@ -94,7 +94,7 @@ export const MyFinancePage = () => {
           />
 
           <Card
-            onClick={() => navigate(getFinanceDetailPath(joinedLoan.id))}
+            onClick={() => navigate(ROUTE_PATHS.myFinanceLoanHistory)}
             className="!gap-0 !rounded-control !border-0 !px-5 !py-4 shadow-sm"
           >
             <div className="flex items-start justify-between gap-3">
@@ -166,6 +166,7 @@ export const MyFinancePage = () => {
             </div>
           </Card>
         </section>
+
       </div>
     </MainLayout>
   )

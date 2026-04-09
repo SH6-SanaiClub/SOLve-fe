@@ -25,9 +25,11 @@ import { HomePage } from '../pages/home/HomePage'
 import { MyFinancePage } from '../pages/my/MyFinancePage'
 import { MyGradePage } from '../pages/my/MyGradePage'
 import { MyHistoryPage } from '../pages/my/MyHistoryPage'
+import { MyLoanHistoryPage } from '../pages/my/MyLoanHistoryPage'
 import { MyPointManagePage } from '../pages/my/MyPointManagePage'
 import { MyProfilePage } from '../pages/my/MyProfilePage'
 import { MyReportPage } from '../pages/my/MyReportPage'
+import { MySavingsHistoryPage } from '../pages/my/MySavingsHistoryPage'
 import { MyPage } from '../pages/my/MyPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { EnvironmentEntryModalRoute } from '../pages/esg/env/EnvironmentEntryModalRoute'
@@ -87,6 +89,8 @@ function AppRoutes() {
           <Route path={ROUTE_PATHS.myGrade} element={<MyGradePage />} />
           <Route path={ROUTE_PATHS.myHistory} element={<MyHistoryPage />} />
           <Route path={ROUTE_PATHS.myFinance} element={<MyFinancePage />} />
+          <Route path={ROUTE_PATHS.myFinanceSavingsHistory} element={<MySavingsHistoryPage />} />
+          <Route path={ROUTE_PATHS.myFinanceLoanHistory} element={<MyLoanHistoryPage />} />
           <Route path={ROUTE_PATHS.myPointManage} element={<MyPointManagePage />} />
           <Route path={ROUTE_PATHS.myReport} element={<MyReportPage />} />
           <Route path={ROUTE_PATHS.chatbot} element={<ChatbotPage />} />

@@ -24,6 +24,12 @@ export const ROUTE_PATHS = {
   financeApply: '/finance/apply/:id',
   financeDone: '/finance/done',
   my: '/my',
+  myProfile: '/my/profile',
+  myGrade: '/my/grade',
+  myHistory: '/my/history',
+  myFinance: '/my/finance',
+  myPointManage: '/my/point-manage',
+  myReport: '/my/report',
   chatbot: '/chatbot',
 } as const
 

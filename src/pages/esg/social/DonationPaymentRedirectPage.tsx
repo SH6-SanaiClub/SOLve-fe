@@ -24,6 +24,10 @@ export function DonationPaymentRedirectPage() {
         : !impUid || !merchantUid
           ? '결제 검증에 필요한 정보가 없어요.'
           : ''
+  const verificationKey =
+    !immediateError && impUid && merchantUid
+      ? `donation-payment-verify:${parsedDonationId}:${impUid}:${merchantUid}`
+      : ''
   const currentMessage = immediateError || error
   const title = currentMessage
     ? '결제 확인 중 문제가 발생했어요'
@@ -35,6 +39,10 @@ export function DonationPaymentRedirectPage() {
       return
     }
 
+    if (verificationKey && sessionStorage.getItem(verificationKey)) {
+      return
+    }
+
     const verifyPayment = async () => {
       const payload = {
         donationId: parsedDonationId,
@@ -43,7 +51,15 @@ export function DonationPaymentRedirectPage() {
       }
 
       try {
+        if (verificationKey) {
+          sessionStorage.setItem(verificationKey, 'pending')
+        }
+
         const paymentResult = await verifyDonationPayment(payload)
+
+        if (verificationKey) {
+          sessionStorage.setItem(verificationKey, 'done')
+        }
 
         navigate(getDonationPaymentCompletePath(parsedDonationId), {
           replace: true,
@@ -66,12 +82,23 @@ export function DonationPaymentRedirectPage() {
           })
         }
 
+        if (verificationKey) {
+          sessionStorage.removeItem(verificationKey)
+        }
+
         setError('결제 검증에 실패했어요. 잠시 후 다시 시도해주세요.')
       }
     }
 
     void verifyPayment()
-  }, [immediateError, impUid, merchantUid, navigate, parsedDonationId])
+  }, [
+    immediateError,
+    impUid,
+    merchantUid,
+    navigate,
+    parsedDonationId,
+    verificationKey,
+  ])
 
   return (
     <MainLayout className="bg-white">

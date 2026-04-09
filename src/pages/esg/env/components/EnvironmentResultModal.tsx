@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import { X } from 'lucide-react'
 import Button from '../../../../components/common/Button'
-import goodImage from '../../../../assets/good.png'
+import { getS3AssetUrl } from '../../../../constants/assetUrls'
 
 export type EnvironmentResultVariant = 'success' | 'failure'
 
@@ -38,6 +38,8 @@ export function EnvironmentResultModal({
   rewardPoint,
   onClose,
 }: EnvironmentResultModalProps) {
+  const goodImage = getS3AssetUrl('good.webp')
+
   useEffect(() => {
     if (!open) {
       return

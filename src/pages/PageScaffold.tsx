@@ -1,6 +1,9 @@
-import type { ReactNode } from 'react'
+﻿import type { ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
+import headerLogo from '../assets/home/logo.png'
+import { ROUTE_PATHS } from '../constants/routePaths'
 import { useAuthStore } from '../store/authStore'
+
 interface PageScaffoldProps {
   title: string
   description: string
@@ -14,22 +17,22 @@ export function PageScaffold({ title, description, children }: PageScaffoldProps
   const handleLogout = () => {
     if (window.confirm('로그아웃 하시겠습니까?')) {
       clearSession()
-      navigate('/login')
+      navigate(ROUTE_PATHS.login)
     }
   }
+
   return (
     <div className="app-shell">
-      {/* 1. 우측 상단에 로그아웃 버튼만 절대 위치로 배치 */}
       {isAuthenticated && (
-        <button 
+        <button
           onClick={handleLogout}
-          className="absolute top-6 right-6 text-xs font-medium text-red-500 border border-red-200 px-2 py-1 rounded-md hover:bg-red-50 z-10"
+          className="absolute right-6 top-6 z-10 rounded-md border border-red-200 px-2 py-1 text-xs font-medium text-red-500 hover:bg-red-50"
         >
           로그아웃
         </button>
       )}
       <section className="page-card flex flex-col gap-4">
-        <span className="text-sm font-semibold text-primary-500">SOLve</span>
+        <img src={headerLogo} alt="SOLve" className="h-9 w-fit object-contain" />
         <h1 className="text-2xl font-bold text-font-main">{title}</h1>
         <p className="text-base text-font-sub">{description}</p>
         {children}

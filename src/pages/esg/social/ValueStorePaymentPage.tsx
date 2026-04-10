@@ -17,6 +17,9 @@ import type { UserProfileResponse } from '../../../types/user'
 const formatPrice = (price: number) =>
   `${new Intl.NumberFormat('ko-KR').format(price)}원`
 
+const formatPoint = (point: number) =>
+  `${new Intl.NumberFormat('ko-KR').format(point)}P`
+
 const resolveImageUrl = (imageUrl: string) => {
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
     return imageUrl
@@ -52,6 +55,8 @@ export function ValueStorePaymentPage() {
   const deliveryName = userProfile?.name ?? user?.name ?? '김연아'
   const deliveryPhoneNumber = userProfile?.phoneNumber ?? '010 - 1111 - 2222'
   const deliveryAddress = '서울특별시 영등포구 선유서로25길 34 (양평동2가, 삼성코코빌) 400호'
+  const finalAmount = productDetail?.price ?? 0
+  const expectedPoint = Math.floor(finalAmount * 0.01)
 
   const fetchProductDetail = useCallback(async () => {
     if (!Number.isInteger(parsedProductId) || parsedProductId <= 0) {
@@ -349,7 +354,16 @@ export function ValueStorePaymentPage() {
               최종 결제 금액
             </p>
             <p className="text-[20px] leading-4 font-bold text-primary-500">
-              {formatPrice(productDetail?.price ?? 0)}
+              {formatPrice(finalAmount)}
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between px-5 pt-[5px] pb-0">
+            <p className="text-[12px] leading-7 font-normal text-font-sub">
+              예상 적립 포인트
+            </p>
+            <p className="text-[12px] leading-7 font-semibold text-gray-800">
+              {formatPoint(expectedPoint)}
             </p>
           </div>
 

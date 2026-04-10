@@ -10,7 +10,7 @@ import {
 import { ROUTE_PATHS } from '../../constants/routePaths'
 import { useAuth } from '../../hooks/useAuth'
 import { ShopHeader } from '../shop/components/ShopHeader'
-import { LogOut } from 'lucide-react'
+import { LogOut, Store } from 'lucide-react'
 
 const menuItems = [
   {
@@ -32,6 +32,18 @@ const menuItems = [
     path: ROUTE_PATHS.myHistory,
   },
   {
+    key: 'report',
+    label: 'ESG 활동 보고서',
+    icon: <FileChartColumn size={18} />,
+    path: ROUTE_PATHS.myReport,
+  },
+  {
+    key: 'storePurchase',
+    label: '가치가게 구매 내역',
+    icon: <Store size={18} />,
+    path: ROUTE_PATHS.activitySocialStore,
+  },
+  {
     key: 'finance',
     label: '금융 상품 관리',
     icon: <Landmark size={18} />,
@@ -43,17 +55,11 @@ const menuItems = [
     icon: <Coins size={18} />,
     path: ROUTE_PATHS.myPointManage,
   },
-  {
-    key: 'report',
-    label: 'ESG 활동 보고서',
-    icon: <FileChartColumn size={18} />,
-    path: ROUTE_PATHS.myReport,
-  },
 ]
 
 const accountMenuItems = menuItems.filter((item) => item.key === 'profile')
 const activityMenuItems = menuItems.filter((item) =>
-  ['grade', 'history', 'point', 'report'].includes(item.key),
+  ['grade', 'history', 'storePurchase', 'report', 'point'].includes(item.key),
 )
 const financeMenuItems = menuItems.filter((item) => item.key === 'finance')
 
@@ -141,9 +147,9 @@ export const MyPage = () => {
             <button
               type="button"
               onClick={handleLogout}
-              className="flex w-full items-center gap-3 px-5 py-5 text-left text-red-500"
+              className="flex w-full items-center gap-3 px-5 py-5 text-left text-primary-400"
             >
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-red-400">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-gray-50 text-primary-400">
                 <LogOut size={18} />
               </div>
               <span className="text-[15px] font-medium">로그아웃</span>

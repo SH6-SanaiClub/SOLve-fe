@@ -144,7 +144,7 @@ export function ValueStoreDetailPage() {
                   />
                 </section>
 
-                <section className="px-[31px] pt-8">
+                <section className="px-[24px] pt-6">
                   <div className="space-y-[22px]">
                     <div className="space-y-[12px]">
                       <Badge
@@ -180,7 +180,7 @@ export function ValueStoreDetailPage() {
 
                     <div className="h-px w-full bg-gray-300" />
 
-                    <div className="space-y-[11px] px-2">
+                    <div className="space-y-[11px]">
                       <h3 className="text-base leading-7 font-medium text-gray-800">
                         함께 나무를 심어주세요
                       </h3>

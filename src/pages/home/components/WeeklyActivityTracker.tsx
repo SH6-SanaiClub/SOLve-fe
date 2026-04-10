@@ -1,4 +1,4 @@
-import type { WeeklyActivityStatus } from '../homeDashboardData'
+import type { WeeklyActivityStatus } from '../../../types/home'
 
 interface WeeklyActivityTrackerProps {
   items: WeeklyActivityStatus[]

@@ -1,10 +1,228 @@
-import { PageScaffold } from '../PageScaffold'
+﻿import React, { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { AxiosError } from 'axios'
+import { authService } from '../../services/authService'
+import { ROUTE_PATHS } from '../../constants/routePaths'
+import { type AuthJoinRequest } from '../../types/auth'
+import Input from '../../components/common/Input'
+import Button from '../../components/common/Button'
+import IconButton from '../../components/common/IconButton'
+import { Icons } from '../../components/common/Icons'
 
 export function SignupPage() {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const verificationState = location.state as { verificationToken?: string } | null
+
+  const [formData, setFormData] = useState<AuthJoinRequest>({
+    loginId: '',
+    password: '',
+    name: '',
+    email: '',
+    phoneNumber: '',
+    birthdate: '',
+    ciDi: '',
+  })
+  const [isIdChecked, setIsIdChecked] = useState(false)
+  const [passwordConfirm, setPasswordConfirm] = useState('')
+  const [idCheckMessage, setIdCheckMessage] = useState('')
+  const [idCheckColor, setIdCheckColor] = useState('')
+
+  useEffect(() => {
+    if (!verificationState?.verificationToken) {
+      navigate(ROUTE_PATHS.signupAgreement, { replace: true })
+    }
+  }, [navigate, verificationState])
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+
+    if (name === 'phoneNumber') {
+      const onlyNums = value.replace(/[^0-9]/g, '')
+
+      let formattedPhone = ''
+      if (onlyNums.length <= 3) {
+        formattedPhone = onlyNums
+      } else if (onlyNums.length <= 7) {
+        formattedPhone = `${onlyNums.slice(0, 3)}-${onlyNums.slice(3)}`
+      } else {
+        formattedPhone = `${onlyNums.slice(0, 3)}-${onlyNums.slice(3, 7)}-${onlyNums.slice(7, 11)}`
+      }
+
+      setFormData((prev) => ({ ...prev, [name]: formattedPhone }))
+      return
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: value }))
+
+    if (name === 'loginId') {
+      setIsIdChecked(false)
+      setIdCheckMessage('')
+    }
+  }
+
+  const handleCheckId = async () => {
+    if (!formData.loginId) {
+      alert('아이디를 입력해주세요.')
+      return
+    }
+
+    try {
+      const isDuplicate = await authService.checkLoginId(formData.loginId)
+      if (isDuplicate) {
+        setIdCheckMessage('이미 사용 중인 아이디입니다.')
+        setIdCheckColor('red')
+        setIsIdChecked(false)
+      } else {
+        setIdCheckMessage('사용 가능한 아이디입니다.')
+        setIdCheckColor('green')
+        setIsIdChecked(true)
+      }
+    } catch {
+      alert('중복 확인 중 오류가 발생했습니다.')
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!isIdChecked) {
+      alert('아이디 중복 확인을 먼저 진행해주세요.')
+      return
+    }
+    if (formData.password !== passwordConfirm) {
+      alert('비밀번호가 일치하지 않습니다.')
+      return
+    }
+    if (!verificationState?.verificationToken) {
+      alert('본인인증 검증 정보가 없습니다. 다시 인증을 진행해주세요.')
+      navigate(ROUTE_PATHS.signupAgreement, { replace: true })
+      return
+    }
+
+    try {
+      const requestData = {
+        ...formData,
+        phoneNumber: formData.phoneNumber.trim(),
+        ciDi: `DEV_${Date.now()}`,
+        verificationToken: verificationState.verificationToken,
+      }
+      await authService.signup(requestData)
+      navigate(ROUTE_PATHS.signupComplete)
+    } catch (err) {
+      if (err instanceof AxiosError) {
+        const errorMessage =
+          (err.response?.data as { message?: string })?.message || '가입 중 오류가 발생했습니다.'
+        alert(errorMessage)
+      } else {
+        alert('알 수 없는 오류가 발생했습니다.')
+      }
+    }
+  }
+
   return (
-    <PageScaffold
-      title="회원가입"
-      description="컴포넌트 브랜치 UI와 백엔드 계약이 준비되면 이 페이지에 연결합니다."
-    />
+    <div className="app-shell">
+      <section className="page-card flex flex-col gap-6">
+        <div className="-mx-6 -mt-6 flex items-center gap-3 border-b border-gray-200 px-6 py-4">
+          <IconButton
+            onClick={() => navigate(-1)}
+            icon={<Icons.Back />}
+            label="뒤로가기"
+            size="md"
+          />
+          <h1 className="text-xl font-bold text-font-main">회원가입</h1>
+        </div>
+
+        <div>
+          <h2 className="mb-2 text-base font-semibold text-font-main">기본 정보를 입력해주세요</h2>
+          <p className="text-xs text-font-sub">본인인증이 완료되었습니다. 회원가입 정보를 직접 입력해주세요.</p>
+        </div>
+
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+          <div className="flex flex-col">
+            <div className="flex items-start gap-2">
+              <div className="flex min-w-0 flex-1 flex-col">
+                <Input
+                  label="아이디"
+                  name="loginId"
+                  value={formData.loginId}
+                  onChange={handleChange}
+                  placeholder="아이디를 입력하세요"
+                  className="w-full"
+                  required
+                />
+
+                {idCheckMessage && (
+                  <p className="mt-1.5 pr-0.5 text-right text-[11px] font-medium" style={{ color: idCheckColor }}>
+                    {idCheckColor === 'green' ? '✓' : '✕'} {idCheckMessage}
+                  </p>
+                )}
+              </div>
+
+              <div className="shrink-0 pt-6">
+                <Button type="button" onClick={handleCheckId} variant="sub" className="w-[100px] text-sm">
+                  중복확인
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <Input
+            label="비밀번호"
+            name="password"
+            type="password"
+            value={formData.password}
+            onChange={handleChange}
+            placeholder="영문, 숫자, 특수문자 조합 8-16자"
+            required
+          />
+
+          <Input
+            label="비밀번호 확인"
+            name="passwordConfirm"
+            type="password"
+            value={passwordConfirm}
+            onChange={(e) => setPasswordConfirm(e.target.value)}
+            placeholder="비밀번호를 한 번 더 입력해주세요"
+            required
+          />
+
+          <Input label="이름" name="name" value={formData.name} onChange={handleChange} placeholder="이름을 입력하세요" required />
+
+          <Input
+            label="생년월일"
+            name="birthdate"
+            type="date"
+            value={formData.birthdate}
+            onChange={handleChange}
+            placeholder="YYYY-MM-DD"
+            required
+          />
+
+          <Input
+            label="전화번호"
+            name="phoneNumber"
+            value={formData.phoneNumber}
+            onChange={handleChange}
+            placeholder="010-0000-0000"
+            required
+          />
+
+          <Input
+            label="이메일"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="이메일을 입력하세요"
+            required
+          />
+
+          <Button type="submit" variant="primary" fullWidth size="md" className="mt-4">
+            완료
+          </Button>
+        </form>
+      </section>
+    </div>
   )
 }

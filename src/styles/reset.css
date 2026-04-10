@@ -33,6 +33,7 @@ select {
 
 button {
   border: 0;
+  background: transparent;
 }
 
 a {

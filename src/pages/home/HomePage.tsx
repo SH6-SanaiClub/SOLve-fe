@@ -3,24 +3,38 @@ import { Card, IconButton, Icons, InfoRow, ProgressBar, SectionHeader } from '..
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import Header from '../../components/layout/Header'
 import MainLayout from '../../components/layout/MainLayout'
-import headerLogo from '../../assets/home/logo.png'
 import {
   BOTTOM_NAVIGATION_ITEMS,
   BOTTOM_NAVIGATION_ROUTE_BY_KEY,
 } from '../../constants/bottomNavigation'
+import { getS3AssetUrl } from '../../constants/assetUrls'
 import { ROUTE_PATHS } from '../../constants/routePaths'
 import { useAuth } from '../../hooks/useAuth'
+import type { WeeklyActivityStatus } from '../../types/home'
 import type { UserGrade } from '../../types/user'
 import { DashboardActionTile } from './components/DashboardActionTile'
 import { WeeklyActivityTracker } from './components/WeeklyActivityTracker'
-import {
-  defaultGradeProgress,
-  defaultPoints,
-  gradeLabelMap,
-  weeklyActivityStatuses,
-} from './homeDashboardData'
+import { useHomeDashboardSummary } from './hooks/useHomeDashboardSummary'
 
 const numberFormatter = new Intl.NumberFormat('ko-KR')
+
+const gradeLabelMap: Record<UserGrade, string> = {
+  SEED: '씨앗',
+  SPROUT: '새싹',
+  TREE: '나무',
+  FOREST: '숲',
+  EARTH: '지구',
+}
+
+const emptyWeeklyActivities: WeeklyActivityStatus[] = [
+  { day: '월', completed: false },
+  { day: '화', completed: false },
+  { day: '수', completed: false },
+  { day: '목', completed: false },
+  { day: '금', completed: false },
+  { day: '토', completed: false },
+  { day: '일', completed: false },
+]
 
 function getGradeLabel(grade?: UserGrade | null) {
   if (!grade) {
@@ -30,15 +44,40 @@ function getGradeLabel(grade?: UserGrade | null) {
   return gradeLabelMap[grade]
 }
 
+function getCurrentWeekRangeLabel() {
+  const today = new Date()
+  const day = today.getDay()
+  const diffToMonday = day === 0 ? -6 : 1 - day
+
+  const startDate = new Date(today)
+  startDate.setDate(today.getDate() + diffToMonday)
+
+  const endDate = new Date(startDate)
+  endDate.setDate(startDate.getDate() + 6)
+
+  const format = (date: Date) => `${date.getMonth() + 1}/${date.getDate()}`
+
+  return `${format(startDate)} - ${format(endDate)}`
+}
+
 export function HomePage() {
   const location = useLocation()
   const navigate = useNavigate()
   const { user } = useAuth()
+  const { summary } = useHomeDashboardSummary()
 
-  const userName = user?.name ?? '000'
-  const gradeLabel = getGradeLabel(user?.currentGrade)
-  const totalPoints = user?.totalPoints ?? defaultPoints
+  const userName = summary?.name ?? user?.name ?? '000'
+  const gradeLabel = getGradeLabel(summary?.currentGrade ?? user?.currentGrade)
+  const totalPoints = summary?.totalPoints ?? user?.totalPoints ?? 0
   const formattedPoints = `${numberFormatter.format(totalPoints)}p`
+  const headerLogo = getS3AssetUrl('logo.webp')
+  const weekRangeLabel = getCurrentWeekRangeLabel()
+  const gradeProgress = summary?.gradeProgress ?? {
+    current: 0,
+    target: 600,
+    visualValue: 0,
+  }
+  const weeklyActivities = summary?.weeklyActivities ?? emptyWeeklyActivities
 
   const handleBottomNavigation = (key: string) => {
     const nextPath =
@@ -62,12 +101,6 @@ export function HomePage() {
                 icon={<Icons.Chat size={22} />}
                 size="sm"
                 onClick={() => navigate(ROUTE_PATHS.chatbot)}
-              />
-              <IconButton
-                label="메뉴 열기"
-                icon={<Icons.Menu size={22} />}
-                size="sm"
-                onClick={() => undefined}
               />
             </div>
           }
@@ -105,11 +138,11 @@ export function HomePage() {
                 }
                 right={
                   <span className="text-xs font-medium text-gray-400">
-                    {defaultGradeProgress.current} / {defaultGradeProgress.target}
+                    {gradeProgress.current} / {gradeProgress.target}
                   </span>
                 }
               />
-              <ProgressBar value={defaultGradeProgress.visualValue} max={100} />
+              <ProgressBar value={gradeProgress.visualValue} max={100} />
               <div className="h-px w-full bg-gray-100" />
               <InfoRow
                 label={<span className="text-base font-medium text-gray-500">보유 포인트</span>}
@@ -148,9 +181,9 @@ export function HomePage() {
             <div className="space-y-4">
               <SectionHeader
                 title={<span className="text-base font-semibold text-gray-700">이번주 나의 활동</span>}
-                right={<span className="text-xs font-medium text-gray-400">3/21 - 3/27</span>}
+                right={<span className="text-xs font-medium text-gray-400">{weekRangeLabel}</span>}
               />
-              <WeeklyActivityTracker items={weeklyActivityStatuses} />
+              <WeeklyActivityTracker items={weeklyActivities} />
             </div>
           </Card>
 

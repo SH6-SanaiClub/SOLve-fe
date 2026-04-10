@@ -8,14 +8,20 @@ import {
 } from 'react-router-dom'
 import { ROUTE_PATHS } from '../constants/routePaths'
 import { GovernancePage } from '../pages/activities/GovernancePage'
-import { DonationDetailPage } from '../pages/activities/DonationDetailPage'
-import { DonationPage } from '../pages/activities/DonationPage'
-import { SocialPage } from '../pages/activities/SocialPage'
-import { ValueStoreDetailPage } from '../pages/activities/ValueStoreDetailPage'
-import { ValueStorePage } from '../pages/activities/ValueStorePage'
+
+import { DonationDetailPage } from '../pages/esg/social/DonationDetailPage'
+import { DonationPaymentPage } from '../pages/esg/social/DonationPaymentPage'
+
+import { DonationPage } from '../pages/esg/social/DonationPage'
+import { SocialPage } from '../pages/esg/social/SocialPage'
+import { ValueStoreDetailPage } from '../pages/esg/social/ValueStoreDetailPage'
+import { ValueStorePage } from '../pages/esg/social/ValueStorePage'
+
 import { LoginPage } from '../pages/auth/LoginPage'
 import { OnboardingPage } from '../pages/auth/OnboardingPage'
 import { SignupPage } from '../pages/auth/SignupPage'
+import { SignupAgreementPage } from '../pages/auth/SignupAgreementPage'
+import { SignupCompletePage } from '../pages/auth/SignupCompletePage'
 import { ChatbotPage } from '../pages/chatbot/ChatbotPage'
 import { FinanceApplyPage } from '../pages/finance/FinanceApplyPage'
 import { FinanceDetailPage } from '../pages/finance/FinanceDetailPage'
@@ -52,11 +58,17 @@ function AppRoutes() {
   return (
     <>
       <Routes location={routeState?.backgroundLocation ?? location}>
-        <Route path={ROUTE_PATHS.root} element={<Navigate replace to={ROUTE_PATHS.home} />} />
+        <Route
+          path={ROUTE_PATHS.root}
+          element={<Navigate replace to={ROUTE_PATHS.home} />}
+        />
 
         <Route element={<PublicOnlyRoute />}>
           <Route path={ROUTE_PATHS.login} element={<LoginPage />} />
+          <Route path={ROUTE_PATHS.signupAgreement} element={<SignupAgreementPage />} />
+          <Route path={ROUTE_PATHS.verify} element={<SignupAgreementPage />} />
           <Route path={ROUTE_PATHS.signup} element={<SignupPage />} />
+          <Route path={ROUTE_PATHS.signupComplete} element={<SignupCompletePage />} />
         </Route>
 
         <Route element={<ProtectedRoute />}>
@@ -64,25 +76,57 @@ function AppRoutes() {
           <Route path={ROUTE_PATHS.home} element={<HomePage />} />
           <Route path={ROUTE_PATHS.shop} element={<ShopListPage />} />
           <Route path={ROUTE_PATHS.shopHistory} element={<ShopHistoryPage />} />
-          <Route path={ROUTE_PATHS.shopDetail} element={<ShopProductDetailPage />} />
+          <Route
+            path={ROUTE_PATHS.shopDetail}
+            element={<ShopProductDetailPage />}
+          />
           <Route path={ROUTE_PATHS.esgEnv} element={<EnvironmentEntryPage />} />
-          <Route path={ROUTE_PATHS.activityEnvironment} element={<EnvironmentEntryPage />} />
-          <Route path={ROUTE_PATHS.esgEnvVerify} element={<EnvironmentVerifyPage />} />
+          <Route
+            path={ROUTE_PATHS.activityEnvironment}
+            element={<EnvironmentEntryPage />}
+          />
+          <Route
+            path={ROUTE_PATHS.esgEnvVerify}
+            element={<EnvironmentVerifyPage />}
+          />
           <Route path={ROUTE_PATHS.esgSocial} element={<SocialPage />} />
           <Route path={ROUTE_PATHS.activitySocial} element={<SocialPage />} />
-          <Route path={ROUTE_PATHS.esgSocialDonation} element={<DonationPage />} />
-          <Route path={ROUTE_PATHS.activitySocialDonation} element={<DonationPage />} />
-          <Route path={ROUTE_PATHS.activitySocialStore} element={<ValueStorePage />} />
+          <Route
+            path={ROUTE_PATHS.esgSocialDonation}
+            element={<DonationPage />}
+          />
+          <Route
+            path={ROUTE_PATHS.activitySocialDonation}
+            element={<DonationPage />}
+          />
+          <Route
+            path={ROUTE_PATHS.activitySocialStore}
+            element={<ValueStorePage />}
+          />
           <Route
             path={ROUTE_PATHS.activitySocialProductDetail}
             element={<ValueStoreDetailPage />}
           />
-          <Route path={ROUTE_PATHS.donationDetail} element={<DonationDetailPage />} />
+
+          <Route
+            path={ROUTE_PATHS.donationDetail}
+            element={<DonationDetailPage />}
+          />
+          <Route
+            path={ROUTE_PATHS.donationPayment}
+            element={<DonationPaymentPage />}
+          />
+
           <Route path={ROUTE_PATHS.esgQuiz} element={<GovernancePage />} />
           <Route path={ROUTE_PATHS.activityGovernance} element={<GovernancePage />} />
           <Route path={ROUTE_PATHS.financeDone} element={<FinanceDonePage />} />
           <Route path={ROUTE_PATHS.financeApply} element={<FinanceApplyPage />} />
           <Route path={ROUTE_PATHS.financeDetail} element={<FinanceDetailPage />} />
+          <Route
+            path={ROUTE_PATHS.activityGovernance}
+            element={<GovernancePage />}
+          />
+
           <Route path={ROUTE_PATHS.finance} element={<FinancePage />} />
           <Route path={ROUTE_PATHS.my} element={<MyPage />} />
           <Route path={ROUTE_PATHS.myProfile} element={<MyProfilePage />} />
@@ -102,7 +146,10 @@ function AppRoutes() {
       {routeState?.backgroundLocation ? (
         <Routes>
           <Route element={<ProtectedRoute />}>
-            <Route path={ROUTE_PATHS.esgEnv} element={<EnvironmentEntryModalRoute />} />
+            <Route
+              path={ROUTE_PATHS.esgEnv}
+              element={<EnvironmentEntryModalRoute />}
+            />
           </Route>
         </Routes>
       ) : null}

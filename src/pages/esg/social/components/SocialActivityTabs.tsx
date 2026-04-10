@@ -1,12 +1,16 @@
 import { useNavigate } from 'react-router-dom'
-import { ROUTE_PATHS } from '../../../constants/routePaths'
+import { ROUTE_PATHS } from '../../../../constants/routePaths'
 
 interface SocialActivityTabsProps {
   activeTab: 'donation' | 'store' | 'volunteer'
 }
 
 const tabItems = [
-  { value: 'donation', label: '기부', path: ROUTE_PATHS.activitySocialDonation },
+  {
+    value: 'donation',
+    label: '기부',
+    path: ROUTE_PATHS.activitySocialDonation,
+  },
   { value: 'store', label: '가치가게', path: ROUTE_PATHS.activitySocialStore },
   { value: 'volunteer', label: '봉사', path: undefined },
 ] as const
@@ -34,9 +38,7 @@ export const SocialActivityTabs = ({ activeTab }: SocialActivityTabsProps) => {
               isActive ? 'text-font-main' : 'text-gray-400'
             }`}
           >
-            <span
-              className="text-base font-semibold tracking-[-0.02em]"
-            >
+            <span className="text-base font-semibold tracking-[-0.02em]">
               {item.label}
             </span>
             <span

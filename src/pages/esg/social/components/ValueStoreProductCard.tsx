@@ -1,15 +1,19 @@
 import { useState } from 'react'
-import { Badge, Card } from '../../../components/common'
-import type { ValueStoreProduct } from '../../../types/product'
+import { Badge, Card } from '../../../../components/common'
+import type { ValueStoreProduct } from '../../../../types/product'
 
 interface ValueStoreProductCardProps {
   product: ValueStoreProduct
   onClick?: (productId: number) => void
 }
 
-const formatPrice = (price: number) => `${new Intl.NumberFormat('ko-KR').format(price)}원`
+const formatPrice = (price: number) =>
+  `${new Intl.NumberFormat('ko-KR').format(price)}원`
 
-export const ValueStoreProductCard = ({ product, onClick }: ValueStoreProductCardProps) => {
+export const ValueStoreProductCard = ({
+  product,
+  onClick,
+}: ValueStoreProductCardProps) => {
   const [hasImageError, setHasImageError] = useState(false)
 
   return (
@@ -41,7 +45,9 @@ export const ValueStoreProductCard = ({ product, onClick }: ValueStoreProductCar
             <div className="flex items-center gap-2">
               <p
                 className={`text-base leading-[120%] font-semibold tracking-[-0.02em] ${
-                  product.soldOut ? 'text-gray-400 line-through' : 'text-gray-700'
+                  product.soldOut
+                    ? 'text-gray-400 line-through'
+                    : 'text-gray-700'
                 }`}
               >
                 {formatPrice(product.price)}
@@ -55,7 +61,10 @@ export const ValueStoreProductCard = ({ product, onClick }: ValueStoreProductCar
           </div>
 
           <div className="flex flex-wrap items-center gap-1">
-            <Badge tone="primary" className="px-[6px] py-[2px] text-xs font-medium tracking-[-0.02em]">
+            <Badge
+              tone="primary"
+              className="px-[6px] py-[2px] text-xs font-medium tracking-[-0.02em]"
+            >
               {product.category}
             </Badge>
           </div>

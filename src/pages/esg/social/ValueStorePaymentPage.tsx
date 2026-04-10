@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Badge, Button, Card, IconButton, Radio } from '../../../components/common'
+import {
+  Badge,
+  Button,
+  Card,
+  IconButton,
+  Radio,
+} from '../../../components/common'
 import { Icons } from '../../../components/common'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
@@ -48,13 +54,17 @@ export function ValueStorePaymentPage() {
   const { productId } = useParams()
   const { user } = useAuth()
   const parsedProductId = Number(productId)
-  const [productDetail, setProductDetail] = useState<ValueStoreProductDetail | null>(null)
-  const [userProfile, setUserProfile] = useState<UserProfileResponse | null>(null)
+  const [productDetail, setProductDetail] =
+    useState<ValueStoreProductDetail | null>(null)
+  const [userProfile, setUserProfile] = useState<UserProfileResponse | null>(
+    null,
+  )
   const [isLoading, setIsLoading] = useState(true)
   const [paymentMethod, setPaymentMethod] = useState<'solpay' | 'card'>('card')
-  const deliveryName = userProfile?.name ?? user?.name ?? '김연아'
-  const deliveryPhoneNumber = userProfile?.phoneNumber ?? '010 - 1111 - 2222'
-  const deliveryAddress = '서울특별시 영등포구 선유서로25길 34 (양평동2가, 삼성코코빌) 400호'
+  const deliveryName = userProfile?.name ?? user?.name ?? 'user'
+  const deliveryPhoneNumber = userProfile?.phoneNumber ?? 'phoneNumber'
+  const deliveryAddress =
+    '서울특별시 영등포구 선유서로25길 34 (양평동2가, 삼성코코빌) 404호'
   const finalAmount = productDetail?.price ?? 0
   const expectedPoint = Math.floor(finalAmount * 0.01)
 
@@ -193,7 +203,7 @@ export function ValueStorePaymentPage() {
                 배송지 정보
               </h3>
               <Card className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
-              <div className="space-y-3">
+                <div className="space-y-3">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
                       <p className="text-[18px] leading-[120%] font-semibold tracking-[-0.02em] text-black">
@@ -368,9 +378,7 @@ export function ValueStorePaymentPage() {
           </div>
 
           <div className="px-5 pt-[15px] pb-[calc(20px+env(safe-area-inset-bottom))]">
-            <Button fullWidth>
-              구매하기
-            </Button>
+            <Button fullWidth>구매하기</Button>
           </div>
         </section>
       </div>

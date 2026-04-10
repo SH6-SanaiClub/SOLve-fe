@@ -12,11 +12,14 @@ import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
 import {
   ROUTE_PATHS,
+  getValueStoreProductPaymentCallbackPath,
   getValueStoreProductDetailPath,
 } from '../../../constants/routePaths'
 import { useAuth } from '../../../hooks/useAuth'
 import { getValueStoreProductDetail } from '../../../services/productService'
-import { prepareProductPayment } from '../../../services/paymentService'
+import {
+  prepareProductPayment,
+} from '../../../services/paymentService'
 import { getMyProfile } from '../../../services/userService'
 import {
   PortOnePaymentError,
@@ -160,6 +163,9 @@ export function ValueStorePaymentPage() {
         productName: preparedPayment.productName,
         amount: preparedPayment.amount,
         paymentMethod,
+        redirectUrl: `${window.location.origin}${getValueStoreProductPaymentCallbackPath(
+          preparedPayment.productId,
+        )}`,
       })
 
       console.info('포트원 상품 결제 성공 콜백', {
@@ -167,6 +173,25 @@ export function ValueStorePaymentPage() {
         merchant_uid: paymentResponse.merchant_uid,
         response: paymentResponse,
       })
+
+      if (!paymentResponse.imp_uid || !paymentResponse.merchant_uid) {
+        throw new Error('결제 검증에 필요한 정보가 누락되었어요.')
+      }
+
+      const callbackSearchParams = new URLSearchParams({
+        imp_uid: paymentResponse.imp_uid,
+        merchant_uid: paymentResponse.merchant_uid,
+        imp_success: 'true',
+      })
+
+      navigate(
+        `${getValueStoreProductPaymentCallbackPath(
+          preparedPayment.productId,
+        )}?${callbackSearchParams.toString()}`,
+        {
+          replace: true,
+        },
+      )
     } catch (error) {
       if (error instanceof PortOnePaymentError) {
         console.error('포트원 상품 결제 실패 콜백', {
@@ -437,10 +462,16 @@ export function ValueStorePaymentPage() {
           <div className="px-5 pt-[15px] pb-[calc(20px+env(safe-area-inset-bottom))]">
             <Button
               fullWidth
-              disabled={isLoading || !productDetail || isSubmittingPayment}
+              disabled={
+                isLoading ||
+                !productDetail ||
+                isSubmittingPayment
+              }
               onClick={() => void handlePayment()}
             >
-              {isSubmittingPayment ? '결제 준비 중...' : '구매하기'}
+              {isSubmittingPayment
+                ? '결제 준비 중...'
+                : '구매하기'}
             </Button>
           </div>
         </section>

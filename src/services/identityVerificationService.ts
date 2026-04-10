@@ -5,6 +5,7 @@ import type { PortOneCertificationResponse } from '../types/portone'
 type VerifyIdentityResponse = {
   verified: boolean
   verificationToken?: string
+  preservedLoginId?: string
 }
 
 async function requestImpCertification(): Promise<string> {
@@ -55,6 +56,7 @@ async function requestImpCertification(): Promise<string> {
 }
 
 export const identityVerificationService = {
+  requestImpUid: requestImpCertification,
   verify: async (): Promise<VerifyIdentityResponse> => {
     const impUid = await requestImpCertification()
     const response = await apiClient.post<VerifyIdentityResponse>('/v1/auth/verify-identity', {

@@ -163,6 +163,8 @@ export function ValueStorePaymentPage() {
         productName: preparedPayment.productName,
         amount: preparedPayment.amount,
         paymentMethod,
+        buyerName: deliveryName,
+        buyerTel: deliveryPhoneNumber,
         redirectUrl: `${window.location.origin}${getValueStoreProductPaymentCallbackPath(
           preparedPayment.productId,
         )}`,

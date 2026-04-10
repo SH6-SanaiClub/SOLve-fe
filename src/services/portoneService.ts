@@ -61,6 +61,8 @@ export interface RequestDonationPortOnePaymentParams {
   donationName: string
   amount: number
   paymentMethod: 'solpay' | 'card'
+  buyerName?: string
+  buyerTel?: string
   redirectUrl?: string
 }
 
@@ -69,6 +71,8 @@ export interface RequestProductPortOnePaymentParams {
   productName: string
   amount: number
   paymentMethod: 'solpay' | 'card'
+  buyerName?: string
+  buyerTel?: string
   redirectUrl?: string
 }
 
@@ -87,6 +91,8 @@ const buildRequestParams = ({
   donationName,
   amount,
   paymentMethod,
+  buyerName,
+  buyerTel,
   redirectUrl,
 }: RequestDonationPortOnePaymentParams): PortOneRequestPayParams => {
   if (!PORTONE_CHANNEL_KEY) {
@@ -99,6 +105,8 @@ const buildRequestParams = ({
     merchant_uid: merchantUid,
     name: donationName,
     amount,
+    buyer_name: buyerName,
+    buyer_tel: buyerTel,
     m_redirect_url: redirectUrl,
   }
 }
@@ -126,6 +134,8 @@ export const requestProductPortOnePayment = async ({
   productName,
   amount,
   paymentMethod,
+  buyerName,
+  buyerTel,
   redirectUrl,
 }: RequestProductPortOnePaymentParams): Promise<PortOnePaymentResponse> => {
   const IMP = await getPortOne()
@@ -134,6 +144,8 @@ export const requestProductPortOnePayment = async ({
     donationName: productName,
     amount,
     paymentMethod,
+    buyerName,
+    buyerTel,
     redirectUrl,
   })
 

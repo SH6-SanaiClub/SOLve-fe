@@ -323,7 +323,7 @@ export function ValueStorePaymentPage() {
               </Card>
             </div>
 
-            <div className="space-y-[6px]">
+            <div className="space-y-[6px] pb-8">
               <h3 className="text-base leading-7 font-semibold text-gray-800">
                 결제 수단
               </h3>
@@ -401,7 +401,7 @@ export function ValueStorePaymentPage() {
               </div>
             </Card>
 
-            <div className="space-y-[6px]">
+            <div className="space-y-[6px] pb-8">
               <h3 className="text-base leading-7 font-semibold text-gray-800">
                 결제 수단
               </h3>

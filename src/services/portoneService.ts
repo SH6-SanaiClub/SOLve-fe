@@ -64,6 +64,14 @@ export interface RequestDonationPortOnePaymentParams {
   redirectUrl?: string
 }
 
+export interface RequestProductPortOnePaymentParams {
+  merchantUid: string
+  productName: string
+  amount: number
+  paymentMethod: 'solpay' | 'card'
+  redirectUrl?: string
+}
+
 export class PortOnePaymentError extends Error {
   response: PortOnePaymentResponse
 
@@ -100,6 +108,34 @@ export const requestDonationPortOnePayment = async (
 ): Promise<PortOnePaymentResponse> => {
   const IMP = await getPortOne()
   const requestParams = buildRequestParams(params)
+
+  return new Promise<PortOnePaymentResponse>((resolve, reject) => {
+    IMP.request_pay(requestParams, (response) => {
+      if (response.success) {
+        resolve(response)
+        return
+      }
+
+      reject(new PortOnePaymentError(response))
+    })
+  })
+}
+
+export const requestProductPortOnePayment = async ({
+  merchantUid,
+  productName,
+  amount,
+  paymentMethod,
+  redirectUrl,
+}: RequestProductPortOnePaymentParams): Promise<PortOnePaymentResponse> => {
+  const IMP = await getPortOne()
+  const requestParams = buildRequestParams({
+    merchantUid,
+    donationName: productName,
+    amount,
+    paymentMethod,
+    redirectUrl,
+  })
 
   return new Promise<PortOnePaymentResponse>((resolve, reject) => {
     IMP.request_pay(requestParams, (response) => {

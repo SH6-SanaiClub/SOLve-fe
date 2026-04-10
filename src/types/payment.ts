@@ -25,3 +25,14 @@ export interface VerifyDonationPaymentResponse {
   awardedPoint: number
   currentPoint: number
 }
+
+export interface PrepareProductPaymentRequest {
+  productId: number
+}
+
+export interface PrepareProductPaymentResponse {
+  merchantUid: string
+  productId: number
+  productName: string
+  amount: number
+}

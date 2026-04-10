@@ -54,9 +54,14 @@ export function ValueStorePaymentCompletePage() {
                     <span className="text-[12px] leading-6 font-medium tracking-[-0.02em] text-font-sub">
                       상품명
                     </span>
-                    <span className="text-right text-[16px] leading-6 font-semibold tracking-[-0.02em] text-font-sub">
-                      {paymentResult.productName}
-                    </span>
+                    <div className="flex flex-col items-end gap-[2px] text-right">
+                      <span className="text-[12px] leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+                        {paymentResult.storeName}
+                      </span>
+                      <span className="text-right text-[16px] leading-6 font-semibold tracking-[-0.02em] text-font-sub">
+                        {paymentResult.productName}
+                      </span>
+                    </div>
                   </div>
 
                   <div className="flex items-center justify-between gap-4">

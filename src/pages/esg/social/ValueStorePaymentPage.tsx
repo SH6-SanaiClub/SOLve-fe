@@ -266,9 +266,14 @@ export function ValueStorePaymentPage() {
                 </div>
 
                 <div className="flex min-w-0 flex-1 flex-col gap-4">
-                  <h2 className="text-[16px] leading-[120%] font-medium tracking-[-0.02em] text-font-sub">
-                    {productDetail.name}
-                  </h2>
+                  <div className="flex flex-col gap-[6px]">
+                    <p className="text-[12px] leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+                      {productDetail.storeName}
+                    </p>
+                    <h2 className="text-[16px] leading-[120%] font-medium tracking-[-0.02em] text-font-sub">
+                      {productDetail.name}
+                    </h2>
+                  </div>
                   <p className="text-[18px] leading-[120%] font-medium tracking-[-0.02em] text-font-main">
                     {formatPrice(productDetail.price)}
                   </p>

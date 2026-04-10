@@ -39,6 +39,9 @@ export const ValueStoreProductCard = ({
       <div className="bg-white px-3 py-[14px]">
         <div className="flex flex-col gap-[10px]">
           <div className="flex flex-col gap-[2px]">
+            <p className="text-[12px] leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+              {product.storeName}
+            </p>
             <div className="min-h-[34px]">
               <p className="line-clamp-2 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-700">
                 {product.name}

@@ -155,9 +155,14 @@ export function ValueStoreDetailPage() {
                       </Badge>
 
                       <div className="space-y-4">
-                        <h2 className="w-[248px] text-[20px] leading-[120%] font-bold text-gray-500">
-                          {productDetail.name}
-                        </h2>
+                        <div className="space-y-[6px]">
+                          <p className="text-[12px] leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+                            {productDetail.storeName}
+                          </p>
+                          <h2 className="w-[248px] text-[20px] leading-[120%] font-bold text-gray-500">
+                            {productDetail.name}
+                          </h2>
+                        </div>
 
                         <div className="flex items-center gap-2">
                           <p

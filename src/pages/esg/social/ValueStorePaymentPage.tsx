@@ -272,7 +272,7 @@ export function ValueStorePaymentPage() {
                     <p className="text-[12px] leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
                       {productDetail.storeName}
                     </p>
-                    <h2 className="text-[16px] leading-[120%] font-medium tracking-[-0.02em] text-font-sub">
+                    <h2 className="text-[16px] leading-[120%] font-medium tracking-[-0.02em] text-gray-600">
                       {productDetail.name}
                     </h2>
                   </div>

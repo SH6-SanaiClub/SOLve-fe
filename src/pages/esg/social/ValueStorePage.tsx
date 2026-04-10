@@ -52,6 +52,11 @@ export function ValueStorePage() {
       return
     }
 
+    if (key === 'benefits') {
+      navigate(ROUTE_PATHS.shop)
+      return
+    }
+
     if (key === 'finance') {
       navigate(ROUTE_PATHS.finance)
       return

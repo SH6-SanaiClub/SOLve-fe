@@ -25,8 +25,19 @@ import { SignupPage } from '../pages/auth/SignupPage'
 import { SignupAgreementPage } from '../pages/auth/SignupAgreementPage'
 import { SignupCompletePage } from '../pages/auth/SignupCompletePage'
 import { ChatbotPage } from '../pages/chatbot/ChatbotPage'
+import { FinanceApplyPage } from '../pages/finance/FinanceApplyPage'
+import { FinanceDetailPage } from '../pages/finance/FinanceDetailPage'
+import { FinanceDonePage } from '../pages/finance/FinanceDonePage'
 import { FinancePage } from '../pages/finance/FinancePage'
 import { HomePage } from '../pages/home/HomePage'
+import { MyFinancePage } from '../pages/my/MyFinancePage'
+import { MyGradePage } from '../pages/my/MyGradePage'
+import { MyHistoryPage } from '../pages/my/MyHistoryPage'
+import { MyLoanHistoryPage } from '../pages/my/MyLoanHistoryPage'
+import { MyPointManagePage } from '../pages/my/MyPointManagePage'
+import { MyProfilePage } from '../pages/my/MyProfilePage'
+import { MyReportPage } from '../pages/my/MyReportPage'
+import { MySavingsHistoryPage } from '../pages/my/MySavingsHistoryPage'
 import { MyPage } from '../pages/my/MyPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { EnvironmentEntryModalRoute } from '../pages/esg/env/EnvironmentEntryModalRoute'
@@ -117,6 +128,10 @@ function AppRoutes() {
           />
 
           <Route path={ROUTE_PATHS.esgQuiz} element={<GovernancePage />} />
+          <Route path={ROUTE_PATHS.activityGovernance} element={<GovernancePage />} />
+          <Route path={ROUTE_PATHS.financeDone} element={<FinanceDonePage />} />
+          <Route path={ROUTE_PATHS.financeApply} element={<FinanceApplyPage />} />
+          <Route path={ROUTE_PATHS.financeDetail} element={<FinanceDetailPage />} />
           <Route
             path={ROUTE_PATHS.activityGovernance}
             element={<GovernancePage />}
@@ -124,6 +139,14 @@ function AppRoutes() {
 
           <Route path={ROUTE_PATHS.finance} element={<FinancePage />} />
           <Route path={ROUTE_PATHS.my} element={<MyPage />} />
+          <Route path={ROUTE_PATHS.myProfile} element={<MyProfilePage />} />
+          <Route path={ROUTE_PATHS.myGrade} element={<MyGradePage />} />
+          <Route path={ROUTE_PATHS.myHistory} element={<MyHistoryPage />} />
+          <Route path={ROUTE_PATHS.myFinance} element={<MyFinancePage />} />
+          <Route path={ROUTE_PATHS.myFinanceSavingsHistory} element={<MySavingsHistoryPage />} />
+          <Route path={ROUTE_PATHS.myFinanceLoanHistory} element={<MyLoanHistoryPage />} />
+          <Route path={ROUTE_PATHS.myPointManage} element={<MyPointManagePage />} />
+          <Route path={ROUTE_PATHS.myReport} element={<MyReportPage />} />
           <Route path={ROUTE_PATHS.chatbot} element={<ChatbotPage />} />
         </Route>
 

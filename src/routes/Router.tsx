@@ -17,7 +17,9 @@ import { DonationPaymentCompletePage } from '../pages/esg/social/DonationPayment
 import { DonationPage } from '../pages/esg/social/DonationPage'
 import { SocialPage } from '../pages/esg/social/SocialPage'
 import { ValueStoreDetailPage } from '../pages/esg/social/ValueStoreDetailPage'
+import { ValueStorePaymentCompletePage } from '../pages/esg/social/ValueStorePaymentCompletePage'
 import { ValueStorePaymentPage } from '../pages/esg/social/ValueStorePaymentPage'
+import { ValueStorePaymentRedirectPage } from '../pages/esg/social/ValueStorePaymentRedirectPage'
 import { ValueStorePage } from '../pages/esg/social/ValueStorePage'
 
 import { LoginPage } from '../pages/auth/LoginPage'
@@ -114,6 +116,14 @@ function AppRoutes() {
           <Route
             path={ROUTE_PATHS.activitySocialProductPayment}
             element={<ValueStorePaymentPage />}
+          />
+          <Route
+            path={ROUTE_PATHS.activitySocialProductPaymentCallback}
+            element={<ValueStorePaymentRedirectPage />}
+          />
+          <Route
+            path={ROUTE_PATHS.activitySocialProductPaymentComplete}
+            element={<ValueStorePaymentCompletePage />}
           />
 
           <Route

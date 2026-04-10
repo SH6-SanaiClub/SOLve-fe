@@ -12,11 +12,19 @@ import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
 import {
   ROUTE_PATHS,
+  getValueStoreProductPaymentCallbackPath,
   getValueStoreProductDetailPath,
 } from '../../../constants/routePaths'
 import { useAuth } from '../../../hooks/useAuth'
 import { getValueStoreProductDetail } from '../../../services/productService'
+import {
+  prepareProductPayment,
+} from '../../../services/paymentService'
 import { getMyProfile } from '../../../services/userService'
+import {
+  PortOnePaymentError,
+  requestProductPortOnePayment,
+} from '../../../services/portoneService'
 import type { ValueStoreProductDetail } from '../../../types/product'
 import type { UserProfileResponse } from '../../../types/user'
 
@@ -61,11 +69,14 @@ export function ValueStorePaymentPage() {
   )
   const [isLoading, setIsLoading] = useState(true)
   const [paymentMethod, setPaymentMethod] = useState<'solpay' | 'card'>('card')
+  const [isSubmittingPayment, setIsSubmittingPayment] = useState(false)
+  const [paymentError, setPaymentError] = useState('')
+  const [preparedAmount, setPreparedAmount] = useState<number | null>(null)
   const deliveryName = userProfile?.name ?? user?.name ?? 'user'
   const deliveryPhoneNumber = userProfile?.phoneNumber ?? 'phoneNumber'
   const deliveryAddress =
     '서울특별시 영등포구 선유서로25길 34 (양평동2가, 삼성코코빌) 404호'
-  const finalAmount = productDetail?.price ?? 0
+  const finalAmount = preparedAmount ?? productDetail?.price ?? 0
   const expectedPoint = Math.floor(finalAmount * 0.01)
 
   const fetchProductDetail = useCallback(async () => {
@@ -132,6 +143,75 @@ export function ValueStorePaymentPage() {
     navigate(ROUTE_PATHS.activitySocialStore)
   }
 
+  const handlePayment = async () => {
+    if (!productDetail || isSubmittingPayment) {
+      return
+    }
+
+    setIsSubmittingPayment(true)
+    setPaymentError('')
+
+    try {
+      const preparedPayment = await prepareProductPayment({
+        productId: productDetail.productId,
+      })
+
+      setPreparedAmount(preparedPayment.amount)
+
+      const paymentResponse = await requestProductPortOnePayment({
+        merchantUid: preparedPayment.merchantUid,
+        productName: preparedPayment.productName,
+        amount: preparedPayment.amount,
+        paymentMethod,
+        buyerName: deliveryName,
+        buyerTel: deliveryPhoneNumber,
+        redirectUrl: `${window.location.origin}${getValueStoreProductPaymentCallbackPath(
+          preparedPayment.productId,
+        )}`,
+      })
+
+      console.info('포트원 상품 결제 성공 콜백', {
+        imp_uid: paymentResponse.imp_uid,
+        merchant_uid: paymentResponse.merchant_uid,
+        response: paymentResponse,
+      })
+
+      if (!paymentResponse.imp_uid || !paymentResponse.merchant_uid) {
+        throw new Error('결제 검증에 필요한 정보가 누락되었어요.')
+      }
+
+      const callbackSearchParams = new URLSearchParams({
+        imp_uid: paymentResponse.imp_uid,
+        merchant_uid: paymentResponse.merchant_uid,
+        imp_success: 'true',
+      })
+
+      navigate(
+        `${getValueStoreProductPaymentCallbackPath(
+          preparedPayment.productId,
+        )}?${callbackSearchParams.toString()}`,
+        {
+          replace: true,
+        },
+      )
+    } catch (error) {
+      if (error instanceof PortOnePaymentError) {
+        console.error('포트원 상품 결제 실패 콜백', {
+          imp_uid: error.response.imp_uid,
+          merchant_uid: error.response.merchant_uid,
+          response: error.response,
+        })
+        window.alert(error.response.error_msg ?? '결제가 완료되지 않았어요.')
+      } else {
+        console.error('상품 결제 준비 실패', error)
+        setPaymentError('결제 준비에 실패했어요. 잠시 후 다시 시도해주세요.')
+        window.alert('결제 준비에 실패했어요. 잠시 후 다시 시도해주세요.')
+      }
+    } finally {
+      setIsSubmittingPayment(false)
+    }
+  }
+
   return (
     <MainLayout
       header={
@@ -188,9 +268,14 @@ export function ValueStorePaymentPage() {
                 </div>
 
                 <div className="flex min-w-0 flex-1 flex-col gap-4">
-                  <h2 className="text-[16px] leading-[120%] font-medium tracking-[-0.02em] text-font-sub">
-                    {productDetail.name}
-                  </h2>
+                  <div className="flex flex-col gap-[6px]">
+                    <p className="text-[12px] leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+                      {productDetail.storeName}
+                    </p>
+                    <h2 className="text-[16px] leading-[120%] font-medium tracking-[-0.02em] text-gray-600">
+                      {productDetail.name}
+                    </h2>
+                  </div>
                   <p className="text-[18px] leading-[120%] font-medium tracking-[-0.02em] text-font-main">
                     {formatPrice(productDetail.price)}
                   </p>
@@ -199,7 +284,7 @@ export function ValueStorePaymentPage() {
             </Card>
 
             <div className="space-y-[10px]">
-              <h3 className="text-[18px] leading-[120%] font-semibold tracking-[-0.02em] text-font-main">
+              <h3 className="text-base leading-7 font-semibold text-gray-800">
                 배송지 정보
               </h3>
               <Card className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
@@ -238,7 +323,7 @@ export function ValueStorePaymentPage() {
               </Card>
             </div>
 
-            <div className="space-y-[6px]">
+            <div className="space-y-[6px] pb-8">
               <h3 className="text-base leading-7 font-semibold text-gray-800">
                 결제 수단
               </h3>
@@ -278,7 +363,7 @@ export function ValueStorePaymentPage() {
           </div>
         ) : (
           <div className="space-y-[10px]">
-            <h3 className="text-[18px] leading-[120%] font-semibold tracking-[-0.02em] text-font-main">
+            <h3 className="text-base leading-7 font-semibold text-gray-800">
               배송지 정보
             </h3>
             <Card className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
@@ -316,7 +401,7 @@ export function ValueStorePaymentPage() {
               </div>
             </Card>
 
-            <div className="space-y-[6px]">
+            <div className="space-y-[6px] pb-8">
               <h3 className="text-base leading-7 font-semibold text-gray-800">
                 결제 수단
               </h3>
@@ -377,8 +462,24 @@ export function ValueStorePaymentPage() {
             </p>
           </div>
 
+          {paymentError ? (
+            <p className="px-5 pt-1 text-xs text-red-500">{paymentError}</p>
+          ) : null}
+
           <div className="px-5 pt-[15px] pb-[calc(20px+env(safe-area-inset-bottom))]">
-            <Button fullWidth>구매하기</Button>
+            <Button
+              fullWidth
+              disabled={
+                isLoading ||
+                !productDetail ||
+                isSubmittingPayment
+              }
+              onClick={() => void handlePayment()}
+            >
+              {isSubmittingPayment
+                ? '결제 준비 중...'
+                : '구매하기'}
+            </Button>
           </div>
         </section>
       </div>

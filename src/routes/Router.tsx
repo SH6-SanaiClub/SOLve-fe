@@ -40,6 +40,7 @@ import { MyReportPage } from '../pages/my/MyReportPage'
 import { MySavingsHistoryPage } from '../pages/my/MySavingsHistoryPage'
 import { MyPage } from '../pages/my/MyPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
+import { RecommendPage } from '../pages/recommend/RecommendPage'
 import { EnvironmentEntryModalRoute } from '../pages/esg/env/EnvironmentEntryModalRoute'
 import { EnvironmentEntryPage } from '../pages/esg/env/EnvironmentEntryPage'
 import { EnvironmentVerifyPage } from '../pages/esg/env/EnvironmentVerifyPage'
@@ -148,6 +149,7 @@ function AppRoutes() {
           <Route path={ROUTE_PATHS.myPointManage} element={<MyPointManagePage />} />
           <Route path={ROUTE_PATHS.myReport} element={<MyReportPage />} />
           <Route path={ROUTE_PATHS.chatbot} element={<ChatbotPage />} />
+          <Route path={ROUTE_PATHS.recommend} element={<RecommendPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

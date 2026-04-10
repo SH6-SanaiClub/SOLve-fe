@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Badge, Button, Card, IconButton } from '../../../components/common'
+import { Badge, Button, Card, IconButton, Radio } from '../../../components/common'
 import { Icons } from '../../../components/common'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
@@ -48,6 +48,7 @@ export function ValueStorePaymentPage() {
   const [productDetail, setProductDetail] = useState<ValueStoreProductDetail | null>(null)
   const [userProfile, setUserProfile] = useState<UserProfileResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [paymentMethod, setPaymentMethod] = useState<'solpay' | 'card'>('card')
   const deliveryName = userProfile?.name ?? user?.name ?? '김연아'
   const deliveryPhoneNumber = userProfile?.phoneNumber ?? '010 - 1111 - 2222'
   const deliveryAddress = '서울특별시 영등포구 선유서로25길 34 (양평동2가, 삼성코코빌) 400호'
@@ -221,6 +222,44 @@ export function ValueStorePaymentPage() {
                 </div>
               </Card>
             </div>
+
+            <div className="space-y-[6px]">
+              <h3 className="text-base leading-7 font-semibold text-gray-800">
+                결제 수단
+              </h3>
+
+              <div className="flex flex-col gap-3">
+                <div className="rounded-control border border-gray-200 bg-white px-4 py-4 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+                  <Radio
+                    name="paymentMethod"
+                    value="solpay"
+                    checked={paymentMethod === 'solpay'}
+                    onChange={() => setPaymentMethod('solpay')}
+                    className="p-0"
+                    label={
+                      <span className="text-base leading-4 font-semibold text-font-main">
+                        SOL Pay
+                      </span>
+                    }
+                  />
+                </div>
+
+                <div className="rounded-control border border-gray-200 bg-white px-4 py-4 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+                  <Radio
+                    name="paymentMethod"
+                    value="card"
+                    checked={paymentMethod === 'card'}
+                    onChange={() => setPaymentMethod('card')}
+                    className="p-0"
+                    label={
+                      <span className="text-base leading-4 font-semibold text-font-main">
+                        신용/체크카드
+                      </span>
+                    }
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="space-y-[10px]">
@@ -228,7 +267,7 @@ export function ValueStorePaymentPage() {
               배송지 정보
             </h3>
             <Card className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
-              <div className="space-y-5">
+              <div className="space-y-3">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <p className="text-[18px] leading-[120%] font-semibold tracking-[-0.02em] text-black">
@@ -261,6 +300,44 @@ export function ValueStorePaymentPage() {
                 </p>
               </div>
             </Card>
+
+            <div className="space-y-[6px]">
+              <h3 className="text-base leading-7 font-semibold text-gray-800">
+                결제 수단
+              </h3>
+
+              <div className="flex flex-col gap-3">
+                <div className="rounded-control border border-gray-200 bg-white px-4 py-4 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+                  <Radio
+                    name="paymentMethod"
+                    value="solpay"
+                    checked={paymentMethod === 'solpay'}
+                    onChange={() => setPaymentMethod('solpay')}
+                    className="p-0"
+                    label={
+                      <span className="text-base leading-4 font-semibold text-font-main">
+                        SOL Pay
+                      </span>
+                    }
+                  />
+                </div>
+
+                <div className="rounded-control border border-gray-200 bg-white px-4 py-4 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+                  <Radio
+                    name="paymentMethod"
+                    value="card"
+                    checked={paymentMethod === 'card'}
+                    onChange={() => setPaymentMethod('card')}
+                    className="p-0"
+                    label={
+                      <span className="text-base leading-4 font-semibold text-font-main">
+                        신용/체크카드
+                      </span>
+                    }
+                  />
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </section>

@@ -39,9 +39,11 @@ export const ValueStoreProductCard = ({
       <div className="bg-white px-3 py-[14px]">
         <div className="flex flex-col gap-[10px]">
           <div className="flex flex-col gap-[2px]">
-            <p className="line-clamp-2 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-700">
-              {product.name}
-            </p>
+            <div className="min-h-[34px]">
+              <p className="line-clamp-2 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-700">
+                {product.name}
+              </p>
+            </div>
             <div className="flex items-center gap-2">
               <p
                 className={`text-base leading-[120%] font-semibold tracking-[-0.02em] ${

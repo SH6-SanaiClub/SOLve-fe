@@ -115,7 +115,9 @@ export const ShopListPage = () => {
       }
     >
       <div className="-mx-4 flex flex-col gap-[var(--space-4)]">
-        <ShopTabs items={shopTabs} value={selectedTab} onChange={setSelectedTab} />
+        <div className="sticky top-(--header-h) z-10 bg-white">
+          <ShopTabs items={shopTabs} value={selectedTab} onChange={setSelectedTab} />
+        </div>
 
         <div className="flex flex-col gap-[var(--space-4)] bg-bg-light px-(--side-padding) pb-[var(--space-4)]">
           <SectionHeader

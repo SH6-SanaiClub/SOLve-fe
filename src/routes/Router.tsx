@@ -17,6 +17,7 @@ import { DonationPaymentCompletePage } from '../pages/esg/social/DonationPayment
 import { DonationPage } from '../pages/esg/social/DonationPage'
 import { SocialPage } from '../pages/esg/social/SocialPage'
 import { ValueStoreDetailPage } from '../pages/esg/social/ValueStoreDetailPage'
+import { ValueStorePaymentPage } from '../pages/esg/social/ValueStorePaymentPage'
 import { ValueStorePage } from '../pages/esg/social/ValueStorePage'
 
 import { LoginPage } from '../pages/auth/LoginPage'
@@ -97,6 +98,10 @@ function AppRoutes() {
           <Route
             path={ROUTE_PATHS.activitySocialProductDetail}
             element={<ValueStoreDetailPage />}
+          />
+          <Route
+            path={ROUTE_PATHS.activitySocialProductPayment}
+            element={<ValueStorePaymentPage />}
           />
 
           <Route

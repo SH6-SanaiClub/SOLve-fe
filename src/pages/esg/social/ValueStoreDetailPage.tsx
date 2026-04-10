@@ -4,7 +4,10 @@ import { Badge, Button, IconButton } from '../../../components/common'
 import { Icons } from '../../../components/common'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
-import { ROUTE_PATHS } from '../../../constants/routePaths'
+import {
+  ROUTE_PATHS,
+  getValueStoreProductPaymentPath,
+} from '../../../constants/routePaths'
 import { getValueStoreProductDetail } from '../../../services/productService'
 import type { ValueStoreProductDetail } from '../../../types/product'
 
@@ -208,6 +211,11 @@ export function ValueStoreDetailPage() {
                 fullWidth
                 disabled={isLoading || isSoldOut || !productDetail}
                 className="!h-[48px]"
+                onClick={() =>
+                  productDetail
+                    ? navigate(getValueStoreProductPaymentPath(productDetail.productId))
+                    : undefined
+                }
               >
                 {isSoldOut ? '품절' : '구매하기'}
               </Button>

@@ -1,5 +1,6 @@
 export interface ValueStoreProduct {
   productId: number
+  storeName: string
   name: string
   category: string
   price: number

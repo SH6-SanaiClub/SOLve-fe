@@ -33,6 +33,7 @@ export interface PrepareProductPaymentRequest {
 export interface PrepareProductPaymentResponse {
   merchantUid: string
   productId: number
+  storeName: string
   productName: string
   amount: number
 }
@@ -46,6 +47,7 @@ export interface VerifyProductPaymentRequest {
 export interface VerifyProductPaymentResponse {
   paymentId: number
   productId: number
+  storeName: string
   productName: string
   amount: number
   paymentStatus: 'paid' | string

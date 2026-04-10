@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Button, Card, IconButton } from '../../../components/common'
+import { Badge, Button, Card, IconButton } from '../../../components/common'
 import { Icons } from '../../../components/common'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
@@ -8,8 +8,11 @@ import {
   ROUTE_PATHS,
   getValueStoreProductDetailPath,
 } from '../../../constants/routePaths'
+import { useAuth } from '../../../hooks/useAuth'
 import { getValueStoreProductDetail } from '../../../services/productService'
+import { getMyProfile } from '../../../services/userService'
 import type { ValueStoreProductDetail } from '../../../types/product'
+import type { UserProfileResponse } from '../../../types/user'
 
 const formatPrice = (price: number) =>
   `${new Intl.NumberFormat('ko-KR').format(price)}원`
@@ -40,9 +43,14 @@ const resolveImageUrl = (imageUrl: string) => {
 export function ValueStorePaymentPage() {
   const navigate = useNavigate()
   const { productId } = useParams()
+  const { user } = useAuth()
   const parsedProductId = Number(productId)
   const [productDetail, setProductDetail] = useState<ValueStoreProductDetail | null>(null)
+  const [userProfile, setUserProfile] = useState<UserProfileResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const deliveryName = userProfile?.name ?? user?.name ?? '김연아'
+  const deliveryPhoneNumber = userProfile?.phoneNumber ?? '010 - 1111 - 2222'
+  const deliveryAddress = '서울특별시 영등포구 선유서로25길 34 (양평동2가, 삼성코코빌) 400호'
 
   const fetchProductDetail = useCallback(async () => {
     if (!Number.isInteger(parsedProductId) || parsedProductId <= 0) {
@@ -67,6 +75,32 @@ export function ValueStorePaymentPage() {
   useEffect(() => {
     void fetchProductDetail()
   }, [fetchProductDetail])
+
+  useEffect(() => {
+    let isMounted = true
+
+    const fetchUserProfile = async () => {
+      try {
+        const response = await getMyProfile()
+        if (!isMounted) {
+          return
+        }
+        setUserProfile(response)
+      } catch (error) {
+        console.error(error)
+        if (!isMounted) {
+          return
+        }
+        setUserProfile(null)
+      }
+    }
+
+    void fetchUserProfile()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
 
   const handleBack = () => {
     if (window.history.length > 1) {
@@ -100,37 +134,135 @@ export function ValueStorePaymentPage() {
     >
       <section className="mx-[-16px] min-h-[calc(100vh-var(--header-h)-48px)] bg-gray-50 px-[21px] pt-6 pb-[128px]">
         {isLoading ? (
-          <Card className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
-            <div className="flex items-center gap-6">
-              <div className="h-[112px] w-[104px] animate-pulse rounded-control bg-primary-100" />
-              <div className="flex flex-1 flex-col gap-4">
-                <div className="h-7 w-3/4 animate-pulse rounded-full bg-gray-200" />
-                <div className="h-7 w-1/2 animate-pulse rounded-full bg-gray-300" />
+          <div className="space-y-8">
+            <Card className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+              <div className="flex items-center gap-6">
+                <div className="h-[96px] w-[88px] animate-pulse rounded-control bg-primary-100" />
+                <div className="flex flex-1 flex-col gap-4">
+                  <div className="h-7 w-3/4 animate-pulse rounded-full bg-gray-200" />
+                  <div className="h-7 w-1/2 animate-pulse rounded-full bg-gray-300" />
+                </div>
               </div>
-            </div>
-          </Card>
-        ) : productDetail ? (
-          <Card className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
-            <div className="flex items-center gap-6">
-              <div className="h-[112px] w-[104px] overflow-hidden rounded-[8px] bg-primary-100">
-                <img
-                  src={resolveImageUrl(productDetail.imageUrl)}
-                  alt={productDetail.name}
-                  className="h-full w-full object-cover"
-                />
-              </div>
+            </Card>
 
-              <div className="flex min-w-0 flex-1 flex-col gap-4">
-                <h2 className="text-[16px] leading-[120%] font-medium tracking-[-0.02em] text-font-sub">
-                  {productDetail.name}
-                </h2>
-                <p className="text-[18px] leading-[120%] font-medium tracking-[-0.02em] text-font-main">
-                  {formatPrice(productDetail.price)}
+            <div className="space-y-[10px]">
+              <div className="h-8 w-32 animate-pulse rounded-full bg-gray-300" />
+              <Card className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="h-8 w-16 animate-pulse rounded-full bg-gray-300" />
+                    <div className="h-8 w-24 animate-pulse rounded-full bg-primary-50" />
+                  </div>
+                  <div className="h-7 w-full animate-pulse rounded-full bg-gray-200" />
+                  <div className="h-7 w-1/2 animate-pulse rounded-full bg-gray-200" />
+                </div>
+              </Card>
+            </div>
+          </div>
+        ) : productDetail ? (
+          <div className="space-y-8">
+            <Card className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+              <div className="flex items-center gap-6">
+                <div className="h-[96px] w-[88px] overflow-hidden rounded-[8px] bg-primary-100">
+                  <img
+                    src={resolveImageUrl(productDetail.imageUrl)}
+                    alt={productDetail.name}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+
+                <div className="flex min-w-0 flex-1 flex-col gap-4">
+                  <h2 className="text-[16px] leading-[120%] font-medium tracking-[-0.02em] text-font-sub">
+                    {productDetail.name}
+                  </h2>
+                  <p className="text-[18px] leading-[120%] font-medium tracking-[-0.02em] text-font-main">
+                    {formatPrice(productDetail.price)}
+                  </p>
+                </div>
+              </div>
+            </Card>
+
+            <div className="space-y-[10px]">
+              <h3 className="text-[18px] leading-[120%] font-semibold tracking-[-0.02em] text-font-main">
+                배송지 정보
+              </h3>
+              <Card className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+              <div className="space-y-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <p className="text-[18px] leading-[120%] font-semibold tracking-[-0.02em] text-black">
+                        {deliveryName}
+                      </p>
+                      <Badge
+                        tone="primary"
+                        className="px-[6px] py-[2px] text-[12px] font-medium tracking-[-0.02em]"
+                      >
+                        기본배송지
+                      </Badge>
+                    </div>
+
+                    <Button
+                      type="button"
+                      variant="gray"
+                      size="sm"
+                      className="!h-[32px] !w-[64px] !rounded-[8px] !border !border-solid !border-gray-300 !bg-transparent !px-0 !text-[14px] !font-medium !text-gray-400"
+                    >
+                      변경
+                    </Button>
+                  </div>
+
+                  <p className="break-keep text-[16px] leading-[160%] font-normal tracking-[-0.02em] text-black">
+                    {deliveryAddress}
+                  </p>
+
+                  <p className="text-[16px] leading-[160%] font-normal tracking-[-0.02em] text-black">
+                    {deliveryPhoneNumber}
+                  </p>
+                </div>
+              </Card>
+            </div>
+          </div>
+        ) : (
+          <div className="space-y-[10px]">
+            <h3 className="text-[18px] leading-[120%] font-semibold tracking-[-0.02em] text-font-main">
+              배송지 정보
+            </h3>
+            <Card className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+              <div className="space-y-5">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <p className="text-[18px] leading-[120%] font-semibold tracking-[-0.02em] text-black">
+                      {deliveryName}
+                    </p>
+                    <Badge
+                      tone="primary"
+                      className="px-[6px] py-[2px] text-[12px] font-medium tracking-[-0.02em]"
+                    >
+                      기본배송지
+                    </Badge>
+                  </div>
+
+                  <Button
+                    type="button"
+                    variant="gray"
+                    size="sm"
+                    className="!h-[32px] !w-[64px] !rounded-[8px] !border !border-solid !border-gray-300 !bg-transparent !px-0 !text-[14px] !font-medium !text-gray-400"
+                  >
+                    변경
+                  </Button>
+                </div>
+
+                <p className="break-keep text-[16px] leading-[160%] font-normal tracking-[-0.02em] text-black">
+                  {deliveryAddress}
+                </p>
+
+                <p className="text-[16px] leading-[160%] font-normal tracking-[-0.02em] text-black">
+                  {deliveryPhoneNumber}
                 </p>
               </div>
-            </div>
-          </Card>
-        ) : null}
+            </Card>
+          </div>
+        )}
       </section>
 
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50">

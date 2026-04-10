@@ -1,6 +1,6 @@
 ﻿import { Coins, FileChartColumn, FileText, Landmark, ShieldCheck, UserRound } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { Card, Icons, InfoRow, ProgressBar, SectionHeader } from '../../components/common'
+import { Card, Icons, SectionHeader } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import MainLayout from '../../components/layout/MainLayout'
 import {
@@ -9,16 +9,8 @@ import {
 } from '../../constants/bottomNavigation'
 import { ROUTE_PATHS } from '../../constants/routePaths'
 import { useAuth } from '../../hooks/useAuth'
-import type { UserGrade } from '../../types/user'
 import { ShopHeader } from '../shop/components/ShopHeader'
-
-const gradeLabelMap: Record<UserGrade, string> = {
-  SEED: '씨앗',
-  SPROUT: '새싹',
-  TREE: '나무',
-  FOREST: '숲',
-  EARTH: '지구',
-}
+import { LogOut } from 'lucide-react'
 
 const menuItems = [
   {
@@ -59,26 +51,15 @@ const menuItems = [
   },
 ]
 
-const defaultGradeProgress = {
-  current: 100,
-  target: 690,
-  visualValue: 68,
-}
-
-const defaultPoints = 12400
-
-const numberFormatter = new Intl.NumberFormat('ko-KR')
+const accountMenuItems = menuItems.filter((item) => item.key === 'profile')
+const activityMenuItems = menuItems.filter((item) =>
+  ['grade', 'history', 'point', 'report'].includes(item.key),
+)
+const financeMenuItems = menuItems.filter((item) => item.key === 'finance')
 
 export const MyPage = () => {
   const navigate = useNavigate()
-  const { user } = useAuth()
-
-  const userName = user?.name ?? '김태호'
-  const userLoginId = user?.loginId ?? 'taeho_kim_88'
-  const currentGrade = user?.currentGrade ?? 'SPROUT'
-  const gradeLabel = gradeLabelMap[currentGrade]
-  const totalPoints = user?.totalPoints ?? defaultPoints
-  const formattedPoints = `${numberFormatter.format(totalPoints)}p`
+  const { clearSession } = useAuth()
 
   const handleBottomNavigation = (key: string) => {
     const nextPath =
@@ -88,6 +69,39 @@ export const MyPage = () => {
       navigate(nextPath)
     }
   }
+
+  const handleLogout = () => {
+    if (!window.confirm('로그아웃 하시겠습니까?')) {
+      return
+    }
+
+    clearSession()
+    navigate(ROUTE_PATHS.login)
+  }
+
+  const renderMenuCard = (items: typeof menuItems) => (
+    <Card className="!gap-0 !p-0">
+      {items.map((item, index) => (
+        <button
+          key={item.key}
+          type="button"
+          onClick={() => navigate(item.path)}
+          className={`flex w-full items-center justify-between px-5 py-5 text-left ${
+            index < items.length - 1 ? 'border-b border-gray-100' : ''
+          }`}
+        >
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-100 bg-gray-50 text-gray-500">
+              {item.icon}
+            </div>
+            <span className="text-[15px] font-medium text-font-main">{item.label}</span>
+          </div>
+
+          <Icons.ArrowRight className="text-gray-300" size={20} />
+        </button>
+      ))}
+    </Card>
+  )
 
   return (
     <MainLayout
@@ -101,71 +115,52 @@ export const MyPage = () => {
       }
       className="bg-bg-light"
     >
-      <div className="mt-5 flex flex-col gap-3">
-        <section className="pl-3">
-          <div className="flex min-w-0 flex-col justify-center py-2">
-            <p className="text-[11px] font-bold tracking-[0.08em] text-primary-400 uppercase">
-              Member Profile
-            </p>
-            <p className="mt-1 text-[32px] leading-[1.1] tracking-tight font-semibold text-gray-700">
-              {userName}
-            </p>
-            <p className="mt-1 text-sm text-font-sub">{userLoginId}</p>
-          </div>
+      <section className="mt-2 flex flex-col gap-5">
+        <section className="flex flex-col gap-3">
+          <SectionHeader title="계정" className="px-1" />
+
+          <Card className="!gap-0 !p-0">
+            {accountMenuItems.map((item) => (
+              <button
+                key={item.key}
+                type="button"
+                onClick={() => navigate(item.path)}
+                className="flex w-full items-center justify-between border-b border-gray-100 px-5 py-5 text-left"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-100 bg-gray-50 text-gray-500">
+                    {item.icon}
+                  </div>
+                  <span className="text-[15px] font-medium text-font-main">{item.label}</span>
+                </div>
+
+                <Icons.ArrowRight className="text-gray-300" size={20} />
+              </button>
+            ))}
+
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex w-full items-center gap-3 px-5 py-5 text-left text-red-500"
+            >
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-red-50 text-red-400">
+                <LogOut size={18} />
+              </div>
+              <span className="text-[15px] font-medium">로그아웃</span>
+            </button>
+          </Card>
         </section>
 
-        <div className="flex flex-col gap-6">
-          <Card className="!h-[136px]">
-            <div className="space-y-3">
-              <SectionHeader
-                title={
-                  <span className="text-lg font-semibold text-gray-700">
-                    나의 등급 <span className="text-primary-500">{gradeLabel}</span>
-                  </span>
-                }
-                right={
-                  <span className="text-xs font-medium text-gray-400">
-                    {defaultGradeProgress.current} / {defaultGradeProgress.target}
-                  </span>
-                }
-              />
-              <ProgressBar value={defaultGradeProgress.visualValue} max={100} />
-              <div className="h-px w-full bg-gray-100" />
-              <InfoRow
-                label={<span className="text-base font-medium text-gray-500">보유 포인트</span>}
-                value={<span className="text-base font-medium text-gray-500">{formattedPoints}</span>}
-                className="items-center"
-              />
-            </div>
-          </Card>
+        <section className="flex flex-col gap-3">
+          <SectionHeader title="활동" className="px-1" />
+          {renderMenuCard(activityMenuItems)}
+        </section>
 
-          <section className="flex flex-col gap-3">
-            <SectionHeader title="메뉴" className="px-3" />
-
-            <Card className="!gap-0 !p-0">
-              {menuItems.map((item, index) => (
-                <button
-                  key={item.key}
-                  type="button"
-                  onClick={() => navigate(item.path)}
-                  className={`flex w-full items-center justify-between px-5 py-5 text-left ${
-                    index < menuItems.length - 1 ? 'border-b border-gray-100' : ''
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary-50 text-primary-500">
-                      {item.icon}
-                    </div>
-                    <span className="text-[15px] font-medium text-font-main">{item.label}</span>
-                  </div>
-
-                  <Icons.ArrowRight className="text-gray-300" size={20} />
-                </button>
-              ))}
-            </Card>
-          </section>
-        </div>
-      </div>
+        <section className="flex flex-col gap-3">
+          <SectionHeader title="금융" className="px-1" />
+          {renderMenuCard(financeMenuItems)}
+        </section>
+      </section>
     </MainLayout>
   )
 }

@@ -21,6 +21,10 @@ export const ROUTE_PATHS = {
   activitySocialStore: '/esg/social/store',
   activitySocialProductDetail: '/esg/social/products/:productId',
   activitySocialProductPayment: '/esg/social/products/:productId/payment',
+  activitySocialProductPaymentCallback:
+    '/esg/social/products/:productId/payment/callback',
+  activitySocialProductPaymentComplete:
+    '/esg/social/products/:productId/payment/complete',
   donationDetail: '/esg/social/donations/:donationId',
   donationPayment: '/esg/social/donations/:donationId/payment',
   donationPaymentCallback: '/esg/social/donations/:donationId/payment/callback',
@@ -59,6 +63,14 @@ export const getValueStoreProductDetailPath = (productId: number | string) =>
 
 export const getValueStoreProductPaymentPath = (productId: number | string) =>
   `/esg/social/products/${productId}/payment`
+
+export const getValueStoreProductPaymentCallbackPath = (
+  productId: number | string,
+) => `/esg/social/products/${productId}/payment/callback`
+
+export const getValueStoreProductPaymentCompletePath = (
+  productId: number | string,
+) => `/esg/social/products/${productId}/payment/complete`
 
 export const getFinanceDetailPath = (productId: number | string) =>
   `/finance/${productId}`

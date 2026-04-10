@@ -36,3 +36,19 @@ export interface PrepareProductPaymentResponse {
   productName: string
   amount: number
 }
+
+export interface VerifyProductPaymentRequest {
+  productId: number
+  impUid: string
+  merchantUid: string
+}
+
+export interface VerifyProductPaymentResponse {
+  paymentId: number
+  productId: number
+  productName: string
+  amount: number
+  paymentStatus: 'paid' | string
+  awardedPoint: number
+  currentPoint: number
+}

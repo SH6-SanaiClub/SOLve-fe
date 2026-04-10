@@ -6,6 +6,8 @@ import type {
   PrepareProductPaymentResponse,
   VerifyDonationPaymentRequest,
   VerifyDonationPaymentResponse,
+  VerifyProductPaymentRequest,
+  VerifyProductPaymentResponse,
 } from '../types/payment'
 
 export const prepareDonationPayment = async (
@@ -35,6 +37,17 @@ export const verifyDonationPayment = async (
 ): Promise<VerifyDonationPaymentResponse> => {
   const response = await apiClient.post<VerifyDonationPaymentResponse>(
     '/v1/payments/verify',
+    payload,
+  )
+
+  return response.data
+}
+
+export const verifyProductPayment = async (
+  payload: VerifyProductPaymentRequest,
+): Promise<VerifyProductPaymentResponse> => {
+  const response = await apiClient.post<VerifyProductPaymentResponse>(
+    '/v1/payments/products/verify',
     payload,
   )
 

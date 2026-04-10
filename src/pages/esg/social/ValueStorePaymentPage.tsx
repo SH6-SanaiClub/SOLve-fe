@@ -282,7 +282,7 @@ export function ValueStorePaymentPage() {
             </Card>
 
             <div className="space-y-[10px]">
-              <h3 className="text-[18px] leading-[120%] font-semibold tracking-[-0.02em] text-font-main">
+              <h3 className="text-base leading-7 font-semibold text-gray-800">
                 배송지 정보
               </h3>
               <Card className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
@@ -361,7 +361,7 @@ export function ValueStorePaymentPage() {
           </div>
         ) : (
           <div className="space-y-[10px]">
-            <h3 className="text-[18px] leading-[120%] font-semibold tracking-[-0.02em] text-font-main">
+            <h3 className="text-base leading-7 font-semibold text-gray-800">
               배송지 정보
             </h3>
             <Card className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">

@@ -40,6 +40,7 @@ export const ROUTE_PATHS = {
   myPointManage: '/my/point-manage',
   myReport: '/my/report',
   chatbot: '/chatbot',
+  recommend: '/recommend',
 } as const
 
 export const getDonationDetailPath = (donationId: number | string) =>

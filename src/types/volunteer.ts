@@ -10,6 +10,8 @@ export interface VolunteerActivity {
   organization: string
 }
 
+export type VolunteerDetail = VolunteerActivity
+
 export interface VolunteerListResponse {
   volunteers: VolunteerActivity[]
 }

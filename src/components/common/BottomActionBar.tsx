@@ -2,7 +2,7 @@ import React from 'react';
 import Button from './Button';
 
 interface BottomActionBarProps {
-    leftText: string;
+    leftText: React.ReactNode;
     buttonLabel: string;
     onButtonClick?: () => void;
     className?: string;

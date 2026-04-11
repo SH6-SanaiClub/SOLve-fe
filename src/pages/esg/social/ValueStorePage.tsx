@@ -88,7 +88,7 @@ export function ValueStorePage() {
       {isLoading ? (
         <div className="flex flex-col gap-6">
           <section className="space-y-4 pt-2">
-            <div className="flex items-center justify-between px-[6px]">
+            <div className="flex items-center justify-between">
               <div className="h-5 w-28 animate-pulse rounded-full bg-gray-300" />
               <div className="h-4 w-20 animate-pulse rounded-full bg-primary-100" />
             </div>
@@ -132,7 +132,7 @@ export function ValueStorePage() {
       {!isLoading && !error && productData ? (
         <div className="flex flex-col gap-6 pt-2">
           <section className="space-y-4">
-            <div className="flex items-center justify-between px-[6px]">
+            <div className="flex items-center justify-between">
               <h2 className="text-lg leading-[120%] font-semibold text-gray-700">
                 판매중인 상품
               </h2>

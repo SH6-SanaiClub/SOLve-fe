@@ -100,7 +100,7 @@ export function DonationPage() {
             <div className="h-28 animate-pulse rounded-control bg-primary-300" />
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between px-[6px]">
+              <div className="flex items-center justify-between">
                 <div className="h-5 w-28 animate-pulse rounded-full bg-gray-300" />
                 <div className="h-4 w-10 animate-pulse rounded-full bg-primary-100" />
               </div>
@@ -158,7 +158,7 @@ export function DonationPage() {
           />
 
           <section className="space-y-4">
-            <div className="flex items-center justify-between px-[6px]">
+            <div className="flex items-center justify-between">
               <h2 className="text-lg leading-[120%] font-semibold text-font-main">
                 진행중인 캠페인
               </h2>

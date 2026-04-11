@@ -121,7 +121,6 @@ export const ShopListPage = () => {
 
         <div className="flex flex-col gap-[var(--space-4)] bg-bg-light px-(--side-padding) pb-[var(--space-4)]">
           <SectionHeader
-            className="py-[var(--space-1)]"
             title={<span className="text-lg font-semibold text-gray-700">상품 목록</span>}
             right={
               <div className="flex shrink-0 items-center gap-[var(--space-2)] whitespace-nowrap">

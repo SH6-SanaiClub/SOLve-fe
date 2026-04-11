@@ -46,12 +46,15 @@ export const FinancePage = () => {
       }
       className="bg-bg-light"
     >
-      <div className="-mx-4 flex flex-col gap-10 bg-bg-light px-(--side-padding) pb-2">
-        <section className="flex flex-col gap-3">
+      <div className="-mx-4 flex flex-col gap-4 bg-bg-light px-(--side-padding) pt-4 pb-2">
+        <section className="flex flex-col gap-4">
           <SectionHeader
-            title={financeSectionLabels.SAVINGS}
+            title={
+              <span className="text-lg leading-[120%] font-semibold text-gray-700">
+                {financeSectionLabels.SAVINGS}
+              </span>
+            }
             right={<span className="text-sm font-medium text-primary-400">{savingsProducts.length}건</span>}
-            className="px-3"
           />
 
           <div className="flex flex-col gap-3">
@@ -83,11 +86,14 @@ export const FinancePage = () => {
           </div>
         </section>
 
-        <section className="flex flex-col gap-3">
+        <section className="flex flex-col gap-4">
           <SectionHeader
-            title={financeSectionLabels.LOAN}
+            title={
+              <span className="text-lg leading-[120%] font-semibold text-gray-700">
+                {financeSectionLabels.LOAN}
+              </span>
+            }
             right={<span className="text-sm font-medium text-primary-400">{loanProducts.length}건</span>}
-            className="px-3"
           />
 
           {loanProduct ? (

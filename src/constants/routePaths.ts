@@ -19,6 +19,7 @@ export const ROUTE_PATHS = {
   activitySocial: '/activities/social',
   activitySocialDonation: '/esg/social/donation',
   activitySocialStore: '/esg/social/store',
+  activitySocialVolunteer: '/esg/social/volunteer',
   activitySocialProductDetail: '/esg/social/products/:productId',
   activitySocialProductPayment: '/esg/social/products/:productId/payment',
   activitySocialProductPaymentCallback:

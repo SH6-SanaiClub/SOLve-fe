@@ -12,7 +12,11 @@ const tabItems = [
     path: ROUTE_PATHS.activitySocialDonation,
   },
   { value: 'store', label: '가치가게', path: ROUTE_PATHS.activitySocialStore },
-  { value: 'volunteer', label: '봉사', path: undefined },
+  {
+    value: 'volunteer',
+    label: '봉사',
+    path: ROUTE_PATHS.activitySocialVolunteer,
+  },
 ] as const
 
 export const SocialActivityTabs = ({ activeTab }: SocialActivityTabsProps) => {

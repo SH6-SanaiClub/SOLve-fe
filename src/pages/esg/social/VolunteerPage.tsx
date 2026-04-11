@@ -5,7 +5,10 @@ import { Card, IconButton } from '../../../components/common'
 import { Icons } from '../../../components/common'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
-import { ROUTE_PATHS } from '../../../constants/routePaths'
+import {
+  getVolunteerDetailPath,
+  ROUTE_PATHS,
+} from '../../../constants/routePaths'
 import { getVolunteerActivities } from '../../../services/volunteerService'
 import type { VolunteerActivity, VolunteerListResponse } from '../../../types/volunteer'
 import { SocialActivityTabs } from './components/SocialActivityTabs'
@@ -183,6 +186,9 @@ export function VolunteerPage() {
                   key={volunteer.volunteerId}
                   data-volunteer-id={volunteer.volunteerId}
                   className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]"
+                  onClick={() =>
+                    navigate(getVolunteerDetailPath(volunteer.volunteerId))
+                  }
                 >
                   <div className="flex flex-col gap-3">
                     <div className="flex flex-col gap-1">

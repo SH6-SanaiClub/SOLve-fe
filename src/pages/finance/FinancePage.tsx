@@ -1,4 +1,5 @@
-﻿import { useNavigate } from 'react-router-dom'
+﻿import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Badge, Card, Icons, SectionHeader } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import MainLayout from '../../components/layout/MainLayout'
@@ -8,10 +9,12 @@ import {
 } from '../../constants/bottomNavigation'
 import { ROUTE_PATHS, getFinanceDetailPath } from '../../constants/routePaths'
 import { financeSectionLabels, loanProducts, savingsProducts } from './financeData'
+import { FinanceTabs } from './components/FinanceTabs'
 import { ShopHeader } from '../shop/components/ShopHeader'
 
 export const FinancePage = () => {
   const navigate = useNavigate()
+  const [activeTab, setActiveTab] = useState<'all' | 'savings' | 'loan'>('all')
 
   const handleBottomNavigation = (key: string) => {
     const nextPath =
@@ -33,6 +36,8 @@ export const FinancePage = () => {
 
   const loanProduct = loanProducts[0]
   const loanTiers = loanProduct?.loanTiers ?? []
+  const showSavingsSection = activeTab === 'all' || activeTab === 'savings'
+  const showLoanSection = activeTab === 'all' || activeTab === 'loan'
 
   return (
     <MainLayout
@@ -46,8 +51,11 @@ export const FinancePage = () => {
       }
       className="bg-bg-light"
     >
-      <div className="-mx-4 flex flex-col gap-4 bg-bg-light px-(--side-padding) pt-4 pb-2">
-        <section className="flex flex-col gap-4">
+      <div className="-mx-4 flex flex-col gap-4 bg-bg-light px-(--side-padding) pb-2">
+        <FinanceTabs activeTab={activeTab} onChange={setActiveTab} />
+
+        {showSavingsSection ? (
+          <section className="flex flex-col gap-4">
           <SectionHeader
             title={
               <span className="text-lg leading-[120%] font-semibold text-gray-700">
@@ -84,9 +92,11 @@ export const FinancePage = () => {
               </Card>
             ))}
           </div>
-        </section>
+          </section>
+        ) : null}
 
-        <section className="flex flex-col gap-4">
+        {showLoanSection ? (
+          <section className="flex flex-col gap-4">
           <SectionHeader
             title={
               <span className="text-lg leading-[120%] font-semibold text-gray-700">
@@ -152,7 +162,8 @@ export const FinancePage = () => {
               ) : null}
             </Card>
           ) : null}
-        </section>
+          </section>
+        ) : null}
       </div>
     </MainLayout>
   )

@@ -1,8 +1,7 @@
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { Button, IconButton } from '../../../components/common'
-import { Icons } from '../../../components/common'
-import Header from '../../../components/layout/Header'
+import { Button } from '../../../components/common'
 import MainLayout from '../../../components/layout/MainLayout'
+import completeCharacterImage from '../../../assets/good.png'
 import {
   getVolunteerDetailPath,
   ROUTE_PATHS,
@@ -35,93 +34,105 @@ export function VolunteerCompletePage() {
   const application = state?.application
 
   return (
-    <MainLayout
-      header={
-        <Header
-          left={
-            <IconButton
-              label="뒤로가기"
-              icon={<Icons.Back className="text-font-main" />}
-              onClick={() => navigate(ROUTE_PATHS.activitySocialVolunteer)}
-            />
-          }
-          title="봉사"
-        />
-      }
-      className="bg-gray-50"
-    >
-      <section className="mx-[-16px] min-h-[calc(100vh-var(--header-h)-48px)] bg-gray-50 px-4 pt-6 pb-8">
+    <MainLayout className="bg-gray-50">
+      <section className="mx-[-16px] my-[-24px] bg-gray-50 px-[31px] pt-[88px] pb-6">
         {application ? (
-          <div className="space-y-4">
-            <section className="rounded-control bg-white px-6 py-7 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
-              <div className="flex flex-col gap-2">
-                <p className="text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
-                  봉사 신청이 완료되었습니다.
+          <div className="mx-auto flex max-w-[340px] flex-col items-center text-center">
+            <div className="flex flex-col items-center text-center">
+              <img
+                src={completeCharacterImage}
+                alt=""
+                className="h-[104px] w-[95px] object-cover"
+              />
+              <div className="mt-[11px] flex w-full flex-col items-center gap-2">
+                <h1 className="text-[20px] leading-[30px] font-bold tracking-[-0.02em] text-font-main">
+                  신청이 완료되었습니다!
+                </h1>
+                <p className="text-center text-[12px] leading-6 font-medium tracking-[-0.02em] text-font-sub">
+                  봉사활동에 함께해 주셔서 감사합니다.
                 </p>
-                <h2 className="text-[20px] leading-[140%] font-bold tracking-[-0.02em] text-font-main">
-                  {application.name}
-                </h2>
               </div>
-            </section>
+            </div>
 
-            <section className="rounded-control bg-white px-6 py-6 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
-              <div className="space-y-5">
-                <div className="flex items-start justify-between gap-5">
-                  <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
-                    봉사명
-                  </p>
-                  <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
-                    {application.name}
-                  </p>
+            <div className="mt-[23px] flex w-full flex-col">
+              <div className="rounded-card bg-white px-[15px] pt-[19px] pb-[18px] text-left shadow-card">
+                <div className="text-left text-[12px] leading-6 font-bold tracking-[-0.02em] text-font-sub">
+                  신청내역 상세
                 </div>
 
-                <div className="flex items-start justify-between gap-5">
-                  <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
-                    봉사 장소
-                  </p>
-                  <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
-                    {application.location}
-                  </p>
-                </div>
+                <div className="mt-4 flex flex-col gap-[14px]">
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-[12px] leading-6 font-medium tracking-[-0.02em] text-font-sub">
+                      봉사명
+                    </span>
+                    <span className="text-right text-[16px] leading-6 font-semibold tracking-[-0.02em] text-font-sub">
+                      {application.name}
+                    </span>
+                  </div>
 
-                <div className="flex items-start justify-between gap-5">
-                  <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
-                    봉사 날짜
-                  </p>
-                  <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
-                    {formatVolunteerDate(application.activityDate)}
-                  </p>
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-[12px] leading-6 font-medium tracking-[-0.02em] text-font-sub">
+                      봉사 장소
+                    </span>
+                    <span className="text-right text-[16px] leading-6 font-semibold tracking-[-0.02em] text-font-sub">
+                      {application.location}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between gap-4">
+                    <span className="text-[12px] leading-6 font-medium tracking-[-0.02em] text-font-sub">
+                      봉사 날짜
+                    </span>
+                    <span className="text-right text-[16px] leading-6 font-semibold tracking-[-0.02em] text-font-sub">
+                      {formatVolunteerDate(application.activityDate)}
+                    </span>
+                  </div>
                 </div>
               </div>
-            </section>
 
-            <Button
-              fullWidth
-              onClick={() => navigate(ROUTE_PATHS.activitySocialVolunteer)}
-            >
-              목록으로 돌아가기
-            </Button>
+              <div className="mt-5 w-full">
+                <Button
+                  fullWidth
+                  size="md"
+                  onClick={() => navigate(ROUTE_PATHS.home, { replace: true })}
+                >
+                  메인으로 가기
+                </Button>
+              </div>
+            </div>
           </div>
         ) : (
-          <section className="rounded-card border border-gray-100 bg-white px-5 py-6 text-center shadow-card">
-            <h2 className="text-lg font-semibold text-font-main">
-              신청 정보를 확인할 수 없어요
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-font-sub">
-              다시 상세 페이지에서 신청을 진행해주세요.
-            </p>
-            <Button
-              className="mt-5"
-              fullWidth
-              onClick={() =>
-                volunteerId
-                  ? navigate(getVolunteerDetailPath(volunteerId))
-                  : navigate(ROUTE_PATHS.activitySocialVolunteer)
-              }
-            >
-              상세 페이지로 돌아가기
-            </Button>
-          </section>
+          <div className="flex flex-col items-center justify-center text-center">
+            <div className="w-full rounded-card bg-white p-6 shadow-card">
+              <h2 className="text-[20px] leading-[30px] font-bold tracking-[-0.02em] text-font-main">
+                신청 완료 정보를 찾을 수 없어요
+              </h2>
+              <p className="mt-2 text-[12px] leading-6 font-medium tracking-[-0.02em] text-font-sub">
+                직접 진입한 경우일 수 있어요. 봉사 상세 페이지로 돌아가 다시 확인해주세요.
+              </p>
+              <div className="mt-6">
+                <Button
+                  fullWidth
+                  onClick={() =>
+                    volunteerId
+                      ? navigate(getVolunteerDetailPath(volunteerId))
+                      : navigate(ROUTE_PATHS.activitySocialVolunteer)
+                  }
+                >
+                  상세 페이지로 돌아가기
+                </Button>
+              </div>
+            </div>
+            <div className="mt-6 w-full">
+              <Button
+                fullWidth
+                variant="primary"
+                onClick={() => navigate(ROUTE_PATHS.home, { replace: true })}
+              >
+                메인으로 가기
+              </Button>
+            </div>
+          </div>
         )}
       </section>
     </MainLayout>

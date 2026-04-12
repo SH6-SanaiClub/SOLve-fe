@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { BottomActionBar, IconButton } from '../../../components/common'
+import { BottomActionBar, Button, IconButton } from '../../../components/common'
 import { Icons } from '../../../components/common'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
@@ -47,11 +47,11 @@ export function VolunteerDetailPage() {
   const navigate = useNavigate()
   const { volunteerId } = useParams()
   const parsedVolunteerId = Number(volunteerId)
-  const [volunteerDetail, setVolunteerDetail] = useState<VolunteerDetail | null>(
-    null,
-  )
+  const [volunteerDetail, setVolunteerDetail] =
+    useState<VolunteerDetail | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false)
 
   const requestVolunteerDetail = useCallback(async () => {
     if (!Number.isInteger(parsedVolunteerId) || parsedVolunteerId <= 0) {
@@ -69,7 +69,9 @@ export function VolunteerDetailPage() {
       setVolunteerDetail(response)
     } catch (fetchError) {
       console.error(fetchError)
-      setError('봉사활동 상세 정보를 불러오지 못했어요. 잠시 후 다시 시도해주세요.')
+      setError(
+        '봉사활동 상세 정보를 불러오지 못했어요. 잠시 후 다시 시도해주세요.',
+      )
     } finally {
       setIsLoading(false)
     }
@@ -152,53 +154,53 @@ export function VolunteerDetailPage() {
 
               <section className="bg-white px-[24px] py-6">
                 <div className="space-y-5">
-                <div className="flex items-start justify-between gap-5">
-                  <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
-                    모집기관
-                  </p>
-                  <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
-                    {volunteerDetail.organization}
-                  </p>
-                </div>
+                  <div className="flex items-start justify-between gap-5">
+                    <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+                      모집기관
+                    </p>
+                    <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
+                      {volunteerDetail.organization}
+                    </p>
+                  </div>
 
-                <div className="flex items-start justify-between gap-5">
-                  <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
-                    봉사장소
-                  </p>
-                  <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
-                    {volunteerDetail.location}
-                  </p>
-                </div>
+                  <div className="flex items-start justify-between gap-5">
+                    <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+                      봉사장소
+                    </p>
+                    <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
+                      {volunteerDetail.location}
+                    </p>
+                  </div>
 
-                <div className="flex items-start justify-between gap-5">
-                  <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
-                    봉사날짜
-                  </p>
-                  <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
-                    {formatVolunteerDate(volunteerDetail.activityDate)}
-                  </p>
-                </div>
+                  <div className="flex items-start justify-between gap-5">
+                    <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+                      봉사날짜
+                    </p>
+                    <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
+                      {formatVolunteerDate(volunteerDetail.activityDate)}
+                    </p>
+                  </div>
 
-                <div className="flex items-start justify-between gap-5">
-                  <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
-                    봉사시간
-                  </p>
-                  <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
-                    {formatVolunteerTimeRange(
-                      volunteerDetail.activityDate,
-                      volunteerDetail.volunteerHour,
-                    )}
-                  </p>
-                </div>
+                  <div className="flex items-start justify-between gap-5">
+                    <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+                      봉사시간
+                    </p>
+                    <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
+                      {formatVolunteerTimeRange(
+                        volunteerDetail.activityDate,
+                        volunteerDetail.volunteerHour,
+                      )}
+                    </p>
+                  </div>
 
-                <div className="flex items-start justify-between gap-5">
-                  <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
-                    모집인원
-                  </p>
-                  <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
-                    {volunteerDetail.capacity}명
-                  </p>
-                </div>
+                  <div className="flex items-start justify-between gap-5">
+                    <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+                      모집인원
+                    </p>
+                    <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
+                      {volunteerDetail.capacity}명
+                    </p>
+                  </div>
                 </div>
               </section>
 
@@ -217,12 +219,63 @@ export function VolunteerDetailPage() {
           leftText={
             <>
               <span className="text-gray-400">신청인원 </span>
-              <span className="text-primary-400">{volunteerDetail.currentEnrolled}</span>
-              <span className="text-gray-600"> / {volunteerDetail.capacity}명</span>
+              <span className="text-primary-400">
+                {volunteerDetail.currentEnrolled}
+              </span>
+              <span className="text-gray-600">
+                {' '}
+                / {volunteerDetail.capacity}명
+              </span>
             </>
           }
           buttonLabel="신청하기"
+          onButtonClick={() => setIsApplyModalOpen(true)}
         />
+      ) : null}
+
+      {isApplyModalOpen ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 px-4"
+          onClick={() => setIsApplyModalOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="volunteer-apply-modal-title"
+            className="w-full max-w-[340px] rounded-[8px] bg-white px-5 pt-6 pb-5 shadow-[0_8px_24px_rgba(15,23,42,0.16)]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <p
+              id="volunteer-apply-modal-title"
+              className="text-center text-lg font-semibold text-font-main"
+            >
+              신청하시겠습니까?
+            </p>
+            <p className="mt-2 text-center text-sm leading-6 text-gray-400">
+              봉사 시작 24시간 전까지는 취소할 수 있으며,
+              <br />
+              노쇼 시 이용 제한 및 패널티가 발생할 수 있습니다.
+            </p>
+
+            <div className="mt-5 flex gap-3">
+              <Button
+                variant="gray"
+                fullWidth
+                className="!rounded-[8px]"
+                onClick={() => setIsApplyModalOpen(false)}
+              >
+                아니요
+              </Button>
+              <Button
+                fullWidth
+                className="!rounded-[8px]"
+                onClick={() => setIsApplyModalOpen(false)}
+              >
+                네
+              </Button>
+            </div>
+          </div>
+        </div>
       ) : null}
     </MainLayout>
   )

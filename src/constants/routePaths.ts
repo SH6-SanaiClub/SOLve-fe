@@ -15,6 +15,7 @@ export const ROUTE_PATHS = {
   esgSocial: '/esg/social',
   esgSocialDonation: '/esg/social/donation',
   esgQuiz: '/esg/quiz',
+  esgQuizResult: '/esg/quiz/result',
   activityEnvironment: '/activities/environment',
   activitySocial: '/activities/social',
   activitySocialDonation: '/esg/social/donation',

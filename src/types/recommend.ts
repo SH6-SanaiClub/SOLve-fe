@@ -17,6 +17,8 @@ export interface RecommendedActivity {
   currentEnrolled: number | null
   capacity: number | null
   description: string | null
+  alreadyParticipatedToday?: boolean | null
+  monthlyLimitReached?: boolean | null
 }
 
 export interface ActivityRecommendResponse {

@@ -94,6 +94,9 @@ const getActivityPath = (activity: RecommendedActivity) => {
   }
 }
 
+const shouldUseEnvBackNavigation = (activity: RecommendedActivity) =>
+  activity.activityType === 'PHOTO'
+
 const getPopularActivityGuard = (
   activity: RecommendedActivity,
   nextPath: string | null,
@@ -219,7 +222,10 @@ export const RecommendPage = () => {
     const nextPath = getActivityPath(activity)
 
     if (nextPath) {
-      navigate(nextPath)
+      navigate(
+        nextPath,
+        shouldUseEnvBackNavigation(activity) ? { state: { fromEnv: true } } : undefined,
+      )
     }
   }
 
@@ -233,7 +239,10 @@ export const RecommendPage = () => {
     }
 
     if (nextPath) {
-      navigate(nextPath)
+      navigate(
+        nextPath,
+        shouldUseEnvBackNavigation(activity) ? { state: { fromEnv: true } } : undefined,
+      )
     }
   }
 
@@ -304,7 +313,12 @@ export const RecommendPage = () => {
         onConfirm={
           popularActivityGuard?.nextPath
             ? () => {
-                navigate(popularActivityGuard.nextPath)
+                navigate(
+                  popularActivityGuard.nextPath,
+                  popularActivity?.activityType === 'PHOTO'
+                    ? { state: { fromEnv: true } }
+                    : undefined,
+                )
                 setPopularActivityGuard(null)
               }
             : undefined

@@ -4,9 +4,18 @@ import { BottomActionBar, Button, IconButton } from '../../../components/common'
 import { Icons } from '../../../components/common'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
-import { ROUTE_PATHS } from '../../../constants/routePaths'
-import { getVolunteerDetail } from '../../../services/volunteerService'
-import type { VolunteerDetail } from '../../../types/volunteer'
+import {
+  getVolunteerCompletePath,
+  ROUTE_PATHS,
+} from '../../../constants/routePaths'
+import {
+  applyVolunteer,
+  getVolunteerDetail,
+} from '../../../services/volunteerService'
+import type {
+  VolunteerApplicationResponse,
+  VolunteerDetail,
+} from '../../../types/volunteer'
 
 const formatVolunteerDate = (activityDate: string) => {
   const date = new Date(activityDate)
@@ -52,6 +61,19 @@ export function VolunteerDetailPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false)
+  const [isApplying, setIsApplying] = useState(false)
+  const [applicationError, setApplicationError] = useState('')
+
+  const isAlreadyApplied = volunteerDetail?.status === 'APPLIED'
+  const isCapacityFull = volunteerDetail
+    ? volunteerDetail.currentEnrolled >= volunteerDetail.capacity
+    : false
+  const isApplyDisabled = isApplying || isCapacityFull || isAlreadyApplied
+  const applyButtonLabel = isAlreadyApplied
+    ? '신청 완료'
+    : isCapacityFull
+      ? '정원 마감'
+      : '신청하기'
 
   const requestVolunteerDetail = useCallback(async () => {
     if (!Number.isInteger(parsedVolunteerId) || parsedVolunteerId <= 0) {
@@ -80,6 +102,36 @@ export function VolunteerDetailPage() {
   useEffect(() => {
     void requestVolunteerDetail()
   }, [requestVolunteerDetail])
+
+  const handleApplyVolunteer = async () => {
+    if (!Number.isInteger(parsedVolunteerId) || parsedVolunteerId <= 0) {
+      return
+    }
+
+    setIsApplying(true)
+    setApplicationError('')
+
+    try {
+      const response: VolunteerApplicationResponse = await applyVolunteer({
+        volunteerId: parsedVolunteerId,
+      })
+      setIsApplyModalOpen(false)
+
+      navigate(getVolunteerCompletePath(response.volunteerId), {
+        replace: true,
+        state: {
+          application: response,
+        },
+      })
+    } catch (applyError) {
+      console.error(applyError)
+      setApplicationError(
+        '봉사 신청에 실패했어요. 잠시 후 다시 시도해주세요.',
+      )
+    } finally {
+      setIsApplying(false)
+    }
+  }
 
   return (
     <MainLayout
@@ -228,8 +280,12 @@ export function VolunteerDetailPage() {
               </span>
             </>
           }
-          buttonLabel="신청하기"
-          onButtonClick={() => setIsApplyModalOpen(true)}
+          buttonLabel={applyButtonLabel}
+          buttonVariant={isApplyDisabled ? 'gray' : 'primary'}
+          buttonDisabled={isApplyDisabled}
+          onButtonClick={
+            isApplyDisabled ? undefined : () => setIsApplyModalOpen(true)
+          }
         />
       ) : null}
 
@@ -262,6 +318,7 @@ export function VolunteerDetailPage() {
                 variant="gray"
                 fullWidth
                 className="!rounded-[8px]"
+                disabled={isApplying}
                 onClick={() => setIsApplyModalOpen(false)}
               >
                 아니요
@@ -269,11 +326,18 @@ export function VolunteerDetailPage() {
               <Button
                 fullWidth
                 className="!rounded-[8px]"
-                onClick={() => setIsApplyModalOpen(false)}
+                disabled={isApplying}
+                onClick={() => void handleApplyVolunteer()}
               >
-                네
+                {isApplying ? '신청 중...' : '네'}
               </Button>
             </div>
+
+            {applicationError ? (
+              <p className="mt-3 text-center text-sm leading-6 text-red-500">
+                {applicationError}
+              </p>
+            ) : null}
           </div>
         </div>
       ) : null}

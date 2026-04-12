@@ -21,6 +21,7 @@ import { ValueStorePaymentCompletePage } from '../pages/esg/social/ValueStorePay
 import { ValueStorePaymentPage } from '../pages/esg/social/ValueStorePaymentPage'
 import { ValueStorePaymentRedirectPage } from '../pages/esg/social/ValueStorePaymentRedirectPage'
 import { ValueStorePage } from '../pages/esg/social/ValueStorePage'
+import { VolunteerCompletePage } from '../pages/esg/social/VolunteerCompletePage'
 import { VolunteerDetailPage } from '../pages/esg/social/VolunteerDetailPage'
 import { VolunteerPage } from '../pages/esg/social/VolunteerPage'
 
@@ -118,6 +119,10 @@ function AppRoutes() {
           <Route
             path={ROUTE_PATHS.activitySocialVolunteerDetail}
             element={<VolunteerDetailPage />}
+          />
+          <Route
+            path={ROUTE_PATHS.activitySocialVolunteerComplete}
+            element={<VolunteerCompletePage />}
           />
           <Route
             path={ROUTE_PATHS.activitySocialProductDetail}

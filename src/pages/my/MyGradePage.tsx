@@ -24,6 +24,8 @@ const SCORE_CHART_MAX = 1000
 const INITIAL_LOG_SIZE = 5
 const LOAD_MORE_SIZE = 10
 const SCORE_GRID_VALUES = [0, 250, 500, 750, 1000]
+const DEFAULT_SCORE_CHART_WIDTH = 320
+const SCORE_CHART_HEIGHT = 190
 const numberFormatter = new Intl.NumberFormat('ko-KR')
 
 const FILTER_OPTIONS: Array<{ label: string; value: ActivityStatusFilter }> = [
@@ -89,12 +91,14 @@ export const MyGradePage = () => {
   const navigate = useNavigate()
   const [activeFilter, setActiveFilter] = useState<ActivityStatusFilter>('ALL')
   const activeFilterRef = useRef<ActivityStatusFilter>('ALL')
+  const chartContainerRef = useRef<HTMLDivElement | null>(null)
   const [overviewRequestKey, setOverviewRequestKey] = useState(0)
   const [overview, setOverview] = useState<ActivityStatusOverviewResponse | null>(null)
   const [logs, setLogs] = useState<ActivityStatusLogItem[]>([])
   const [totalLogCount, setTotalLogCount] = useState(0)
   const [nextCursor, setNextCursor] = useState<string | null>(null)
   const [hasNext, setHasNext] = useState(false)
+  const [chartWidth, setChartWidth] = useState(DEFAULT_SCORE_CHART_WIDTH)
   const [isOverviewLoading, setIsOverviewLoading] = useState(true)
   const [isLogsLoading, setIsLogsLoading] = useState(true)
   const [isLoadingMore, setIsLoadingMore] = useState(false)
@@ -104,6 +108,40 @@ export const MyGradePage = () => {
   useEffect(() => {
     activeFilterRef.current = activeFilter
   }, [activeFilter])
+
+  useEffect(() => {
+    const container = chartContainerRef.current
+
+    if (!container || typeof ResizeObserver === 'undefined') {
+      return
+    }
+
+    const updateChartWidth = (nextWidth: number) => {
+      if (nextWidth <= 0) {
+        return
+      }
+
+      setChartWidth((current) => (current === nextWidth ? current : nextWidth))
+    }
+
+    updateChartWidth(Math.floor(container.getBoundingClientRect().width))
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0]
+
+      if (!entry) {
+        return
+      }
+
+      updateChartWidth(Math.floor(entry.contentRect.width))
+    })
+
+    observer.observe(container)
+
+    return () => {
+      observer.disconnect()
+    }
+  }, [overview, overviewError])
 
   useEffect(() => {
     let cancelled = false
@@ -240,8 +278,8 @@ export const MyGradePage = () => {
       return null
     }
 
-    const width = 320
-    const height = 190
+    const width = chartWidth
+    const height = SCORE_CHART_HEIGHT
     const padding = { top: 20, right: 18, bottom: 28, left: 32 }
     const innerWidth = width - padding.left - padding.right
     const innerHeight = height - padding.top - padding.bottom
@@ -273,7 +311,7 @@ export const MyGradePage = () => {
       areaPath,
       gridValues: SCORE_GRID_VALUES,
     }
-  }, [monthlyScoreSeries])
+  }, [chartWidth, monthlyScoreSeries])
 
   return (
     <MainLayout
@@ -424,18 +462,22 @@ export const MyGradePage = () => {
           />
 
           {isOverviewInitialLoading ? (
-            <div className="pt-2">
+            <div ref={chartContainerRef} className="pt-1">
               <SkeletonBlock className="h-[210px] w-full rounded-control" />
             </div>
           ) : hasOverviewError ? (
-            <div className="flex items-center justify-center py-8 text-center text-sm font-medium text-font-sub">
+            <div
+              ref={chartContainerRef}
+              className="flex items-center justify-center py-8 text-center text-sm font-medium text-font-sub"
+            >
               활동 현황 정보를 불러오지 못했습니다.
             </div>
           ) : scoreChart ? (
-            <div className="pt-1">
+            <div ref={chartContainerRef} className="pt-1">
               <svg
                 viewBox={`0 0 ${scoreChart.width} ${scoreChart.height}`}
-                className="h-[210px] w-full overflow-visible"
+                className="block w-full overflow-visible"
+                style={{ height: 'auto' }}
                 aria-label="월별 점수 변화 그래프"
               >
                 {scoreChart.gridValues.map((value) => {
@@ -507,7 +549,10 @@ export const MyGradePage = () => {
               </svg>
             </div>
           ) : (
-            <div className="flex items-center justify-center py-8 text-sm font-medium text-font-sub">
+            <div
+              ref={chartContainerRef}
+              className="flex items-center justify-center py-8 text-sm font-medium text-font-sub"
+            >
               그래프 데이터가 없습니다.
             </div>
           )}

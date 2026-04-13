@@ -27,7 +27,7 @@ const menuItems = [
   },
   {
     key: 'report',
-    label: 'ESG 활동 보고서',
+    label: 'ESG 활동 인증서',
     icon: <FileChartColumn size={18} />,
     path: ROUTE_PATHS.myReport,
   },

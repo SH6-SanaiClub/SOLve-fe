@@ -41,3 +41,20 @@ export interface FinanceProduct {
   applyFields: FinanceInfoField[]
   completion: FinanceProductCompletion
 }
+
+export interface SavingsRecommendItem {
+  productId: string
+  productName: string
+  matchScore: number
+  expectedMaxRate: string
+  reason: string
+  actionable: string
+  isNewUserRecommend: boolean
+  isAlreadyJoined: boolean
+  isIneligible: boolean
+}
+
+export interface SavingsRecommendResponse {
+  isNewUser: boolean
+  recommendation: SavingsRecommendItem
+}

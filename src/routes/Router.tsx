@@ -46,6 +46,7 @@ import { MyReportPage } from '../pages/my/MyReportPage'
 import { MySavingsHistoryPage } from '../pages/my/MySavingsHistoryPage'
 import { MyPage } from '../pages/my/MyPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
+import { ReportVerificationPage } from '../pages/report/ReportVerificationPage'
 import { RecommendPage } from '../pages/recommend/RecommendPage'
 import { EnvironmentEntryModalRoute } from '../pages/esg/env/EnvironmentEntryModalRoute'
 import { EnvironmentEntryPage } from '../pages/esg/env/EnvironmentEntryPage'
@@ -80,6 +81,8 @@ function AppRoutes() {
           <Route path={ROUTE_PATHS.signup} element={<SignupPage />} />
           <Route path={ROUTE_PATHS.signupComplete} element={<SignupCompletePage />} />
         </Route>
+
+        <Route path={ROUTE_PATHS.reportVerify} element={<ReportVerificationPage />} />
 
         <Route element={<ProtectedRoute />}>
           <Route path={ROUTE_PATHS.survey} element={<SurveyPage />} />

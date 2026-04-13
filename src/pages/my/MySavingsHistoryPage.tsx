@@ -1,4 +1,5 @@
-﻿import { useNavigate } from 'react-router-dom'
+﻿import { useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Badge, Card, SectionHeader } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import MainLayout from '../../components/layout/MainLayout'
@@ -7,11 +8,41 @@ import {
   BOTTOM_NAVIGATION_ROUTE_BY_KEY,
 } from '../../constants/bottomNavigation'
 import { ROUTE_PATHS } from '../../constants/routePaths'
-import { savingsHistoryItems } from './financeHistoryData'
+import { getFinanceSavingHistory } from '../../services/financeService'
+import type { FinanceSavingHistoryItem } from '../../types/finance'
 import { ShopHeader } from '../shop/components/ShopHeader'
+import { formatCurrency, formatDate } from '../finance/financeUi'
 
 export const MySavingsHistoryPage = () => {
   const navigate = useNavigate()
+  const { savingId } = useParams()
+  const [historyItems, setHistoryItems] = useState<FinanceSavingHistoryItem[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('')
+
+  useEffect(() => {
+    const fetchFinanceSavingHistory = async () => {
+      if (!savingId) {
+        setErrorMessage('조회할 적금 상품을 찾을 수 없어요.')
+        setIsLoading(false)
+        return
+      }
+
+      try {
+        setIsLoading(true)
+        setErrorMessage('')
+
+        const response = await getFinanceSavingHistory(savingId)
+        setHistoryItems(response)
+      } catch {
+        setErrorMessage('적금 이력을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    void fetchFinanceSavingHistory()
+  }, [savingId])
 
   const handleBottomNavigation = (key: string) => {
     const nextPath =
@@ -37,30 +68,66 @@ export const MySavingsHistoryPage = () => {
       <div className="mt-5 flex flex-col gap-3">
         <SectionHeader
           title={<span className="text-base font-semibold text-font-main">최근 거래 내역</span>}
-          right={<span className="text-xs font-medium text-primary-400">{savingsHistoryItems.length}건</span>}
+          right={<span className="text-xs font-medium text-primary-400">{historyItems.length}건</span>}
         />
 
-        <Card className="!gap-0 !rounded-control !border-0 !p-0 shadow-sm">
-          {savingsHistoryItems.map((item, index) => (
-            <div
-              key={item.id}
-              className={`px-5 py-4 ${index < savingsHistoryItems.length - 1 ? 'border-b border-gray-100' : ''}`}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <Badge tone="neutral" variant="soft">{item.category}</Badge>
-                    <span className="text-xs text-gray-400">{item.date}</span>
+        {isLoading ? (
+          <Card className="!rounded-control !border-0 !px-5 !py-6 shadow-sm">
+            <p className="text-sm text-gray-500">적금 이력을 불러오는 중입니다.</p>
+          </Card>
+        ) : null}
+
+        {!isLoading && errorMessage ? (
+          <Card className="!rounded-control !border-0 !px-5 !py-6 shadow-sm">
+            <p className="text-sm text-red-500">{errorMessage}</p>
+          </Card>
+        ) : null}
+
+        {!isLoading && !errorMessage && historyItems.length === 0 ? (
+          <Card className="!rounded-control !border-0 !px-5 !py-6 shadow-sm">
+            <p className="text-sm text-gray-500">적금 거래 이력이 없습니다.</p>
+          </Card>
+        ) : null}
+
+        {historyItems.length ? (
+          <Card className="!gap-0 !rounded-control !border-0 !p-0 shadow-sm">
+            {historyItems.map((item, index) => {
+              const isInterest = item.type === 'INTEREST'
+
+              return (
+                <div
+                  key={item.historyId}
+                  className={`px-5 py-4 ${index < historyItems.length - 1 ? 'border-b border-gray-100' : ''}`}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <Badge tone={isInterest ? 'primary' : 'neutral'} variant="soft">
+                          적금
+                        </Badge>
+                        <span className="text-xs text-gray-400">{formatDate(item.paymentDate)}</span>
+                      </div>
+                      <p className="mt-2 truncate text-sm font-medium text-font-main">{item.productName}</p>
+                      <p className="mt-1 text-xs text-gray-500">
+                        {isInterest ? '만기 이자 지급' : '월 납입 완료'}
+                      </p>
+                    </div>
+                    <span
+                      className={`shrink-0 text-sm font-semibold ${
+                        isInterest ? 'text-primary-500' : 'text-gray-700'
+                      }`}
+                    >
+                      +
+                      {formatCurrency(Math.abs(item.amount))}
+                    </span>
                   </div>
-                  <p className="mt-2 truncate text-sm font-medium text-font-main">{item.title}</p>
-                  <p className="mt-1 text-xs text-gray-500">{item.status}</p>
                 </div>
-                <span className="shrink-0 text-sm font-semibold text-gray-700">{item.amount}</span>
-              </div>
-            </div>
-          ))}
-        </Card>
+              )
+            })}
+          </Card>
+        ) : null}
       </div>
     </MainLayout>
   )
 }
+

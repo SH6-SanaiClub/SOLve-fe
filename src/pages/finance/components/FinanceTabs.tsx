@@ -1,6 +1,8 @@
+﻿export type FinanceTabValue = 'all' | 'savings' | 'loan'
+
 interface FinanceTabsProps {
-  activeTab: 'all' | 'savings' | 'loan'
-  onChange: (tab: 'all' | 'savings' | 'loan') => void
+  activeTab: FinanceTabValue
+  onChange: (tab: FinanceTabValue) => void
 }
 
 const tabItems = [

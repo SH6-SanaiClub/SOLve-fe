@@ -1,4 +1,5 @@
-﻿import { useNavigate } from 'react-router-dom'
+﻿import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Badge, Card, SectionHeader } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import MainLayout from '../../components/layout/MainLayout'
@@ -7,11 +8,34 @@ import {
   BOTTOM_NAVIGATION_ROUTE_BY_KEY,
 } from '../../constants/bottomNavigation'
 import { ROUTE_PATHS } from '../../constants/routePaths'
-import { loanHistoryItems } from './financeHistoryData'
+import { getFinanceHistory } from '../../services/financeService'
+import type { FinanceLoanHistoryItem } from '../../types/finance'
 import { ShopHeader } from '../shop/components/ShopHeader'
+import { formatCurrency, formatDate } from '../finance/financeUi'
 
 export const MyLoanHistoryPage = () => {
   const navigate = useNavigate()
+  const [historyItems, setHistoryItems] = useState<FinanceLoanHistoryItem[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('')
+
+  useEffect(() => {
+    const fetchFinanceHistory = async () => {
+      try {
+        setIsLoading(true)
+        setErrorMessage('')
+
+        const response = await getFinanceHistory()
+        setHistoryItems(response.loans)
+      } catch {
+        setErrorMessage('대출 이력을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    void fetchFinanceHistory()
+  }, [])
 
   const handleBottomNavigation = (key: string) => {
     const nextPath =
@@ -37,32 +61,58 @@ export const MyLoanHistoryPage = () => {
       <div className="mt-5 flex flex-col gap-3">
         <SectionHeader
           title={<span className="text-base font-semibold text-font-main">최근 거래 내역</span>}
-          right={<span className="text-xs font-medium text-primary-400">{loanHistoryItems.length}건</span>}
+          right={<span className="text-xs font-medium text-primary-400">{historyItems.length}건</span>}
         />
 
-        <Card className="!gap-0 !rounded-control !border-0 !p-0 shadow-sm">
-          {loanHistoryItems.map((item, index) => (
-            <div
-              key={item.id}
-              className={`px-5 py-4 ${index < loanHistoryItems.length - 1 ? 'border-b border-gray-100' : ''}`}
-            >
-              <div className="flex items-start justify-between gap-4">
-                <div className="min-w-0">
-                  <div className="flex items-center gap-2">
-                    <Badge tone="primary" variant="soft">{item.category}</Badge>
-                    <span className="text-xs text-gray-400">{item.date}</span>
+        {isLoading ? (
+          <Card className="!rounded-control !border-0 !px-5 !py-6 shadow-sm">
+            <p className="text-sm text-gray-500">대출 이력을 불러오는 중입니다.</p>
+          </Card>
+        ) : null}
+
+        {!isLoading && errorMessage ? (
+          <Card className="!rounded-control !border-0 !px-5 !py-6 shadow-sm">
+            <p className="text-sm text-red-500">{errorMessage}</p>
+          </Card>
+        ) : null}
+
+        {!isLoading && !errorMessage && historyItems.length === 0 ? (
+          <Card className="!rounded-control !border-0 !px-5 !py-6 shadow-sm">
+            <p className="text-sm text-gray-500">대출 거래 이력이 없습니다.</p>
+          </Card>
+        ) : null}
+
+        {historyItems.length ? (
+          <Card className="!gap-0 !rounded-control !border-0 !p-0 shadow-sm">
+            {historyItems.map((item, index) => {
+              const isPayout = index === historyItems.length - 1
+              const amountText = `${isPayout ? '+' : '-'}${formatCurrency(Math.abs(item.amount))}`
+
+              return (
+                <div
+                  key={item.historyId}
+                  className={`px-5 py-4 ${index < historyItems.length - 1 ? 'border-b border-gray-100' : ''}`}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <Badge tone="primary" variant="soft">대출</Badge>
+                        <span className="text-xs text-gray-400">{formatDate(item.paymentDate)}</span>
+                      </div>
+                      <p className="mt-2 truncate text-sm font-medium text-font-main">{item.productName}</p>
+                      <p className="mt-1 text-xs text-gray-500">{isPayout ? '대출 실행 완료' : '상환 완료'}</p>
+                    </div>
+                    <span className={`shrink-0 text-sm font-semibold ${isPayout ? 'text-primary-500' : 'text-gray-700'}`}>
+                      {amountText}
+                    </span>
                   </div>
-                  <p className="mt-2 truncate text-sm font-medium text-font-main">{item.title}</p>
-                  <p className="mt-1 text-xs text-gray-500">{item.status}</p>
                 </div>
-                <span className={`shrink-0 text-sm font-semibold ${item.amount.startsWith('+') ? 'text-primary-500' : 'text-gray-700'}`}>
-                  {item.amount}
-                </span>
-              </div>
-            </div>
-          ))}
-        </Card>
+              )
+            })}
+          </Card>
+        ) : null}
       </div>
     </MainLayout>
   )
 }
+

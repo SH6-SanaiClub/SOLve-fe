@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Card, Icons, SectionHeader } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import MainLayout from '../../components/layout/MainLayout'
+// import { getS3AssetUrl } from '../../constants/assetUrls'
 import {
   BOTTOM_NAVIGATION_ITEMS,
   BOTTOM_NAVIGATION_ROUTE_BY_KEY,
@@ -13,6 +14,7 @@ import type { MyPointHistoryItem } from '../../types/myPoint'
 import { ShopHeader } from '../shop/components/ShopHeader'
 
 const numberFormatter = new Intl.NumberFormat('ko-KR')
+// const pointImageUrl = getS3AssetUrl('point.webp')
 
 const pointSummary = {
   guide: '적립과 사용 내역을 한눈에 확인할 수 있어요',
@@ -111,12 +113,21 @@ export const MyPointManagePage = () => {
     >
       <section className="mt-2 flex flex-col gap-5">
         <Card className="mt-3 !gap-3">
-          <div className="space-y-2">
+          <div className="flex items-start justify-between gap-4">
+            <div className="space-y-2">
             <p className="text-sm font-medium text-font-sub">현재 보유 포인트</p>
             <p className="text-[34px] leading-none font-semibold tracking-tight text-font-main">
               {numberFormatter.format(totalPoints)}
               <span className="ml-1 text-[20px] font-semibold text-font-sub">P</span>
             </p>
+            </div>
+
+            {/* <img
+              src={pointImageUrl}
+              alt=""
+              aria-hidden="true"
+              className="mt-[-15px] h-[90px] w-[90px] mr-3 shrink-0 object-contain"
+            /> */}
           </div>
 
           <p className="text-sm leading-6 text-font-sub mt-2">{pointSummary.guide}</p>

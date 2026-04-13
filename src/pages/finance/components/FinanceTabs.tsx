@@ -1,27 +1,17 @@
-import { useNavigate } from 'react-router-dom'
-import { ROUTE_PATHS } from '../../../../constants/routePaths'
+﻿export type FinanceTabValue = 'all' | 'savings' | 'loan'
 
-interface SocialActivityTabsProps {
-  activeTab: 'donation' | 'store' | 'volunteer'
+interface FinanceTabsProps {
+  activeTab: FinanceTabValue
+  onChange: (tab: FinanceTabValue) => void
 }
 
 const tabItems = [
-  {
-    value: 'donation',
-    label: '기부',
-    path: ROUTE_PATHS.activitySocialDonation,
-  },
-  { value: 'store', label: '가치가게', path: ROUTE_PATHS.activitySocialStore },
-  {
-    value: 'volunteer',
-    label: '봉사',
-    path: ROUTE_PATHS.activitySocialVolunteer,
-  },
+  { value: 'all', label: '전체' },
+  { value: 'savings', label: '적금 상품' },
+  { value: 'loan', label: '대출 상품' },
 ] as const
 
-export const SocialActivityTabs = ({ activeTab }: SocialActivityTabsProps) => {
-  const navigate = useNavigate()
-
+export const FinanceTabs = ({ activeTab, onChange }: FinanceTabsProps) => {
   return (
     <div className="sticky top-(--header-h) z-40 mx-[-16px] flex border-b border-gray-200 bg-white">
       {tabItems.map((item) => {
@@ -34,8 +24,8 @@ export const SocialActivityTabs = ({ activeTab }: SocialActivityTabsProps) => {
             role="tab"
             aria-selected={isActive}
             onClick={() => {
-              if (item.path && !isActive) {
-                navigate(item.path)
+              if (!isActive) {
+                onChange(item.value)
               }
             }}
             className={`relative flex h-12 w-1/3 items-center justify-center transition-colors ${

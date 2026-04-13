@@ -2,10 +2,12 @@ import React from 'react';
 import Button from './Button';
 
 interface BottomActionBarProps {
-    leftText: string;
+    leftText: React.ReactNode;
     buttonLabel: string;
     onButtonClick?: () => void;
     className?: string;
+    buttonVariant?: 'primary' | 'outline' | 'sub' | 'gray';
+    buttonDisabled?: boolean;
 }
 
 const BottomActionBar: React.FC<BottomActionBarProps> = ({
@@ -13,6 +15,8 @@ const BottomActionBar: React.FC<BottomActionBarProps> = ({
     buttonLabel,
     onButtonClick,
     className = '',
+    buttonVariant = 'primary',
+    buttonDisabled = false,
 }) => {
     return (
         <div
@@ -28,7 +32,12 @@ const BottomActionBar: React.FC<BottomActionBarProps> = ({
                 </p>
 
                 <div className="min-w-0 flex-1">
-                    <Button fullWidth onClick={onButtonClick}>
+                    <Button
+                        fullWidth
+                        variant={buttonVariant}
+                        disabled={buttonDisabled}
+                        onClick={onButtonClick}
+                    >
                         {buttonLabel}
                     </Button>
                 </div>

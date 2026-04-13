@@ -1,4 +1,4 @@
-﻿import { Coins, FileChartColumn, FileText, Landmark, ShieldCheck, UserRound } from 'lucide-react'
+﻿import { Coins, FileChartColumn, Landmark, ShieldCheck, UserRound } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Card, Icons, SectionHeader } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
@@ -21,19 +21,13 @@ const menuItems = [
   },
   {
     key: 'grade',
-    label: 'ESG 점수 및 등급',
+    label: 'ESG 활동 현황',
     icon: <ShieldCheck size={18} />,
     path: ROUTE_PATHS.myGrade,
   },
   {
-    key: 'history',
-    label: 'ESG 활동 상세 내역',
-    icon: <FileText size={18} />,
-    path: ROUTE_PATHS.myHistory,
-  },
-  {
     key: 'report',
-    label: 'ESG 활동 보고서',
+    label: 'ESG 활동 인증서',
     icon: <FileChartColumn size={18} />,
     path: ROUTE_PATHS.myReport,
   },
@@ -59,7 +53,7 @@ const menuItems = [
 
 const accountMenuItems = menuItems.filter((item) => item.key === 'profile')
 const activityMenuItems = menuItems.filter((item) =>
-  ['grade', 'history', 'storePurchase', 'report', 'point'].includes(item.key),
+  ['grade', 'storePurchase', 'report', 'point'].includes(item.key),
 )
 const financeMenuItems = menuItems.filter((item) => item.key === 'finance')
 

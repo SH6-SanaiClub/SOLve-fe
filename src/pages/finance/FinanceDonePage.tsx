@@ -2,23 +2,16 @@
 import { Button, Card, InfoRow } from '../../components/common'
 import MainLayout from '../../components/layout/MainLayout'
 import { ROUTE_PATHS } from '../../constants/routePaths'
-import { getFinanceProductById } from './financeData'
+import type { FinanceDoneState } from '../../types/finance'
 import { PageScaffold } from '../PageScaffold'
 import financeCompletionMascot from '../../assets/finance/finance-completion-mascot.png'
-
-interface FinanceDoneLocationState {
-  productId?: string
-  productType?: 'LOAN' | 'SAVINGS'
-}
 
 export const FinanceDonePage = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const routeState = location.state as FinanceDoneLocationState | undefined
+  const doneState = location.state as FinanceDoneState | undefined
 
-  const product = routeState?.productId ? getFinanceProductById(routeState.productId) : undefined
-
-  if (!product) {
+  if (!doneState) {
     return (
       <PageScaffold
         title="완료 정보를 불러올 수 없어요"
@@ -40,14 +33,14 @@ export const FinanceDonePage = () => {
           />
 
           <h2 className="mt-3 text-center text-[26px] font-semibold leading-[1.3] text-font-main">
-            {product.completion.title}
+            {doneState.title}
           </h2>
-          <p className="mt-3 text-center text-[15px] leading-[1.8] text-font-sub">
-            {product.completion.description}
+          <p className="mt-3 text-center text-[15px] leading-[1.8] text-font-sub whitespace-pre-line">
+            {doneState.description}
           </p>
 
           <Card className="mt-8 w-full !gap-[14px] !rounded-control !px-5 !py-5 shadow-sm">
-            {product.completion.fields.map((field, index) => (
+            {doneState.fields.map((field, index) => (
               <div key={field.label} className="flex flex-col gap-[14px]">
                 <InfoRow
                   label={field.label}
@@ -59,9 +52,7 @@ export const FinanceDonePage = () => {
                       : 'text-[14px] font-semibold leading-5 text-font-main'
                   }
                 />
-                {index < product.completion.fields.length - 1 ? (
-                  <div className="h-px bg-gray-200" />
-                ) : null}
+                {index < doneState.fields.length - 1 ? <div className="h-px bg-gray-200" /> : null}
               </div>
             ))}
           </Card>
@@ -72,9 +63,9 @@ export const FinanceDonePage = () => {
               fullWidth
               size="md"
               className="!h-[56px] !rounded-control"
-              onClick={() => navigate(ROUTE_PATHS.my)}
+              onClick={() => navigate(ROUTE_PATHS.myFinance)}
             >
-              {product.completion.primaryActionLabel}
+              {doneState.primaryActionLabel}
             </Button>
             <Button
               fullWidth
@@ -82,7 +73,7 @@ export const FinanceDonePage = () => {
               className="!h-[56px] !rounded-control"
               onClick={() => navigate(ROUTE_PATHS.home)}
             >
-              {product.completion.secondaryActionLabel}
+              {doneState.secondaryActionLabel}
             </Button>
           </div>
         </div>
@@ -90,3 +81,4 @@ export const FinanceDonePage = () => {
     </div>
   )
 }
+

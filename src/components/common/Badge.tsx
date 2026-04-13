@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'
 
 /**
  * 상태, 카테고리, 포인트 표시용 배지.
@@ -7,9 +7,9 @@ import React from 'react';
  * <Badge tone="success" variant="soft">+50P</Badge>
  */
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  children: React.ReactNode;
-  tone?: 'primary' | 'neutral' | 'success' | 'danger';
-  variant?: 'soft' | 'outline' | 'solid';
+  children: React.ReactNode
+  tone?: 'primary' | 'neutral' | 'success' | 'danger'
+  variant?: 'soft' | 'outline' | 'solid'
 }
 
 const Badge: React.FC<BadgeProps> = ({
@@ -21,9 +21,9 @@ const Badge: React.FC<BadgeProps> = ({
 }) => {
   const toneStyles = {
     primary: {
-      soft: 'bg-primary-50 text-primary-500',
+      soft: 'bg-primary-50 text-primary-400',
       outline: 'border border-primary-200 bg-white text-primary-500',
-      solid: 'bg-primary-500 text-white',
+      solid: 'bg-primary-400 text-white',
     },
     neutral: {
       soft: 'bg-gray-100 text-font-sub',
@@ -40,10 +40,10 @@ const Badge: React.FC<BadgeProps> = ({
       outline: 'border border-[#FECACA] bg-white text-error',
       solid: 'bg-error text-white',
     },
-  };
+  }
 
   return (
-      <span
+    <span
       className={`
         inline-flex items-center justify-center rounded-badge px-2 py-1
         text-xs font-medium leading-none
@@ -54,7 +54,7 @@ const Badge: React.FC<BadgeProps> = ({
     >
       {children}
     </span>
-  );
-};
+  )
+}
 
-export default Badge;
+export default Badge

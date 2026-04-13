@@ -43,3 +43,14 @@ export interface VolunteerAttendanceInfo {
   checkInAt: string | null
   checkOutAt: string | null
 }
+
+export interface VolunteerCheckInRequest {
+  qrToken: string
+  latitude: number
+  longitude: number
+}
+
+export interface VolunteerCheckInResponse {
+  checkInAt: string
+  status: 'ATTENDED'
+}

@@ -3,6 +3,8 @@ import type {
   ApplyVolunteerRequest,
   VolunteerApplicationResponse,
   VolunteerAttendanceInfo,
+  VolunteerCheckInRequest,
+  VolunteerCheckInResponse,
   VolunteerDetail,
   VolunteerListResponse,
 } from '../types/volunteer'
@@ -36,6 +38,16 @@ export const getVolunteerAttendanceInfo = async (
 ): Promise<VolunteerAttendanceInfo> => {
   const response = await apiClient.get<VolunteerAttendanceInfo>(
     `/v1/esg/s/volunteers/attendance?token=${encodeURIComponent(token)}`,
+  )
+  return response.data
+}
+
+export const checkInVolunteerAttendance = async (
+  payload: VolunteerCheckInRequest,
+): Promise<VolunteerCheckInResponse> => {
+  const response = await apiClient.post<VolunteerCheckInResponse>(
+    '/v1/esg/s/volunteers/check-in',
+    payload,
   )
   return response.data
 }

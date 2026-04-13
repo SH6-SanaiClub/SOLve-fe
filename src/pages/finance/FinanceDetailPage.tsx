@@ -1,10 +1,35 @@
-﻿import { useNavigate, useParams } from 'react-router-dom'
+﻿import { useEffect, useMemo, useState } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, InfoRow } from '../../components/common'
 import MainLayout from '../../components/layout/MainLayout'
 import { ROUTE_PATHS, getFinanceApplyPath } from '../../constants/routePaths'
-import { getFinanceProductById } from './financeData'
+import {
+  applyFinanceSavings,
+  getFinanceLoanPreview,
+  getFinanceProducts,
+} from '../../services/financeService'
+import type {
+  FinanceDoneState,
+  FinanceListProduct,
+  FinanceLoanPreview,
+  FinanceProductType,
+} from '../../types/finance'
 import { PageScaffold } from '../PageScaffold'
 import { ShopHeader } from '../shop/components/ShopHeader'
+import financeMascotImageSrc from '../../assets/finance/finance-mascot.png'
+import {
+  FINANCE_NOTICE_LINES,
+  LOAN_PREVIEW_REASON_LABEL,
+  buildLoanDetailFields,
+  buildSavingsDetailFields,
+  buildSavingsDoneState,
+  buildSavingsRateSummary,
+  formatRate,
+} from './financeUi'
+
+interface FinanceDetailLocationState {
+  productType?: FinanceProductType
+}
 
 const renderNoticeBlock = (noticeLines: string[]) => (
   <div className="px-[3px]">
@@ -19,10 +44,83 @@ const renderNoticeBlock = (noticeLines: string[]) => (
 
 export const FinanceDetailPage = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const { id } = useParams()
+  const routeState = location.state as FinanceDetailLocationState | undefined
+  const [productType, setProductType] = useState<FinanceProductType | null>(routeState?.productType ?? null)
+  const [loanPreview, setLoanPreview] = useState<FinanceLoanPreview | null>(null)
+  const [savingsProduct, setSavingsProduct] = useState<FinanceListProduct | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
 
-  const product = id ? getFinanceProductById(id) : undefined
-  const rateHighlightLabel = product?.heroRateHighlight?.replace(/^최고\s*/, '') ?? ''
+  useEffect(() => {
+    const fetchFinanceDetail = async () => {
+      if (!id) {
+        setErrorMessage('금융 상품을 찾을 수 없어요.')
+        setIsLoading(false)
+        return
+      }
+
+      try {
+        setIsLoading(true)
+        setErrorMessage('')
+
+        if (routeState?.productType === 'LOAN') {
+          const preview = await getFinanceLoanPreview(id)
+          setLoanPreview(preview)
+          setSavingsProduct(null)
+          setProductType('LOAN')
+          return
+        }
+
+        if (routeState?.productType === 'SAVINGS') {
+          const savings = await getFinanceProducts('savings')
+          const selected = savings.find((product) => String(product.id) === id)
+
+          if (!selected) {
+            throw new Error('NOT_FOUND')
+          }
+
+          setSavingsProduct(selected)
+          setLoanPreview(null)
+          setProductType('SAVINGS')
+          return
+        }
+
+        const [loanResult, savingsResult] = await Promise.allSettled([
+          getFinanceLoanPreview(id),
+          getFinanceProducts('savings'),
+        ])
+
+        if (loanResult.status === 'fulfilled') {
+          setLoanPreview(loanResult.value)
+          setSavingsProduct(null)
+          setProductType('LOAN')
+          return
+        }
+
+        if (savingsResult.status === 'fulfilled') {
+          const selected = savingsResult.value.find((product) => String(product.id) === id)
+
+          if (selected) {
+            setSavingsProduct(selected)
+            setLoanPreview(null)
+            setProductType('SAVINGS')
+            return
+          }
+        }
+
+        throw new Error('NOT_FOUND')
+      } catch {
+        setErrorMessage('금융 상품 상세 정보를 불러오지 못했어요.')
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    void fetchFinanceDetail()
+  }, [id, routeState?.productType])
 
   const handleBack = () => {
     if (window.history.length > 1) {
@@ -33,27 +131,50 @@ export const FinanceDetailPage = () => {
     navigate(ROUTE_PATHS.finance)
   }
 
-  if (!product) {
+  const savingsDoneState = useMemo<FinanceDoneState | null>(() => {
+    if (!savingsProduct) {
+      return null
+    }
+
+    return buildSavingsDoneState(savingsProduct)
+  }, [savingsProduct])
+
+  const handleSavingsApply = async () => {
+    if (!savingsProduct) {
+      return
+    }
+
+    try {
+      setIsSubmitting(true)
+      await applyFinanceSavings({ productId: savingsProduct.id })
+
+      navigate(ROUTE_PATHS.financeDone, {
+        state: savingsDoneState,
+      })
+    } catch {
+      setErrorMessage('적금 가입 처리에 실패했어요. 잠시 후 다시 시도해 주세요.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  if (isLoading) {
     return (
       <PageScaffold
-        title="금융 상품을 찾을 수 없어요"
-        description="존재하지 않거나 아직 준비되지 않은 금융 상품입니다."
+        title="금융 상품을 불러오는 중이에요"
+        description="잠시만 기다려 주세요."
       />
     )
   }
 
-  const handlePrimaryAction = () => {
-    if (product.type === 'LOAN') {
-      navigate(getFinanceApplyPath(product.id))
-      return
-    }
-
-    navigate(ROUTE_PATHS.financeDone, {
-      state: { productId: product.id, productType: product.type },
-    })
+  if (errorMessage && !productType) {
+    return <PageScaffold title="금융 상품을 찾을 수 없어요" description={errorMessage} />
   }
 
-  if (product.type === 'LOAN') {
+  if (productType === 'LOAN' && loanPreview) {
+    const detailFields = buildLoanDetailFields(loanPreview)
+    const isAvailable = loanPreview.available
+
     return (
       <div className="relative min-h-screen bg-bg-light font-pretendard">
         <MainLayout
@@ -64,24 +185,22 @@ export const FinanceDetailPage = () => {
             <section className="flex items-start justify-between gap-3 px-[1px]">
               <div className="min-w-0 flex-1">
                 <h2 className="text-[22px] font-semibold leading-[1.2] text-font-main">
-                  {product.name}
+                  {loanPreview.name}
                 </h2>
                 <p className="mt-[10px] break-keep text-[15px] leading-[1.25] text-font-sub">
-                  {product.heroDescription}
+                  {loanPreview.subtitle}
                 </p>
               </div>
 
-              {product.heroImageSrc ? (
-                <img
-                  src={product.heroImageSrc}
-                  alt={product.name}
-                  className="h-[77px] w-[73px] shrink-0 object-contain"
-                />
-              ) : null}
+              <img
+                src={financeMascotImageSrc}
+                alt={loanPreview.name}
+                className="h-[77px] w-[73px] shrink-0 object-contain"
+              />
             </section>
 
             <div className="flex flex-col gap-[14px] px-[10px]">
-              {product.detailFields.map((field, index) => (
+              {detailFields.map((field, index) => (
                 <div key={field.label} className="flex flex-col gap-[14px]">
                   <InfoRow
                     label={field.label}
@@ -89,36 +208,135 @@ export const FinanceDetailPage = () => {
                     className="items-center"
                     valueClassName="text-[14px] font-semibold leading-5 text-font-main"
                   />
-                  {index < product.detailFields.length - 1 ? (
-                    <div className="h-px bg-gray-200" />
-                  ) : null}
+                  {index < detailFields.length - 1 ? <div className="h-px bg-gray-200" /> : null}
                 </div>
               ))}
             </div>
 
             <Card className="!gap-1 !rounded-control !border-0 !bg-gray-200 !px-[23px] !py-[18px] shadow-sm">
-              <h3 className="text-[16px] font-semibold leading-[1.2] text-gray-600">
-                {product.benefitTitle}
-              </h3>
-              <p className="mt-[6px] text-[12px] leading-[22.75px] text-gray-600">
-                {product.benefitDescription}
+              <h3 className="text-[16px] font-semibold leading-[1.2] text-gray-600">상품 안내</h3>
+                <p className="mt-[6px] text-[12px] leading-[22.75px] text-gray-600">
+                {loanPreview.description}
               </p>
+              {!isAvailable ? (
+                <p className="mt-2 text-[12px] leading-[22.75px] text-primary-500">
+                  {LOAN_PREVIEW_REASON_LABEL[loanPreview.reason]}
+                </p>
+              ) : null}
             </Card>
 
-            {renderNoticeBlock(product.noticeLines)}
+            {renderNoticeBlock(FINANCE_NOTICE_LINES)}
+
+            {errorMessage ? (
+              <Card className="!rounded-control !border-0 !px-5 !py-4 shadow-sm">
+                <p className="text-sm text-red-500">{errorMessage}</p>
+              </Card>
+            ) : null}
           </div>
         </MainLayout>
 
         <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
-          <div className="pointer-events-auto mx-auto w-full max-w-[600px] border-t border-gray-200 bg-white px-(--side-padding) pt-4 pb-[calc(16px+env(safe-area-inset-bottom))] shadow-[var(--shadow-card)]">
+          <div className="pointer-events-auto mx-auto w-full max-w-[600px] border-t border-gray-200 bg-white px-(--side-padding) pb-[calc(16px+env(safe-area-inset-bottom))] pt-4 shadow-[var(--shadow-card)]">
             <Button
               type="button"
               fullWidth
               size="md"
-              onClick={handlePrimaryAction}
+              onClick={() => navigate(getFinanceApplyPath(loanPreview.productId))}
               className="!h-[56px]"
+              disabled={!isAvailable}
             >
-              {product.actionLabel}
+              {isAvailable ? '대출 신청' : LOAN_PREVIEW_REASON_LABEL[loanPreview.reason]}
+            </Button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (productType === 'SAVINGS' && savingsProduct) {
+    const detailFields = buildSavingsDetailFields(savingsProduct)
+    const rateHighlightLabel = formatRate(savingsProduct.maxRate)
+
+    return (
+      <div className="relative min-h-screen bg-bg-light font-pretendard">
+        <MainLayout
+          header={<ShopHeader title="금융상품" onBack={handleBack} />}
+          className="bg-bg-light"
+        >
+          <div className="-mx-2 flex flex-col gap-[27px] bg-bg-light px-5 pb-[118px] pt-4">
+            <section className="flex items-center justify-between gap-2 px-[1px]">
+              <div className="min-w-0 flex-1">
+                <h2 className="text-[21px] font-semibold leading-[1.2] text-font-main">
+                  {savingsProduct.name}
+                </h2>
+                <p className="mt-[10px] break-keep text-[15px] leading-[1.2] text-font-sub">
+                  {savingsProduct.subtitle ?? ''}
+                </p>
+              </div>
+
+              <img
+                src={financeMascotImageSrc}
+                alt={savingsProduct.name}
+                className="h-[77px] w-[73px] shrink-0 object-contain"
+              />
+            </section>
+
+            <Card className="!gap-0 !rounded-control !px-[25px] !py-[17px] shadow-sm">
+              <p className="text-[15px] font-medium leading-[1.2] text-gray-500">
+                {buildSavingsRateSummary(savingsProduct)}
+              </p>
+              <div className="mt-[18px] flex items-end gap-[4px]">
+                <span className="text-[16px] font-bold leading-[1.2] text-gray-600">최고</span>
+                <span className="text-[21px] font-bold leading-[1.2] tracking-tight-sm text-primary-500">
+                  {rateHighlightLabel}
+                </span>
+              </div>
+            </Card>
+
+            <div className="flex flex-col gap-[14px] px-[10px]">
+              {detailFields.map((field, index) => (
+                <div key={field.label} className="flex flex-col gap-[14px]">
+                  <InfoRow
+                    label={field.label}
+                    value={field.value}
+                    className="items-center"
+                    valueClassName="text-[14px] font-semibold leading-5 text-font-main"
+                  />
+                  {index < detailFields.length - 1 ? <div className="h-px bg-gray-200" /> : null}
+                </div>
+              ))}
+            </div>
+
+            <div className="flex flex-col gap-[27px]">
+              <Card className="!gap-1 !rounded-control !border-0 !bg-gray-200 !px-[23px] !py-[18px] shadow-sm">
+                <h3 className="text-[16px] font-semibold leading-[1.2] text-gray-600">상품 안내</h3>
+                <p className="mt-[6px] text-[12px] leading-[22.75px] text-gray-600">
+                  {savingsProduct.description ?? ''}
+                </p>
+              </Card>
+
+              {renderNoticeBlock(FINANCE_NOTICE_LINES)}
+
+              {errorMessage ? (
+                <Card className="!rounded-control !border-0 !px-5 !py-4 shadow-sm">
+                  <p className="text-sm text-red-500">{errorMessage}</p>
+                </Card>
+              ) : null}
+            </div>
+          </div>
+        </MainLayout>
+
+        <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
+          <div className="pointer-events-auto mx-auto w-full max-w-[600px] border-t border-gray-200 bg-white px-(--side-padding) pb-[calc(16px+env(safe-area-inset-bottom))] pt-4 shadow-[var(--shadow-card)]">
+            <Button
+              type="button"
+              fullWidth
+              size="md"
+              onClick={handleSavingsApply}
+              className="!h-[56px]"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? '가입 처리 중...' : '가입하기'}
             </Button>
           </div>
         </div>
@@ -127,87 +345,10 @@ export const FinanceDetailPage = () => {
   }
 
   return (
-    <div className="relative min-h-screen bg-bg-light font-pretendard">
-      <MainLayout
-        header={<ShopHeader title="금융상품" onBack={handleBack} />}
-        className="bg-bg-light"
-      >
-        <div className="-mx-2 flex flex-col gap-[27px] bg-bg-light px-5 pb-[118px] pt-4">
-          <section className="flex items-center justify-between gap-2 px-[1px]">
-            <div className="min-w-0 flex-1">
-              <h2 className="text-[21px] font-semibold leading-[1.2] text-font-main">
-                {product.name}
-              </h2>
-              <p className="mt-[10px] break-keep text-[15px] leading-[1.2] text-font-sub">
-                {product.heroDescription}
-              </p>
-            </div>
-
-            {product.heroImageSrc ? (
-              <img
-                src={product.heroImageSrc}
-                alt={product.name}
-                className="h-[77px] w-[73px] shrink-0 object-contain"
-              />
-            ) : null}
-          </section>
-
-          <Card className="!gap-0 !rounded-control !px-[25px] !py-[17px] shadow-sm">
-            <p className="text-[15px] font-medium leading-[1.2] text-gray-500">
-              {product.heroRateSummary}
-            </p>
-            <div className="mt-[18px] flex items-end gap-[4px]">
-              <span className="text-[16px] font-bold leading-[1.2] text-gray-600">최고</span>
-              <span className="text-[21px] font-bold leading-[1.2] tracking-tight-sm text-primary-500">
-                {rateHighlightLabel}
-              </span>
-            </div>
-          </Card>
-
-          <div className="flex flex-col gap-[14px] px-[10px]">
-            {product.detailFields.map((field, index) => (
-              <div key={field.label} className="flex flex-col gap-[14px]">
-                <InfoRow
-                  label={field.label}
-                  value={field.value}
-                  className="items-center"
-                  valueClassName="text-[14px] font-semibold leading-5 text-font-main"
-                />
-                {index < product.detailFields.length - 1 ? (
-                  <div className="h-px bg-gray-200" />
-                ) : null}
-              </div>
-            ))}
-          </div>
-
-          <div className="flex flex-col gap-[27px]">
-            <Card className="!gap-1 !rounded-control !border-0 !bg-gray-200 !px-[23px] !py-[18px] shadow-sm">
-              <h3 className="text-[16px] font-semibold leading-[1.2] text-gray-600">
-                {product.benefitTitle}
-              </h3>
-              <p className="mt-[6px] text-[12px] leading-[22.75px] text-gray-600">
-                {product.benefitDescription}
-              </p>
-            </Card>
-
-            {renderNoticeBlock(product.noticeLines)}
-          </div>
-        </div>
-      </MainLayout>
-
-      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
-        <div className="pointer-events-auto mx-auto w-full max-w-[600px] border-t border-gray-200 bg-white px-(--side-padding) pt-4 pb-[calc(16px+env(safe-area-inset-bottom))] shadow-[var(--shadow-card)]">
-          <Button
-            type="button"
-            fullWidth
-            size="md"
-            onClick={handlePrimaryAction}
-            className="!h-[56px]"
-          >
-            {product.actionLabel}
-          </Button>
-        </div>
-      </div>
-    </div>
+    <PageScaffold
+      title="금융 상품을 찾을 수 없어요"
+      description="존재하지 않거나 아직 준비되지 않은 금융 상품입니다."
+    />
   )
 }
+

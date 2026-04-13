@@ -7,6 +7,7 @@ import MainLayout from '../../../components/layout/MainLayout'
 import { ROUTE_PATHS } from '../../../constants/routePaths'
 import {
   checkInVolunteerAttendance,
+  checkOutVolunteerAttendance,
   getVolunteerAttendanceInfo,
 } from '../../../services/volunteerService'
 import type { VolunteerAttendanceInfo } from '../../../types/volunteer'
@@ -83,6 +84,8 @@ export function VolunteerAttendancePage() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [isCheckingIn, setIsCheckingIn] = useState(false)
+  const [isCheckingOut, setIsCheckingOut] = useState(false)
+  const [isCheckOutModalOpen, setIsCheckOutModalOpen] = useState(false)
   const [actionError, setActionError] = useState('')
 
   const requestAttendanceInfo = useCallback(async () => {
@@ -136,6 +139,7 @@ export function VolunteerAttendancePage() {
     isCheckingIn ||
     attendanceInfo?.status === 'ATTENDED' ||
     attendanceInfo?.status === 'COMPLETED'
+  const isCheckOutButtonVisible = attendanceInfo?.status === 'ATTENDED'
 
   const getCurrentPosition = () =>
     new Promise<GeolocationPosition>((resolve, reject) => {
@@ -181,23 +185,85 @@ export function VolunteerAttendancePage() {
 
       if (isGeolocationError(checkInError)) {
         if (checkInError.code === checkInError.PERMISSION_DENIED) {
-          setActionError('위치 권한이 필요해요. 브라우저에서 위치 접근을 허용해주세요.')
+          setActionError(
+            '위치 권한이 필요해요. 브라우저에서 위치 접근을 허용해주세요.',
+          )
           return
         }
 
         if (checkInError.code === checkInError.TIMEOUT) {
-          setActionError('현재 위치를 가져오지 못했어요. 잠시 후 다시 시도해주세요.')
+          setActionError(
+            '현재 위치를 가져오지 못했어요. 잠시 후 다시 시도해주세요.',
+          )
           return
         }
       }
 
       if (checkInError instanceof Error) {
-        setActionError(checkInError.message || '출석 처리에 실패했어요. 잠시 후 다시 시도해주세요.')
+        setActionError(
+          checkInError.message ||
+            '출석 처리에 실패했어요. 잠시 후 다시 시도해주세요.',
+        )
       } else {
         setActionError('출석 처리에 실패했어요. 잠시 후 다시 시도해주세요.')
       }
     } finally {
       setIsCheckingIn(false)
+    }
+  }
+
+  const handleCheckOut = async () => {
+    if (!attendanceInfo || attendanceInfo.status !== 'ATTENDED' || !token) {
+      return
+    }
+
+    setIsCheckingOut(true)
+    setActionError('')
+
+    try {
+      const position = await getCurrentPosition()
+      const response = await checkOutVolunteerAttendance({
+        qrToken: token,
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude,
+      })
+
+      navigate(ROUTE_PATHS.activitySocialVolunteerAttendanceComplete, {
+        replace: true,
+        state: {
+          result: response,
+        },
+      })
+      setIsCheckOutModalOpen(false)
+    } catch (checkOutError) {
+      console.error(checkOutError)
+
+      if (isGeolocationError(checkOutError)) {
+        if (checkOutError.code === checkOutError.PERMISSION_DENIED) {
+          setActionError(
+            '위치 권한이 필요해요. 브라우저에서 위치 접근을 허용해주세요.',
+          )
+          return
+        }
+
+        if (checkOutError.code === checkOutError.TIMEOUT) {
+          setActionError(
+            '현재 위치를 가져오지 못했어요. 잠시 후 다시 시도해주세요.',
+          )
+          return
+        }
+      }
+
+      if (checkOutError instanceof Error) {
+        setActionError(
+          checkOutError.message ||
+            '퇴실 처리에 실패했어요. 잠시 후 다시 시도해주세요.',
+        )
+      } else {
+        setActionError('퇴실 처리에 실패했어요. 잠시 후 다시 시도해주세요.')
+      }
+    } finally {
+      setIsCheckingOut(false)
     }
   }
 
@@ -254,6 +320,9 @@ export function VolunteerAttendancePage() {
           <div className="space-y-2">
             <section className="bg-white px-[24px] py-6">
               <div className="flex flex-col gap-2">
+                <p className="text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+                  {attendanceInfo.userName}
+                </p>
                 <p className="text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
                   {attendanceInfo.organization}
                 </p>
@@ -320,10 +389,24 @@ export function VolunteerAttendancePage() {
                 fullWidth
                 variant={isAttendanceButtonDisabled ? 'gray' : 'primary'}
                 disabled={isAttendanceButtonDisabled}
-                onClick={isAttendanceButtonDisabled ? undefined : () => void handleCheckIn()}
+                onClick={
+                  isAttendanceButtonDisabled
+                    ? undefined
+                    : () => void handleCheckIn()
+                }
               >
                 {isCheckingIn ? '출석 처리 중...' : attendanceButtonLabel}
               </Button>
+              {isCheckOutButtonVisible ? (
+                <Button
+                  fullWidth
+                  className="mt-3"
+                  disabled={isCheckingOut}
+                  onClick={() => setIsCheckOutModalOpen(true)}
+                >
+                  {isCheckingOut ? '퇴실 처리 중...' : '퇴실하기'}
+                </Button>
+              ) : null}
               {actionError ? (
                 <p className="mt-2 text-center text-sm leading-6 text-red-500">
                   {actionError}
@@ -333,6 +416,58 @@ export function VolunteerAttendancePage() {
           </div>
         ) : null}
       </section>
+
+      {isCheckOutModalOpen ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 px-4"
+          onClick={() => setIsCheckOutModalOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="volunteer-checkout-modal-title"
+            className="w-full max-w-[340px] rounded-[8px] bg-white px-5 pt-6 pb-5 shadow-[0_8px_24px_rgba(15,23,42,0.16)]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <p
+              id="volunteer-checkout-modal-title"
+              className="text-center text-lg font-semibold text-font-main"
+            >
+              정말 퇴실하시겠습니까?
+            </p>
+            <p className="mt-2 text-center text-sm leading-6 text-gray-400">
+              봉사 종료 시간 이전에 종료할 시 정상 참여로 인정되지 않을 수
+              있으니, 시간을 꼭 확인해주세요.
+            </p>
+
+            <div className="mt-5 flex gap-3">
+              <Button
+                variant="gray"
+                fullWidth
+                className="!rounded-[8px]"
+                disabled={isCheckingOut}
+                onClick={() => setIsCheckOutModalOpen(false)}
+              >
+                아니요
+              </Button>
+              <Button
+                fullWidth
+                className="!rounded-[8px]"
+                disabled={isCheckingOut}
+                onClick={() => void handleCheckOut()}
+              >
+                {isCheckingOut ? '퇴실 처리 중...' : '네'}
+              </Button>
+            </div>
+
+            {actionError ? (
+              <p className="mt-3 text-center text-sm leading-6 text-red-500">
+                {actionError}
+              </p>
+            ) : null}
+          </div>
+        </div>
+      ) : null}
     </MainLayout>
   )
 }

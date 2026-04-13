@@ -5,6 +5,8 @@ import type {
   VolunteerAttendanceInfo,
   VolunteerCheckInRequest,
   VolunteerCheckInResponse,
+  VolunteerCheckOutRequest,
+  VolunteerCheckOutResponse,
   VolunteerDetail,
   VolunteerListResponse,
 } from '../types/volunteer'
@@ -47,6 +49,16 @@ export const checkInVolunteerAttendance = async (
 ): Promise<VolunteerCheckInResponse> => {
   const response = await apiClient.post<VolunteerCheckInResponse>(
     '/v1/esg/s/volunteers/check-in',
+    payload,
+  )
+  return response.data
+}
+
+export const checkOutVolunteerAttendance = async (
+  payload: VolunteerCheckOutRequest,
+): Promise<VolunteerCheckOutResponse> => {
+  const response = await apiClient.post<VolunteerCheckOutResponse>(
+    '/v1/esg/s/volunteers/check-out',
     payload,
   )
   return response.data

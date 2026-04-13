@@ -10,6 +10,7 @@ export interface UserSummary {
   totalPoints: number
   isLinked: boolean
   phoneNumber?: string
+  isSurveyCompleted: boolean
 }
 
 export interface UserProfileResponse {

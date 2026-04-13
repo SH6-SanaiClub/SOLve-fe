@@ -53,6 +53,7 @@ import { EnvironmentVerifyPage } from '../pages/esg/env/EnvironmentVerifyPage'
 import { ShopHistoryPage } from '../pages/shop/ShopHistoryPage'
 import { ShopListPage } from '../pages/shop/ShopListPage'
 import { ShopProductDetailPage } from '../pages/shop/ShopProductDetailPage'
+import { OnboardingGuard } from './OnboardingGuard'
 import { ProtectedRoute } from './ProtectedRoute'
 import { PublicOnlyRoute } from './PublicOnlyRoute'
 
@@ -82,104 +83,106 @@ function AppRoutes() {
 
         <Route element={<ProtectedRoute />}>
           <Route path={ROUTE_PATHS.onboarding} element={<OnboardingPage />} />
-          <Route path={ROUTE_PATHS.home} element={<HomePage />} />
-          <Route path={ROUTE_PATHS.shop} element={<ShopListPage />} />
-          <Route path={ROUTE_PATHS.shopHistory} element={<ShopHistoryPage />} />
-          <Route
-            path={ROUTE_PATHS.shopDetail}
-            element={<ShopProductDetailPage />}
-          />
-          <Route path={ROUTE_PATHS.esgEnv} element={<EnvironmentEntryPage />} />
-          <Route
-            path={ROUTE_PATHS.activityEnvironment}
-            element={<EnvironmentEntryPage />}
-          />
-          <Route
-            path={ROUTE_PATHS.esgEnvVerify}
-            element={<EnvironmentVerifyPage />}
-          />
-          <Route path={ROUTE_PATHS.esgSocial} element={<SocialPage />} />
-          <Route path={ROUTE_PATHS.activitySocial} element={<SocialPage />} />
-          <Route
-            path={ROUTE_PATHS.esgSocialDonation}
-            element={<DonationPage />}
-          />
-          <Route
-            path={ROUTE_PATHS.activitySocialDonation}
-            element={<DonationPage />}
-          />
-          <Route
-            path={ROUTE_PATHS.activitySocialStore}
-            element={<ValueStorePage />}
-          />
-          <Route
-            path={ROUTE_PATHS.activitySocialVolunteer}
-            element={<VolunteerPage />}
-          />
-          <Route
-            path={ROUTE_PATHS.activitySocialVolunteerDetail}
-            element={<VolunteerDetailPage />}
-          />
-          <Route
-            path={ROUTE_PATHS.activitySocialVolunteerComplete}
-            element={<VolunteerCompletePage />}
-          />
-          <Route
-            path={ROUTE_PATHS.activitySocialProductDetail}
-            element={<ValueStoreDetailPage />}
-          />
-          <Route
-            path={ROUTE_PATHS.activitySocialProductPayment}
-            element={<ValueStorePaymentPage />}
-          />
-          <Route
-            path={ROUTE_PATHS.activitySocialProductPaymentCallback}
-            element={<ValueStorePaymentRedirectPage />}
-          />
-          <Route
-            path={ROUTE_PATHS.activitySocialProductPaymentComplete}
-            element={<ValueStorePaymentCompletePage />}
-          />
+          <Route element={<OnboardingGuard />}>
+            <Route path={ROUTE_PATHS.home} element={<HomePage />} />
+            <Route path={ROUTE_PATHS.shop} element={<ShopListPage />} />
+            <Route path={ROUTE_PATHS.shopHistory} element={<ShopHistoryPage />} />
+            <Route
+              path={ROUTE_PATHS.shopDetail}
+              element={<ShopProductDetailPage />}
+            />
+            <Route path={ROUTE_PATHS.esgEnv} element={<EnvironmentEntryPage />} />
+            <Route
+              path={ROUTE_PATHS.activityEnvironment}
+              element={<EnvironmentEntryPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.esgEnvVerify}
+              element={<EnvironmentVerifyPage />}
+            />
+            <Route path={ROUTE_PATHS.esgSocial} element={<SocialPage />} />
+            <Route path={ROUTE_PATHS.activitySocial} element={<SocialPage />} />
+            <Route
+              path={ROUTE_PATHS.esgSocialDonation}
+              element={<DonationPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.activitySocialDonation}
+              element={<DonationPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.activitySocialStore}
+              element={<ValueStorePage />}
+            />
+            <Route
+              path={ROUTE_PATHS.activitySocialVolunteer}
+              element={<VolunteerPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.activitySocialVolunteerDetail}
+              element={<VolunteerDetailPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.activitySocialVolunteerComplete}
+              element={<VolunteerCompletePage />}
+            />
+            <Route
+              path={ROUTE_PATHS.activitySocialProductDetail}
+              element={<ValueStoreDetailPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.activitySocialProductPayment}
+              element={<ValueStorePaymentPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.activitySocialProductPaymentCallback}
+              element={<ValueStorePaymentRedirectPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.activitySocialProductPaymentComplete}
+              element={<ValueStorePaymentCompletePage />}
+            />
 
-          <Route
-            path={ROUTE_PATHS.donationDetail}
-            element={<DonationDetailPage />}
-          />
-          <Route
-            path={ROUTE_PATHS.donationPayment}
-            element={<DonationPaymentPage />}
-          />
-          <Route
-            path={ROUTE_PATHS.donationPaymentCallback}
-            element={<DonationPaymentRedirectPage />}
-          />
-          <Route
-            path={ROUTE_PATHS.donationPaymentComplete}
-            element={<DonationPaymentCompletePage />}
-          />
+            <Route
+              path={ROUTE_PATHS.donationDetail}
+              element={<DonationDetailPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.donationPayment}
+              element={<DonationPaymentPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.donationPaymentCallback}
+              element={<DonationPaymentRedirectPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.donationPaymentComplete}
+              element={<DonationPaymentCompletePage />}
+            />
 
-          <Route path={ROUTE_PATHS.esgQuiz} element={<GovernancePage />} />
-          <Route path={ROUTE_PATHS.activityGovernance} element={<GovernancePage />} />
-          <Route path={ROUTE_PATHS.financeDone} element={<FinanceDonePage />} />
-          <Route path={ROUTE_PATHS.financeApply} element={<FinanceApplyPage />} />
-          <Route path={ROUTE_PATHS.financeDetail} element={<FinanceDetailPage />} />
-          <Route
-            path={ROUTE_PATHS.activityGovernance}
-            element={<GovernancePage />}
-          />
+            <Route path={ROUTE_PATHS.esgQuiz} element={<GovernancePage />} />
+            <Route path={ROUTE_PATHS.activityGovernance} element={<GovernancePage />} />
+            <Route path={ROUTE_PATHS.financeDone} element={<FinanceDonePage />} />
+            <Route path={ROUTE_PATHS.financeApply} element={<FinanceApplyPage />} />
+            <Route path={ROUTE_PATHS.financeDetail} element={<FinanceDetailPage />} />
+            <Route
+              path={ROUTE_PATHS.activityGovernance}
+              element={<GovernancePage />}
+            />
 
-          <Route path={ROUTE_PATHS.finance} element={<FinancePage />} />
-          <Route path={ROUTE_PATHS.my} element={<MyPage />} />
-          <Route path={ROUTE_PATHS.myProfile} element={<MyProfilePage />} />
-          <Route path={ROUTE_PATHS.myGrade} element={<MyGradePage />} />
-          <Route path={ROUTE_PATHS.myHistory} element={<MyHistoryPage />} />
-          <Route path={ROUTE_PATHS.myFinance} element={<MyFinancePage />} />
-          <Route path={ROUTE_PATHS.myFinanceSavingsHistory} element={<MySavingsHistoryPage />} />
-          <Route path={ROUTE_PATHS.myFinanceLoanHistory} element={<MyLoanHistoryPage />} />
-          <Route path={ROUTE_PATHS.myPointManage} element={<MyPointManagePage />} />
-          <Route path={ROUTE_PATHS.myReport} element={<MyReportPage />} />
-          <Route path={ROUTE_PATHS.chatbot} element={<ChatbotPage />} />
-          <Route path={ROUTE_PATHS.recommend} element={<RecommendPage />} />
+            <Route path={ROUTE_PATHS.finance} element={<FinancePage />} />
+            <Route path={ROUTE_PATHS.my} element={<MyPage />} />
+            <Route path={ROUTE_PATHS.myProfile} element={<MyProfilePage />} />
+            <Route path={ROUTE_PATHS.myGrade} element={<MyGradePage />} />
+            <Route path={ROUTE_PATHS.myHistory} element={<MyHistoryPage />} />
+            <Route path={ROUTE_PATHS.myFinance} element={<MyFinancePage />} />
+            <Route path={ROUTE_PATHS.myFinanceSavingsHistory} element={<MySavingsHistoryPage />} />
+            <Route path={ROUTE_PATHS.myFinanceLoanHistory} element={<MyLoanHistoryPage />} />
+            <Route path={ROUTE_PATHS.myPointManage} element={<MyPointManagePage />} />
+            <Route path={ROUTE_PATHS.myReport} element={<MyReportPage />} />
+            <Route path={ROUTE_PATHS.chatbot} element={<ChatbotPage />} />
+            <Route path={ROUTE_PATHS.recommend} element={<RecommendPage />} />
+          </Route>
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

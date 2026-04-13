@@ -188,7 +188,7 @@ export function HomePage() {
           </Card>
 
           <Card
-            onClick={() => navigate(ROUTE_PATHS.chatbot)}
+            onClick={() => navigate(ROUTE_PATHS.recommend)}
             className="!h-[46px] !p-0"
           >
             <div className="flex h-[44px] items-center justify-between gap-3 px-5">

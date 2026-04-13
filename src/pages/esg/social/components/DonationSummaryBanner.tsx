@@ -13,8 +13,8 @@ export const DonationSummaryBanner = ({
 }: DonationSummaryBannerProps) => {
   return (
     <section className="relative h-[112px] overflow-hidden rounded-control bg-primary-400">
-      <div className="absolute inset-y-0 left-6 flex w-[153px] flex-col justify-center gap-2">
-        <div className="flex w-[126px] flex-col gap-1">
+      <div className="absolute inset-y-0 left-6 flex w-[153px] flex-col justify-center gap-2 max-[380px]:left-5 max-[380px]:w-[calc(100%-150px)]">
+        <div className="flex w-[126px] flex-col gap-1 max-[380px]:w-full">
           <p className="text-sm leading-[120%] font-semibold text-primary-50">
             현재까지 모인 기부금
           </p>
@@ -33,7 +33,7 @@ export const DonationSummaryBanner = ({
           src={imageSrc}
           alt={imageAlt}
           aria-hidden={imageAlt ? undefined : true}
-          className="absolute right-3 top-1/2 h-[96px] w-[194px] -translate-y-1/2 object-contain object-right"
+          className="absolute right-3 top-1/2 h-[96px] w-[194px] -translate-y-1/2 object-contain object-right max-[380px]:right-2 max-[380px]:h-[88px] max-[380px]:w-[132px]"
         />
       ) : (
         <>

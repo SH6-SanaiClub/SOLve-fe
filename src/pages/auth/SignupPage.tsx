@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { AxiosError } from 'axios'
 import { authService } from '../../services/authService'
@@ -12,10 +12,14 @@ import { Icons } from '../../components/common/Icons'
 export function SignupPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const verificationState = location.state as { verificationToken?: string } | null
+  const verificationState = location.state as
+    | { verificationToken?: string; preservedLoginId?: string }
+    | null
+  const preservedLoginId = verificationState?.preservedLoginId?.trim() ?? ''
+  const isReactivationSignup = preservedLoginId.length > 0
 
   const [formData, setFormData] = useState<AuthJoinRequest>({
-    loginId: '',
+    loginId: preservedLoginId,
     password: '',
     name: '',
     email: '',
@@ -86,7 +90,7 @@ export function SignupPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
-    if (!isIdChecked) {
+    if (!isReactivationSignup && !isIdChecked) {
       alert('아이디 중복 확인을 먼저 진행해주세요.')
       return
     }
@@ -103,6 +107,7 @@ export function SignupPage() {
     try {
       const requestData = {
         ...formData,
+        loginId: isReactivationSignup ? preservedLoginId : formData.loginId,
         phoneNumber: formData.phoneNumber.trim(),
         ciDi: `DEV_${Date.now()}`,
         verificationToken: verificationState.verificationToken,
@@ -135,37 +140,48 @@ export function SignupPage() {
 
         <div>
           <h2 className="mb-2 text-base font-semibold text-font-main">기본 정보를 입력해주세요</h2>
-          <p className="text-xs text-font-sub">본인인증이 완료되었습니다. 회원가입 정보를 직접 입력해주세요.</p>
+          <p className="text-xs text-font-sub">
+            {isReactivationSignup
+              ? '재가입시 기존 아이디가 그대로 유지됩니다.'
+              : '본인인증이 완료되었습니다. 회원가입 정보를 직접 입력해주세요.'}
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-          <div className="flex flex-col">
-            <div className="flex items-start gap-2">
-              <div className="flex min-w-0 flex-1 flex-col">
-                <Input
-                  label="아이디"
-                  name="loginId"
-                  value={formData.loginId}
-                  onChange={handleChange}
-                  placeholder="아이디를 입력하세요"
-                  className="w-full"
-                  required
-                />
+          {isReactivationSignup ? (
+            <div className="rounded-control border border-primary-100 bg-primary-50 px-4 py-4">
+              <p className="text-xs font-medium text-primary-600">기존 아이디</p>
+              <p className="mt-1 text-sm font-semibold text-font-main">{preservedLoginId}</p>
+            </div>
+          ) : (
+            <div className="flex flex-col">
+              <div className="flex items-start gap-2">
+                <div className="flex min-w-0 flex-1 flex-col">
+                  <Input
+                    label="아이디"
+                    name="loginId"
+                    value={formData.loginId}
+                    onChange={handleChange}
+                    placeholder="아이디를 입력하세요"
+                    className="w-full"
+                    required
+                  />
 
-                {idCheckMessage && (
-                  <p className="mt-1.5 pr-0.5 text-right text-[11px] font-medium" style={{ color: idCheckColor }}>
-                    {idCheckColor === 'green' ? '✓' : '✕'} {idCheckMessage}
-                  </p>
-                )}
-              </div>
+                  {idCheckMessage && (
+                    <p className="mt-1.5 pr-0.5 text-right text-[11px] font-medium" style={{ color: idCheckColor }}>
+                      {idCheckColor === 'green' ? '✓' : '✕'} {idCheckMessage}
+                    </p>
+                  )}
+                </div>
 
-              <div className="shrink-0 pt-6">
-                <Button type="button" onClick={handleCheckId} variant="sub" className="w-[100px] text-sm">
-                  중복확인
-                </Button>
+                <div className="shrink-0 pt-6">
+                  <Button type="button" onClick={handleCheckId} variant="sub" className="w-[100px] text-sm">
+                    중복확인
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <Input
             label="비밀번호"

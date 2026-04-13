@@ -9,4 +9,15 @@ export interface UserSummary {
   currentGrade: UserGrade
   totalPoints: number
   isLinked: boolean
+  phoneNumber?: string
+  isSurveyCompleted: boolean
+}
+
+export interface UserProfileResponse {
+  loginId: string
+  name: string
+  phoneNumber: string
+  userType: UserType
+  currentGrade: UserGrade
+  message: string
 }

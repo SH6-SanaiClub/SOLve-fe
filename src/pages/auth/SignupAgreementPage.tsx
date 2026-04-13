@@ -81,6 +81,7 @@ export function SignupAgreementPage() {
       navigate(ROUTE_PATHS.signup, {
         state: {
           verificationToken: verifyResult.verificationToken,
+          preservedLoginId: verifyResult.preservedLoginId,
         },
       })
     } catch (error) {

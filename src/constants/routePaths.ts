@@ -5,7 +5,7 @@ export const ROUTE_PATHS = {
   signupAgreement: '/auth/signup-agreement',
   verify: '/auth/verify',
   signupComplete: '/auth/signup-complete',
-  onboarding: '/onboarding',
+  survey: '/survey',
   home: '/home',
   shop: '/shop',
   shopHistory: '/shop/history',
@@ -19,7 +19,15 @@ export const ROUTE_PATHS = {
   activitySocial: '/activities/social',
   activitySocialDonation: '/esg/social/donation',
   activitySocialStore: '/esg/social/store',
+  activitySocialVolunteer: '/esg/social/volunteer',
+  activitySocialVolunteerDetail: '/esg/social/volunteers/:volunteerId',
+  activitySocialVolunteerComplete: '/esg/social/volunteers/:volunteerId/complete',
   activitySocialProductDetail: '/esg/social/products/:productId',
+  activitySocialProductPayment: '/esg/social/products/:productId/payment',
+  activitySocialProductPaymentCallback:
+    '/esg/social/products/:productId/payment/callback',
+  activitySocialProductPaymentComplete:
+    '/esg/social/products/:productId/payment/complete',
   donationDetail: '/esg/social/donations/:donationId',
   donationPayment: '/esg/social/donations/:donationId/payment',
   donationPaymentCallback: '/esg/social/donations/:donationId/payment/callback',
@@ -39,6 +47,7 @@ export const ROUTE_PATHS = {
   myPointManage: '/my/point-manage',
   myReport: '/my/report',
   chatbot: '/chatbot',
+  recommend: '/recommend',
 } as const
 
 export const getDonationDetailPath = (donationId: number | string) =>
@@ -55,6 +64,23 @@ export const getDonationPaymentCompletePath = (donationId: number | string) =>
 
 export const getValueStoreProductDetailPath = (productId: number | string) =>
   `/esg/social/products/${productId}`
+
+export const getVolunteerDetailPath = (volunteerId: number | string) =>
+  `/esg/social/volunteers/${volunteerId}`
+
+export const getVolunteerCompletePath = (volunteerId: number | string) =>
+  `/esg/social/volunteers/${volunteerId}/complete`
+
+export const getValueStoreProductPaymentPath = (productId: number | string) =>
+  `/esg/social/products/${productId}/payment`
+
+export const getValueStoreProductPaymentCallbackPath = (
+  productId: number | string,
+) => `/esg/social/products/${productId}/payment/callback`
+
+export const getValueStoreProductPaymentCompletePath = (
+  productId: number | string,
+) => `/esg/social/products/${productId}/payment/complete`
 
 export const getFinanceDetailPath = (productId: number | string) =>
   `/finance/${productId}`

@@ -4,7 +4,10 @@ import { Badge, Button, IconButton } from '../../../components/common'
 import { Icons } from '../../../components/common'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
-import { ROUTE_PATHS } from '../../../constants/routePaths'
+import {
+  ROUTE_PATHS,
+  getValueStoreProductPaymentPath,
+} from '../../../constants/routePaths'
 import { getValueStoreProductDetail } from '../../../services/productService'
 import type { ValueStoreProductDetail } from '../../../types/product'
 
@@ -141,7 +144,7 @@ export function ValueStoreDetailPage() {
                   />
                 </section>
 
-                <section className="px-[31px] pt-8">
+                <section className="px-[24px] pt-6">
                   <div className="space-y-[22px]">
                     <div className="space-y-[12px]">
                       <Badge
@@ -152,9 +155,14 @@ export function ValueStoreDetailPage() {
                       </Badge>
 
                       <div className="space-y-4">
-                        <h2 className="w-[248px] text-[20px] leading-[120%] font-bold text-gray-500">
-                          {productDetail.name}
-                        </h2>
+                        <div className="space-y-[6px]">
+                          <p className="text-[12px] leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+                            {productDetail.storeName}
+                          </p>
+                          <h2 className="w-[248px] text-[20px] leading-[120%] font-bold text-gray-500">
+                            {productDetail.name}
+                          </h2>
+                        </div>
 
                         <div className="flex items-center gap-2">
                           <p
@@ -177,7 +185,7 @@ export function ValueStoreDetailPage() {
 
                     <div className="h-px w-full bg-gray-300" />
 
-                    <div className="space-y-[11px] px-2">
+                    <div className="space-y-[11px]">
                       <h3 className="text-base leading-7 font-medium text-gray-800">
                         함께 나무를 심어주세요
                       </h3>
@@ -208,6 +216,11 @@ export function ValueStoreDetailPage() {
                 fullWidth
                 disabled={isLoading || isSoldOut || !productDetail}
                 className="!h-[48px]"
+                onClick={() =>
+                  productDetail
+                    ? navigate(getValueStoreProductPaymentPath(productDetail.productId))
+                    : undefined
+                }
               >
                 {isSoldOut ? '품절' : '구매하기'}
               </Button>

@@ -7,6 +7,7 @@ import { ROUTE_PATHS } from '../../constants/routePaths'
 import { useAuth } from '../../hooks/useAuth'
 import { submitSurvey } from '../../services/onboardingService'
 import type { UserType } from '../../types/user'
+import { OnboardingCompleteModal } from './components/OnboardingCompleteModal'
 
 const QUESTIONS = [
   {
@@ -66,16 +67,18 @@ export function OnboardingPage() {
   const [step, setStep] = useState(0)
   const [answers, setAnswers] = useState<Record<string, number>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false)
 
   const currentQuestion = QUESTIONS[step]
   const isLastStep = step === QUESTIONS.length - 1
+  const isFirstStep = step === 0
   const hasAnswer = answers[currentQuestion.id] !== undefined
 
   useEffect(() => {
-    if (user?.isSurveyCompleted) {
+    if (user?.isSurveyCompleted && !isCompleteModalOpen) {
       navigate(ROUTE_PATHS.home, { replace: true })
     }
-  }, [navigate, user?.isSurveyCompleted])
+  }, [isCompleteModalOpen, navigate, user?.isSurveyCompleted])
 
   const handleSelect = (score: number) => {
     setAnswers((prev) => ({ ...prev, [currentQuestion.id]: score }))
@@ -106,12 +109,25 @@ export function OnboardingPage() {
         })
       }
 
-      navigate(ROUTE_PATHS.home, { replace: true })
+      setIsCompleteModalOpen(true)
     } catch {
       navigate(ROUTE_PATHS.home, { replace: true })
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  const handlePrev = () => {
+    if (isFirstStep || isSubmitting) {
+      return
+    }
+
+    setStep((prev) => prev - 1)
+  }
+
+  const handleCompleteClose = () => {
+    setIsCompleteModalOpen(false)
+    navigate(ROUTE_PATHS.home, { replace: true })
   }
 
   return (
@@ -121,10 +137,10 @@ export function OnboardingPage() {
           <img src={logoImage} alt="SOLve" className="h-9 w-fit object-contain" />
 
           <div className="flex flex-col gap-2">
-            <h1 className="text-[30px] leading-[1.25] font-bold tracking-[-0.03em] text-font-main break-keep">
+            <h1 className="text-[24px] leading-[1.35] font-bold tracking-[-0.02em] text-font-main break-keep">
               맞춤 추천을 위한 간단한 설문
             </h1>
-            <p className="text-lg leading-7 text-font-sub break-keep">
+            <p className="text-base leading-6 text-font-sub break-keep">
               간단한 답변 후 맞춤 추천을 받아보세요!
             </p>
           </div>
@@ -145,12 +161,12 @@ export function OnboardingPage() {
               <span className="text-sm font-medium text-font-sub">
                 {step + 1} / {QUESTIONS.length}
               </span>
-              <h2 className="text-[26px] leading-[1.35] font-bold tracking-[-0.03em] text-font-main break-keep">
+              <h2 className="text-[20px] leading-[1.45] font-bold tracking-[-0.02em] text-font-main break-keep">
                 {currentQuestion.question}
               </h2>
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div className="mt-3 flex flex-col gap-4">
               {currentQuestion.options.map((option) => {
                 const isSelected = answers[currentQuestion.id] === option.score
 
@@ -179,7 +195,7 @@ export function OnboardingPage() {
                         />
                       </span>
                       <p
-                        className={`text-base leading-7 font-medium break-keep ${
+                        className={`text-[15px] leading-6 font-medium break-keep ${
                           isSelected ? 'text-primary-500' : 'text-font-main'
                         }`}
                       >
@@ -194,17 +210,33 @@ export function OnboardingPage() {
         </div>
 
         <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-[600px] -translate-x-1/2 bg-bg-light px-6 pb-4 pt-4">
-          <Button
-            variant="primary"
-            fullWidth
-            size="lg"
-            disabled={!hasAnswer || isSubmitting}
-            onClick={handleNext}
-          >
-            {isLastStep ? (isSubmitting ? '저장 중...' : '설문 완료') : '다음'}
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              variant="sub"
+              size="lg"
+              fullWidth
+              disabled={isFirstStep || isSubmitting}
+              onClick={handlePrev}
+            >
+              이전
+            </Button>
+            <Button
+              variant="primary"
+              fullWidth
+              size="lg"
+              disabled={!hasAnswer || isSubmitting}
+              onClick={handleNext}
+            >
+              {isLastStep ? (isSubmitting ? '저장 중...' : '설문 완료') : '다음'}
+            </Button>
+          </div>
         </div>
       </div>
+
+      <OnboardingCompleteModal
+        open={isCompleteModalOpen}
+        onClose={handleCompleteClose}
+      />
     </MainLayout>
   )
 }

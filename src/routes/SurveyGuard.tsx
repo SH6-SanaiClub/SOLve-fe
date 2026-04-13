@@ -2,10 +2,10 @@ import { useEffect, useState } from 'react'
 import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { ROUTE_PATHS } from '../constants/routePaths'
 import { useAuth } from '../hooks/useAuth'
-import { getSurveyStatus } from '../services/onboardingService'
+import { getSurveyStatus } from '../services/surveyService'
 import type { UserType } from '../types/user'
 
-export function OnboardingGuard() {
+export function SurveyGuard() {
   const { user, isAuthenticated, updateUser } = useAuth()
   const location = useLocation()
   const [fetchedSurveyCompleted, setFetchedSurveyCompleted] = useState<boolean | null>(null)
@@ -57,10 +57,10 @@ export function OnboardingGuard() {
 
   if (
     isAuthenticated &&
-    location.pathname !== ROUTE_PATHS.onboarding &&
+    location.pathname !== ROUTE_PATHS.survey &&
     surveyCompleted === false
   ) {
-    return <Navigate replace to={ROUTE_PATHS.onboarding} />
+    return <Navigate replace to={ROUTE_PATHS.survey} />
   }
 
   return <Outlet />

@@ -5,7 +5,7 @@ export const ROUTE_PATHS = {
   signupAgreement: '/auth/signup-agreement',
   verify: '/auth/verify',
   signupComplete: '/auth/signup-complete',
-  onboarding: '/onboarding',
+  survey: '/survey',
   home: '/home',
   shop: '/shop',
   shopHistory: '/shop/history',

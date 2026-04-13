@@ -5,9 +5,9 @@ import { Button, Card } from '../../components/common'
 import MainLayout from '../../components/layout/MainLayout'
 import { ROUTE_PATHS } from '../../constants/routePaths'
 import { useAuth } from '../../hooks/useAuth'
-import { submitSurvey } from '../../services/onboardingService'
+import { submitSurvey } from '../../services/surveyService'
 import type { UserType } from '../../types/user'
-import { OnboardingCompleteModal } from './components/OnboardingCompleteModal'
+import { SurveyCompleteModal } from './components/SurveyCompleteModal'
 
 const QUESTIONS = [
   {
@@ -61,7 +61,7 @@ const calcUserType = (answers: Record<string, number>): UserType => {
   return winners[0] === 'E' ? 'GREEN' : winners[0] === 'S' ? 'SOCIAL' : 'FINANCE'
 }
 
-export function OnboardingPage() {
+export function SurveyPage() {
   const navigate = useNavigate()
   const { user, updateUser } = useAuth()
   const [step, setStep] = useState(0)
@@ -233,7 +233,7 @@ export function OnboardingPage() {
         </div>
       </div>
 
-      <OnboardingCompleteModal
+      <SurveyCompleteModal
         open={isCompleteModalOpen}
         onClose={handleCompleteClose}
       />

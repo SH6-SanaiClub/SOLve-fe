@@ -26,7 +26,7 @@ import { VolunteerDetailPage } from '../pages/esg/social/VolunteerDetailPage'
 import { VolunteerPage } from '../pages/esg/social/VolunteerPage'
 
 import { LoginPage } from '../pages/auth/LoginPage'
-import { OnboardingPage } from '../pages/auth/OnboardingPage'
+import { SurveyPage } from '../pages/auth/SurveyPage'
 import { SignupPage } from '../pages/auth/SignupPage'
 import { SignupAgreementPage } from '../pages/auth/SignupAgreementPage'
 import { SignupCompletePage } from '../pages/auth/SignupCompletePage'
@@ -53,7 +53,7 @@ import { EnvironmentVerifyPage } from '../pages/esg/env/EnvironmentVerifyPage'
 import { ShopHistoryPage } from '../pages/shop/ShopHistoryPage'
 import { ShopListPage } from '../pages/shop/ShopListPage'
 import { ShopProductDetailPage } from '../pages/shop/ShopProductDetailPage'
-import { OnboardingGuard } from './OnboardingGuard'
+import { SurveyGuard } from './SurveyGuard'
 import { ProtectedRoute } from './ProtectedRoute'
 import { PublicOnlyRoute } from './PublicOnlyRoute'
 
@@ -82,8 +82,8 @@ function AppRoutes() {
         </Route>
 
         <Route element={<ProtectedRoute />}>
-          <Route path={ROUTE_PATHS.onboarding} element={<OnboardingPage />} />
-          <Route element={<OnboardingGuard />}>
+          <Route path={ROUTE_PATHS.survey} element={<SurveyPage />} />
+          <Route element={<SurveyGuard />}>
             <Route path={ROUTE_PATHS.home} element={<HomePage />} />
             <Route path={ROUTE_PATHS.shop} element={<ShopListPage />} />
             <Route path={ROUTE_PATHS.shopHistory} element={<ShopHistoryPage />} />

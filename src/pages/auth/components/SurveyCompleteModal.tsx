@@ -2,15 +2,15 @@ import { useEffect } from 'react'
 import goodImage from '../../../assets/good.png'
 import { Button } from '../../../components/common'
 
-interface OnboardingCompleteModalProps {
+interface SurveyCompleteModalProps {
   open: boolean
   onClose: () => void
 }
 
-export function OnboardingCompleteModal({
+export function SurveyCompleteModal({
   open,
   onClose,
-}: OnboardingCompleteModalProps) {
+}: SurveyCompleteModalProps) {
   useEffect(() => {
     if (!open) {
       return

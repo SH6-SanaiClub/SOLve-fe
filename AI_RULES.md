@@ -29,7 +29,7 @@ src/
 │   ├── auth/                        👉 인증 관련 페이지
 │   │   ├── LoginPage.tsx            👉 로그인
 │   │   ├── SignupPage.tsx           👉 회원가입
-│   │   └── OnboardingPage.tsx       👉 회원가입 후 유형 분류 설문
+│   │   └── SurveyPage.tsx       👉 회원가입 후 유형 분류 설문
 │   ├── activities/                  👉 ESG 활동 관련 페이지 (대시보드 카드 클릭으로 진입)
 │   │   ├── ActivitiesPage.tsx       👉 S 활동 진입점 (기부 | 가치가게 | 봉사)
 │   │   ├── EnvironmentPage.tsx      👉 E 활동 — 친환경 인증 (OCR 업로드)

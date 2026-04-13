@@ -29,3 +29,17 @@ export interface VolunteerApplicationResponse {
   activityDate: string
   status: 'APPLIED'
 }
+
+export type VolunteerAttendanceStatus = 'APPLIED' | 'ATTENDED' | 'COMPLETED'
+
+export interface VolunteerAttendanceInfo {
+  volunteerId: number
+  name: string
+  location: string
+  activityDate: string
+  volunteerHour: number
+  organization: string
+  status: VolunteerAttendanceStatus
+  checkInAt: string | null
+  checkOutAt: string | null
+}

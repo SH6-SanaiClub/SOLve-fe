@@ -46,6 +46,7 @@ export const ROUTE_PATHS = {
   myFinanceLoanHistory: '/my/finance/loan',
   myPointManage: '/my/point-manage',
   myReport: '/my/report',
+  reportVerify: '/report/verify/:token',
   chatbot: '/chatbot',
   recommend: '/recommend',
 } as const
@@ -92,3 +93,6 @@ export const getShopDetailPath = (productId: string) => `/shop/${productId}`
 
 export const getEnvVerifyPath = (activityType: string) =>
   `/esg/env/verify?type=${encodeURIComponent(activityType)}`
+
+export const getReportVerifyPath = (token: string) =>
+  `/report/verify/${encodeURIComponent(token)}`

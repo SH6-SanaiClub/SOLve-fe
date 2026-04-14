@@ -15,11 +15,15 @@ export const ROUTE_PATHS = {
   esgSocial: '/esg/social',
   esgSocialDonation: '/esg/social/donation',
   esgQuiz: '/esg/quiz',
+  esgQuizResult: '/esg/quiz/result',
   activityEnvironment: '/activities/environment',
   activitySocial: '/activities/social',
   activitySocialDonation: '/esg/social/donation',
   activitySocialStore: '/esg/social/store',
   activitySocialVolunteer: '/esg/social/volunteer',
+  activitySocialVolunteerAttendance: '/esg/social/volunteers/attendance',
+  activitySocialVolunteerAttendanceComplete:
+    '/esg/social/volunteers/attendance/complete',
   activitySocialVolunteerDetail: '/esg/social/volunteers/:volunteerId',
   activitySocialVolunteerComplete: '/esg/social/volunteers/:volunteerId/complete',
   activitySocialProductDetail: '/esg/social/products/:productId',
@@ -42,10 +46,11 @@ export const ROUTE_PATHS = {
   myGrade: '/my/grade',
   myHistory: '/my/history',
   myFinance: '/my/finance',
-  myFinanceSavingsHistory: '/my/finance/savings',
+  myFinanceSavingsHistory: '/my/finance/savings/:savingId',
   myFinanceLoanHistory: '/my/finance/loan',
   myPointManage: '/my/point-manage',
   myReport: '/my/report',
+  reportVerify: '/report/verify/:token',
   chatbot: '/chatbot',
   recommend: '/recommend',
 } as const
@@ -88,7 +93,13 @@ export const getFinanceDetailPath = (productId: number | string) =>
 export const getFinanceApplyPath = (productId: number | string) =>
   `/finance/apply/${productId}`
 
+export const getMyFinanceSavingsHistoryPath = (savingId: number | string) =>
+  `/my/finance/savings/${savingId}`
+
 export const getShopDetailPath = (productId: string) => `/shop/${productId}`
 
 export const getEnvVerifyPath = (activityType: string) =>
   `/esg/env/verify?type=${encodeURIComponent(activityType)}`
+
+export const getReportVerifyPath = (token: string) =>
+  `/report/verify/${encodeURIComponent(token)}`

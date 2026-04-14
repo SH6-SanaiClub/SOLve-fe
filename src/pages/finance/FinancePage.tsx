@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Badge, Card, Icons, SectionHeader } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
@@ -8,31 +8,48 @@ import {
   BOTTOM_NAVIGATION_ROUTE_BY_KEY,
 } from '../../constants/bottomNavigation'
 import { ROUTE_PATHS, getFinanceDetailPath } from '../../constants/routePaths'
-import { getSavingsRecommend } from '../../services/financeService'
-import type { SavingsRecommendResponse } from '../../types/finance'
+import { getFinanceProducts, getSavingsRecommend } from '../../services/financeService'
+import type { FinanceListProduct, SavingsRecommendResponse } from '../../types/finance'
 import { ShopHeader } from '../shop/components/ShopHeader'
-import { FinanceTabs } from './components/FinanceTabs'
+import { FinanceTabs, type FinanceTabValue } from './components/FinanceTabs'
 import { SavingsRecommendCard } from './components/SavingsRecommendCard'
-import { financeSectionLabels, loanProducts, savingsProducts } from './financeData'
+import { FINANCE_SECTION_LABELS, buildLoanLimitRateLabel, formatRate } from './financeUi'
 
 export const FinancePage = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const [activeTab, setActiveTab] = useState<'all' | 'savings' | 'loan'>('all')
+  const [activeTab, setActiveTab] = useState<FinanceTabValue>('all')
+  const [savingsProducts, setSavingsProducts] = useState<FinanceListProduct[]>([])
+  const [loanProducts, setLoanProducts] = useState<FinanceListProduct[]>([])
   const [recommend, setRecommend] = useState<SavingsRecommendResponse | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
+  const [errorMessage, setErrorMessage] = useState('')
   const returnTo = (location.state as { returnTo?: string } | null)?.returnTo
 
   useEffect(() => {
-    const fetchSavingsRecommend = async () => {
+    const fetchFinanceProducts = async () => {
       try {
-        const response = await getSavingsRecommend()
-        setRecommend(response)
+        setIsLoading(true)
+        setErrorMessage('')
+
+        const [savings, loans, savingsRecommend] = await Promise.all([
+          getFinanceProducts('savings'),
+          getFinanceProducts('loan'),
+          getSavingsRecommend().catch(() => null),
+        ])
+
+        setSavingsProducts(savings)
+        setLoanProducts(loans)
+        setRecommend(savingsRecommend)
       } catch {
+        setErrorMessage('금융 상품 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.')
         setRecommend(null)
+      } finally {
+        setIsLoading(false)
       }
     }
 
-    void fetchSavingsRecommend()
+    void fetchFinanceProducts()
   }, [])
 
   const handleBottomNavigation = (key: string) => {
@@ -59,7 +76,6 @@ export const FinancePage = () => {
   }
 
   const loanProduct = loanProducts[0]
-  const loanTiers = loanProduct?.loanTiers ?? []
   const showSavingsSection = activeTab === 'all' || activeTab === 'savings'
   const showLoanSection = activeTab === 'all' || activeTab === 'loan'
 
@@ -86,12 +102,24 @@ export const FinancePage = () => {
           />
         ) : null}
 
+        {isLoading ? (
+          <Card className="!rounded-control !border-0 !px-5 !py-6 shadow-sm">
+            <p className="text-sm text-gray-500">금융 상품을 불러오는 중입니다.</p>
+          </Card>
+        ) : null}
+
+        {!isLoading && errorMessage ? (
+          <Card className="!rounded-control !border-0 !px-5 !py-6 shadow-sm">
+            <p className="text-sm text-red-500">{errorMessage}</p>
+          </Card>
+        ) : null}
+
         {showSavingsSection ? (
           <section className="flex flex-col gap-4">
             <SectionHeader
               title={
-                <span className="text-lg leading-[120%] font-semibold text-gray-700">
-                  {financeSectionLabels.SAVINGS}
+                <span className="text-lg font-semibold leading-[120%] text-gray-700">
+                  {FINANCE_SECTION_LABELS.SAVINGS}
                 </span>
               }
               right={
@@ -99,13 +127,18 @@ export const FinancePage = () => {
                   {savingsProducts.length}건
                 </span>
               }
+              className="px-3"
             />
 
             <div className="flex flex-col gap-3">
               {savingsProducts.map((product) => (
                 <Card
                   key={product.id}
-                  onClick={() => navigate(getFinanceDetailPath(product.id))}
+                  onClick={() =>
+                    navigate(getFinanceDetailPath(product.id), {
+                      state: { productType: product.type },
+                    })
+                  }
                   className="!gap-0 !rounded-control !border-0 !px-[26px] !py-4 shadow-sm"
                 >
                   <div className="flex min-h-[58px] items-center justify-between gap-5">
@@ -114,19 +147,25 @@ export const FinancePage = () => {
                         {product.name}
                       </p>
                       <p className="mt-2 whitespace-pre-line text-xs leading-[1.2] text-gray-600">
-                        {product.listDescription}
+                        {product.subtitle ?? ''}
                       </p>
                     </div>
 
                     <div className="flex shrink-0 items-center">
                       <span className="text-base font-bold leading-none text-primary-500">
-                        {product.listRateLabel}
+                        {formatRate(product.maxRate)}
                       </span>
                       <Icons.ArrowRight className="text-gray-500" size={24} />
                     </div>
                   </div>
                 </Card>
               ))}
+
+              {!isLoading && !errorMessage && savingsProducts.length === 0 ? (
+                <Card className="!rounded-control !border-0 !px-5 !py-6 shadow-sm">
+                  <p className="text-sm text-gray-500">가입 가능한 적금 상품이 없습니다.</p>
+                </Card>
+              ) : null}
             </div>
           </section>
         ) : null}
@@ -135,8 +174,8 @@ export const FinancePage = () => {
           <section className="flex flex-col gap-4">
             <SectionHeader
               title={
-                <span className="text-lg leading-[120%] font-semibold text-gray-700">
-                  {financeSectionLabels.LOAN}
+                <span className="text-lg font-semibold leading-[120%] text-gray-700">
+                  {FINANCE_SECTION_LABELS.LOAN}
                 </span>
               }
               right={
@@ -144,64 +183,51 @@ export const FinancePage = () => {
                   {loanProducts.length}건
                 </span>
               }
+              className="px-3"
             />
 
             {loanProduct ? (
               <Card
                 key={loanProduct.id}
-                onClick={() => navigate(getFinanceDetailPath(loanProduct.id))}
+                onClick={() =>
+                  navigate(getFinanceDetailPath(loanProduct.id), {
+                    state: { productType: loanProduct.type },
+                  })
+                }
                 className="!gap-0 !rounded-control !border-0 !px-5 !py-[26px] shadow-sm"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 max-w-[235px]">
-                    {loanProduct.badge ? (
+                    {loanProduct.available ? (
                       <Badge
                         tone="primary"
                         variant="soft"
                         className="mb-3 !rounded-[4px] !px-[6px] !py-[2px] text-xs font-medium text-primary-400"
                       >
-                        {loanProduct.badge}
+                        신청 가능
                       </Badge>
                     ) : null}
                     <p className="text-[20px] font-bold leading-[1.2] text-font-main">
                       {loanProduct.name}
                     </p>
                     <p className="mt-2 text-xs leading-[1.2] text-font-main">
-                      {loanProduct.listDescription}
+                      {loanProduct.subtitle ?? ''}
                     </p>
                   </div>
 
                   <Icons.ArrowRight className="mt-5 shrink-0 text-gray-500" size={24} />
                 </div>
 
-                {loanProduct.userOfferLabel ? (
-                  <div className="mt-8 rounded-control bg-gray-50 px-9 py-6 shadow-sm">
-                    <p className="text-xs leading-[1.625] text-gray-600">나의 ESG 등급</p>
-                    <p className="mt-1 text-base font-bold leading-7 text-font-main">
-                      {loanProduct.userOfferLabel}
-                    </p>
-                  </div>
-                ) : null}
-
-                {loanTiers.length ? (
-                  <div className="mt-[30px] flex flex-col gap-[14px]">
-                    {loanTiers.map((tier, index) => (
-                      <div key={tier.scoreLabel} className="flex flex-col gap-[14px]">
-                        <div className="flex items-center justify-between gap-4 px-[10px]">
-                          <span className="text-xs font-medium leading-5 text-gray-500">
-                            {tier.scoreLabel}
-                          </span>
-                          <div className="text-base font-semibold leading-5 text-font-main">
-                            {tier.limitLabel} / {tier.rateLabel}
-                          </div>
-                        </div>
-                        {index < loanTiers.length - 1 ? (
-                          <div className="h-px bg-gray-200" />
-                        ) : null}
-                      </div>
-                    ))}
-                  </div>
-                ) : null}
+                <div className="mt-8 rounded-control bg-gray-50 px-9 py-6 shadow-sm">
+                  <p className="text-xs leading-[1.625] text-gray-600">현재 적용 조건</p>
+                  <p className="mt-1 text-base font-bold leading-7 text-font-main">
+                    {buildLoanLimitRateLabel(loanProduct.loanLimit, loanProduct.appliedRate)}
+                  </p>
+                </div>
+              </Card>
+            ) : !isLoading && !errorMessage ? (
+              <Card className="!rounded-control !border-0 !px-5 !py-6 shadow-sm">
+                <p className="text-sm text-gray-500">이용 가능한 대출 상품이 없습니다.</p>
               </Card>
             ) : null}
           </section>

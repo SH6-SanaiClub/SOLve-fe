@@ -1,4 +1,4 @@
-﻿import { apiClient } from './apiClient'
+import { apiClient } from './apiClient'
 import type {
   FinanceApplyResponse,
   FinanceHistoryResponse,
@@ -10,7 +10,13 @@ import type {
   FinanceProductListQueryType,
   FinanceSavingsApplyRequest,
   FinanceSavingHistoryItem,
+  SavingsRecommendResponse,
 } from '../types/finance'
+
+export const getSavingsRecommend = async (): Promise<SavingsRecommendResponse> => {
+  const response = await apiClient.get<SavingsRecommendResponse>('/v1/finance/recommend')
+  return response.data
+}
 
 export const getFinanceProducts = async (
   type: FinanceProductListQueryType,
@@ -73,4 +79,3 @@ export const getFinanceSavingHistory = async (
 
   return response.data
 }
-

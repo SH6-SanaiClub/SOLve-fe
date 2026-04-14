@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Badge, Button, Card, InfoRow, ProgressBar, SectionHeader } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import MainLayout from '../../components/layout/MainLayout'
@@ -89,6 +89,8 @@ const SkeletonBlock = ({ className }: { className: string }) => (
 
 export const MyGradePage = () => {
   const navigate = useNavigate()
+  const location = useLocation()
+  const returnTo = (location.state as { returnTo?: string } | null)?.returnTo
   const [activeFilter, setActiveFilter] = useState<ActivityStatusFilter>('ALL')
   const activeFilterRef = useRef<ActivityStatusFilter>('ALL')
   const chartContainerRef = useRef<HTMLDivElement | null>(null)
@@ -315,7 +317,18 @@ export const MyGradePage = () => {
 
   return (
     <MainLayout
-      header={<ShopHeader title="ESG 활동 현황" onBack={() => navigate(ROUTE_PATHS.my)} />}
+      header={
+        <ShopHeader
+          title="ESG 활동 현황"
+          onBack={() => {
+            if (returnTo) {
+              navigate(returnTo, { replace: true })
+              return
+            }
+            navigate(ROUTE_PATHS.my)
+          }}
+        />
+      }
       nav={
         <BottomNavigation
           items={BOTTOM_NAVIGATION_ITEMS}

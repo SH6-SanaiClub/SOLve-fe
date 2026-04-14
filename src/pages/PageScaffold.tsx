@@ -1,5 +1,6 @@
 ﻿import type { ReactNode } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { IconButton, Icons } from '../components/common'
 import headerLogo from '../assets/home/logo.png'
 import { ROUTE_PATHS } from '../constants/routePaths'
 import { useAuthStore } from '../store/authStore'
@@ -12,7 +13,9 @@ interface PageScaffoldProps {
 
 export function PageScaffold({ title, description, children }: PageScaffoldProps) {
   const navigate = useNavigate()
+  const location = useLocation()
   const { isAuthenticated, clearSession } = useAuthStore()
+  const returnTo = (location.state as { returnTo?: string } | null)?.returnTo
 
   const handleLogout = () => {
     if (window.confirm('로그아웃 하시겠습니까?')) {
@@ -21,8 +24,30 @@ export function PageScaffold({ title, description, children }: PageScaffoldProps
     }
   }
 
+  const handleBack = () => {
+    if (returnTo) {
+      navigate(returnTo, { replace: true })
+      return
+    }
+
+    if (window.history.length > 1) {
+      navigate(-1)
+      return
+    }
+
+    navigate(ROUTE_PATHS.home)
+  }
+
   return (
     <div className="app-shell">
+      <div className="absolute left-6 top-6 z-10">
+        <IconButton
+          label="뒤로가기"
+          icon={<Icons.Back size={20} />}
+          size="sm"
+          onClick={handleBack}
+        />
+      </div>
       {isAuthenticated && (
         <button
           onClick={handleLogout}

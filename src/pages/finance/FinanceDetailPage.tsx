@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, InfoRow } from '../../components/common'
 import MainLayout from '../../components/layout/MainLayout'
@@ -46,6 +46,7 @@ export const FinanceDetailPage = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const { id } = useParams()
+  const returnTo = (location.state as { returnTo?: string } | null)?.returnTo
   const routeState = location.state as FinanceDetailLocationState | undefined
   const [productType, setProductType] = useState<FinanceProductType | null>(routeState?.productType ?? null)
   const [loanPreview, setLoanPreview] = useState<FinanceLoanPreview | null>(null)
@@ -123,6 +124,11 @@ export const FinanceDetailPage = () => {
   }, [id, routeState?.productType])
 
   const handleBack = () => {
+    if (returnTo) {
+      navigate(returnTo, { replace: true })
+      return
+    }
+
     if (window.history.length > 1) {
       navigate(-1)
       return

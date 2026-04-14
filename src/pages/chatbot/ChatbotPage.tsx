@@ -1,10 +1,443 @@
-import { PageScaffold } from '../PageScaffold'
+import { useEffect, useRef, useState } from 'react'
+import type { KeyboardEvent } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Button, Card, IconButton, Icons } from '../../components/common'
+import Header from '../../components/layout/Header'
+import MainLayout from '../../components/layout/MainLayout'
+import { getS3AssetUrl } from '../../constants/assetUrls'
+import { ROUTE_PATHS } from '../../constants/routePaths'
+import { clearChatHistory, getChatHistory, streamChatMessage } from '../../services/chatService'
+import type { ChatAction, ChatHistoryMessage, ChatMessage } from '../../types/chat'
 
-export function ChatbotPage() {
+const BOT_PROFILE_IMAGE_URL = getS3AssetUrl('chatbot.png')
+
+const INITIAL_QUICK_QUESTIONS = [
+  '내 점수/등급 알려줘',
+  '오늘 추천 활동',
+  '적금 추천해줘',
+  '이번 달 활동 현황',
+  '등급 올리는 방법',
+] as const
+
+const FOLLOW_UP_QUESTION_MAP = {
+  finance: ['다른 적금도 비교해줘', '금리 조건 다시 정리해줘', '나한테 가장 유리한 적금은?', '대출도 알려줘'],
+  score: ['다음 등급까지 얼마나 남았어?', '점수 올리기 쉬운 활동 추천해줘', '이번 달 활동 현황 알려줘', '적금 추천도 해줘'],
+  activity: ['환경 활동 추천해줘', '기부 관련 활동 추천해줘', '퀴즈로 점수 올리는 법 알려줘', '오늘 바로 할 수 있는 활동은?'],
+  default: ['내 점수/등급 다시 알려줘', '오늘 추천 활동', '적금 추천해줘', '이번 달 활동 현황'],
+} as const
+
+const CHAT_ERROR_MESSAGE = '일시적인 오류가 발생했어요. 다시 시도해주세요.'
+
+const createMessageId = () =>
+  typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(16).slice(2)}`
+
+const toChatMessage = (message: ChatHistoryMessage): ChatMessage => ({
+  id: createMessageId(),
+  role: message.role,
+  content: message.content,
+  actions: message.actions ?? undefined,
+})
+
+const getFollowUpQuestions = (messages: ChatMessage[]) => {
+  const latestAssistantMessage = [...messages].reverse().find((message) => message.role === 'assistant')
+  const latestUserMessage = [...messages].reverse().find((message) => message.role === 'user')
+
+  if (!latestAssistantMessage) {
+    return [...INITIAL_QUICK_QUESTIONS]
+  }
+
+  const content = latestAssistantMessage.content
+  const latestQuestion = latestUserMessage?.content ?? ''
+  const actionPaths = latestAssistantMessage.actions?.map((action) => action.path) ?? []
+  const activityKeywords = ['활동', '환경', '기부', '봉사', '가치가게', '퀴즈', '점수 올리기', '쉬운 활동']
+  const financeKeywords = ['적금', '대출', '금리', '금융 상품']
+  const scoreKeywords = ['등급', '점수', '현황']
+
+  if (
+    actionPaths.some(
+      (path) =>
+        path.startsWith('/activities') || path.startsWith('/esg/social') || path === '/esg/quiz',
+    ) ||
+    activityKeywords.some((keyword) => latestQuestion.includes(keyword) || content.includes(keyword))
+  ) {
+    return [...FOLLOW_UP_QUESTION_MAP.activity]
+  }
+
+  if (
+    actionPaths.some((path) => path.startsWith('/finance')) ||
+    financeKeywords.some((keyword) => latestQuestion.includes(keyword) || content.includes(keyword))
+  ) {
+    return [...FOLLOW_UP_QUESTION_MAP.finance]
+  }
+
+  if (scoreKeywords.some((keyword) => latestQuestion.includes(keyword) || content.includes(keyword))) {
+    return [...FOLLOW_UP_QUESTION_MAP.score]
+  }
+
+  return [...FOLLOW_UP_QUESTION_MAP.default]
+}
+
+const renderMessageParagraphs = (content: string) =>
+  normalizeChatText(content)
+    .split(/\n{2,}/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+
+const normalizeChatText = (content: string) =>
+  content
+    .replace(/\*/g, '')
+    .replace(/__/g, '')
+    .replace(/`/g, '')
+    .replace(/#\s?/g, '')
+    .replace(/(?<!\n)(\d+\.)\s*(?=[A-Za-z가-힣])/g, '\n$1 ')
+    .replace(/(?<!\n)(-)\s*(?=[A-Za-z가-힣])/g, '\n$1 ')
+    .replace(/(^|\n)(\d+)\.\s*([A-Za-z가-힣])/g, '$1$2. $3')
+    .replace(/([가-힣])([A-Za-z])/g, '$1 $2')
+    .replace(/([A-Za-z])([가-힣])/g, '$1 $2')
+    .replace(/([가-힣])((?:\d+(?:\/\d+)?)(?:점|개월|회|만원|원|P|%))/g, '$1 $2')
+    .replace(/([ESG])활동/g, '$1 활동')
+    .replace(/([가-힣0-9]+)(으로|에서|에게|처럼|까지|부터|보다|마다)([가-힣]{2,})/g, '$1$2 $3')
+    .replace(/([가-힣0-9]+)(은|는|이|가|을|를|와|과|의|도|로|에)([가-힣]{2,})/g, '$1$2 $3')
+    .replace(/(다음과 같은)([가-힣])/g, '$1 $2')
+    .replace(/(위 활동들을 통해)([가-힣])/g, '$1 $2')
+    .replace(/(버튼에서)([가-힣])/g, '$1 $2')
+    .replace(/[ \t]+/g, ' ')
+    .replace(/ *\n */g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim()
+
+export const ChatbotPage = () => {
+  const navigate = useNavigate()
+  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [input, setInput] = useState('')
+  const [isStreaming, setIsStreaming] = useState(false)
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true)
+  const bottomRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages, isStreaming])
+
+  useEffect(() => {
+    let mounted = true
+
+    const loadHistory = async () => {
+      try {
+        const history = await getChatHistory()
+        if (!mounted) {
+          return
+        }
+        setMessages(history.map(toChatMessage))
+      } catch {
+        if (!mounted) {
+          return
+        }
+        setMessages([])
+      } finally {
+        if (mounted) {
+          setIsLoadingHistory(false)
+        }
+      }
+    }
+
+    void loadHistory()
+
+    return () => {
+      mounted = false
+    }
+  }, [])
+
+  const handleBack = () => {
+    navigate(ROUTE_PATHS.home)
+  }
+
+  const handleSend = async (text: string) => {
+    const trimmedText = text.trim()
+
+    if (!trimmedText || isStreaming) {
+      return
+    }
+
+    const userMessage: ChatMessage = {
+      id: createMessageId(),
+      role: 'user',
+      content: trimmedText,
+    }
+
+    const assistantMessageId = createMessageId()
+    const assistantMessage: ChatMessage = {
+      id: assistantMessageId,
+      role: 'assistant',
+      content: '',
+      isStreaming: true,
+    }
+
+    setInput('')
+    setIsStreaming(true)
+    setMessages((prev) => [...prev, userMessage, assistantMessage])
+
+    const handleAssistantUpdate = (updater: (message: ChatMessage) => ChatMessage) => {
+      setMessages((prev) =>
+        prev.map((message) => (message.id === assistantMessageId ? updater(message) : message)),
+      )
+    }
+
+    await streamChatMessage(
+      trimmedText,
+      (chunk) => {
+        handleAssistantUpdate((message) => ({
+          ...message,
+          content: `${message.content}${chunk}`,
+        }))
+      },
+      (fullText) => {
+        handleAssistantUpdate((message) => ({
+          ...message,
+          content: fullText,
+        }))
+      },
+      (actions: ChatAction[]) => {
+        handleAssistantUpdate((message) => ({
+          ...message,
+          actions,
+        }))
+      },
+      () => {
+        handleAssistantUpdate((message) => ({
+          ...message,
+          content: normalizeChatText(message.content),
+          isStreaming: false,
+        }))
+        setIsStreaming(false)
+      },
+      (errorMessage) => {
+        handleAssistantUpdate((message) => ({
+          ...message,
+          content: errorMessage || CHAT_ERROR_MESSAGE,
+          isStreaming: false,
+          actions: undefined,
+        }))
+        setIsStreaming(false)
+      },
+    )
+  }
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault()
+      void handleSend(input)
+    }
+  }
+
+  const handleQuestionClick = (question: string) => {
+    void handleSend(question)
+  }
+
+  const handleActionClick = (path: string) => {
+    navigate(path, {
+      state: {
+        returnTo: ROUTE_PATHS.chatbot,
+      },
+    })
+  }
+
+  const handleResetChat = async () => {
+    if (isStreaming) {
+      return
+    }
+
+    try {
+      await clearChatHistory()
+      setMessages([])
+    } catch {
+      // keep current history on failure
+    }
+  }
+
+  const followUpQuestions = getFollowUpQuestions(messages)
+
   return (
-    <PageScaffold
-      title="AI 챗봇"
-      description="추천 결과를 재사용하는 챗봇 진입 화면 자리입니다."
-    />
+    <div className="relative min-h-screen bg-[linear-gradient(180deg,#F7FAFF_0%,#EDF3FF_100%)] font-pretendard">
+      <MainLayout
+        header={
+          <Header
+            bgColor="bg-transparent"
+            left={
+              <IconButton
+                label="뒤로가기"
+                icon={<Icons.Back size={20} />}
+                size="sm"
+                onClick={handleBack}
+              />
+            }
+            title="Chatbot"
+            right={
+              messages.length > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => void handleResetChat()}
+                  className="text-xs font-medium text-font-sub transition-colors"
+                >
+                  새로 채팅하기
+                </button>
+              ) : null
+            }
+          />
+        }
+        className="bg-transparent"
+      >
+        <div className="-mx-4 flex min-h-[calc(100vh-var(--header-h)-48px)] flex-col px-(--side-padding)">
+          <div className="flex-1 pb-[152px] pt-2">
+            {isLoadingHistory ? (
+              <div className="flex min-h-[40vh] items-center justify-center text-sm text-font-sub">
+                대화 내용을 불러오는 중입니다...
+              </div>
+            ) : messages.length === 0 ? (
+              <div className="flex min-h-[68vh] flex-col items-center justify-center px-4 text-center">
+                <div className="mb-5 h-20 w-20 overflow-hidden rounded-full bg-white shadow-sm">
+                  <img src={BOT_PROFILE_IMAGE_URL} alt="SOLve 챗봇" className="h-full w-full object-cover" />
+                </div>
+                <p className="text-[24px] font-semibold tracking-tight text-font-main">SOLve 사용 도우미</p>
+                <p className="mt-2 text-sm leading-6 text-font-sub">
+                  궁금한 점이 있으면 물어보세요.
+                  <br />
+                  점수, 활동, 금융 상품을 바로 안내해드릴게요.
+                </p>
+
+                <div className="mt-8 flex w-full flex-col gap-2">
+                  {INITIAL_QUICK_QUESTIONS.map((question) => (
+                    <button
+                      key={question}
+                      type="button"
+                      onClick={() => handleQuestionClick(question)}
+                      disabled={isStreaming}
+                      className="w-full rounded-[18px] border border-white/70 bg-white/90 px-4 py-3 text-left text-sm text-font-main shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {question}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-4 py-4">
+                {messages.map((message) => {
+                  const isUserMessage = message.role === 'user'
+                  const paragraphs = renderMessageParagraphs(message.content)
+
+                  return (
+                    <div
+                      key={message.id}
+                      className={`flex ${isUserMessage ? 'justify-end' : 'justify-start'}`}
+                    >
+                      {isUserMessage ? (
+                        <Card className="!w-auto !max-w-[82%] !gap-0 !border-0 !rounded-[20px] !rounded-tr-[6px] !bg-primary-500 !px-4 !py-3 text-white shadow-sm">
+                          <div className="space-y-3 break-words text-sm leading-7">
+                            {paragraphs.map((paragraph) => (
+                              <p key={`${message.id}-${paragraph}`} className="whitespace-pre-wrap">
+                                {paragraph}
+                              </p>
+                            ))}
+                          </div>
+                        </Card>
+                      ) : (
+                        <div className="flex max-w-[90%] items-start gap-3">
+                          <div className="mt-1 h-10 w-10 shrink-0 overflow-hidden rounded-full bg-white shadow-sm">
+                            <img src={BOT_PROFILE_IMAGE_URL} alt="SOLve 챗봇" className="h-full w-full object-cover" />
+                          </div>
+
+                          <div className="flex min-w-0 flex-col gap-2">
+                            <div>
+                              <p className="text-[11px] font-semibold text-font-main">SOLve 사용 도우미</p>
+                            </div>
+
+                            <Card className="!w-auto !max-w-full !gap-0 !border-0 !rounded-[22px] !rounded-tl-[8px] !bg-white/95 !px-4 !py-3 text-font-main shadow-sm">
+                              <div className="space-y-3 break-words text-sm leading-7">
+                                {paragraphs.map((paragraph) => (
+                                  <p key={`${message.id}-${paragraph}`} className="whitespace-pre-wrap">
+                                    {paragraph}
+                                  </p>
+                                ))}
+                                {message.isStreaming ? (
+                                  <span className="inline-block animate-pulse align-middle text-sm">|</span>
+                                ) : null}
+                              </div>
+                            </Card>
+
+                            {!message.isStreaming && message.actions?.length ? (
+                              <div className="flex flex-col gap-2">
+                                {message.actions.map((action) => (
+                                  <Button
+                                    key={`${message.id}-${action.path}-${action.label}`}
+                                    type="button"
+                                    variant="outline"
+                                    size="sm"
+                                    fullWidth
+                                    onClick={() => handleActionClick(action.path)}
+                                    className="!h-auto !justify-start !rounded-[16px] !border-white/70 !bg-white/85 !px-4 !py-3 !text-left !text-sm !text-font-main"
+                                  >
+                                    <span className="flex w-full items-center justify-between gap-3">
+                                      <span>{action.label}</span>
+                                      <Icons.ArrowRight size={16} />
+                                    </span>
+                                  </Button>
+                                ))}
+                              </div>
+                            ) : null}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+
+                <div ref={bottomRef} />
+              </div>
+            )}
+          </div>
+        </div>
+      </MainLayout>
+
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
+        <div className="pointer-events-auto mx-auto flex w-full max-w-[600px] flex-col gap-3 bg-transparent px-(--side-padding) pb-[calc(env(safe-area-inset-bottom)+16px)]">
+          {messages.length > 0 && !isStreaming ? (
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {followUpQuestions.map((question) => (
+                <button
+                  key={question}
+                  type="button"
+                  onClick={() => handleQuestionClick(question)}
+                  className="shrink-0 rounded-full border border-white/80 bg-white/90 px-4 py-2 text-xs font-medium text-font-main shadow-sm"
+                >
+                  {question}
+                </button>
+              ))}
+            </div>
+          ) : null}
+
+          <div className="flex items-end gap-2 rounded-[22px] border border-white/80 bg-white/95 px-3 py-2 shadow-lg shadow-[#AEC5FF]/25 backdrop-blur">
+            <textarea
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+              onKeyDown={handleKeyDown}
+              rows={1}
+              placeholder="메시지를 입력하세요..."
+              className="max-h-[120px] min-h-[24px] flex-1 resize-none bg-transparent py-2 text-sm leading-6 text-font-main placeholder:text-font-sub outline-none"
+            />
+
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => void handleSend(input)}
+              disabled={!input.trim() || isStreaming}
+              className="!h-10 !w-10 !rounded-full !p-0"
+            >
+              <Icons.ArrowRight size={18} />
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }

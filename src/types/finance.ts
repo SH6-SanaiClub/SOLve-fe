@@ -59,6 +59,23 @@ export interface FinanceProduct {
   completion: FinanceProductCompletion
 }
 
+export interface SavingsRecommendItem {
+  productId: string
+  productName: string
+  matchScore: number
+  expectedMaxRate: string
+  reason: string
+  actionable: string
+  isNewUserRecommend: boolean
+  isAlreadyJoined: boolean
+  isIneligible: boolean
+}
+
+export interface SavingsRecommendResponse {
+  isNewUser: boolean
+  recommendation: SavingsRecommendItem
+}
+
 export interface FinanceListProduct {
   id: number
   name: string
@@ -176,4 +193,3 @@ export interface FinanceDoneState {
   primaryActionLabel: string
   secondaryActionLabel: string
 }
-

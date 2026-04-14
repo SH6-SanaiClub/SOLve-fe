@@ -7,6 +7,7 @@ import { EnvironmentEntryModal } from './components/EnvironmentEntryModal'
 
 interface EnvLocationState {
   backgroundLocation?: Location
+  returnTo?: string
 }
 
 export function EnvironmentEntryPage() {
@@ -55,6 +56,11 @@ export function EnvironmentEntryPage() {
   }, [])
 
   const handleClose = () => {
+    if (routeState?.returnTo) {
+      navigate(routeState.returnTo, { replace: true })
+      return
+    }
+
     if (routeState?.backgroundLocation) {
       navigate(-1)
       return
@@ -64,7 +70,12 @@ export function EnvironmentEntryPage() {
   }
 
   const handleSelect = (activityType: EnvActivityType) => {
-    navigate(getEnvVerifyPath(activityType), { state: { fromEnv: true } })
+    navigate(getEnvVerifyPath(activityType), {
+      state: {
+        fromEnv: true,
+        returnTo: routeState?.returnTo,
+      },
+    })
   }
 
   return (

@@ -1,5 +1,5 @@
-﻿import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Badge, Card, Icons, SectionHeader } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import MainLayout from '../../components/layout/MainLayout'
@@ -8,19 +8,23 @@ import {
   BOTTOM_NAVIGATION_ROUTE_BY_KEY,
 } from '../../constants/bottomNavigation'
 import { ROUTE_PATHS, getFinanceDetailPath } from '../../constants/routePaths'
-import { getFinanceProducts } from '../../services/financeService'
-import type { FinanceListProduct } from '../../types/finance'
+import { getFinanceProducts, getSavingsRecommend } from '../../services/financeService'
+import type { FinanceListProduct, SavingsRecommendResponse } from '../../types/finance'
 import { ShopHeader } from '../shop/components/ShopHeader'
 import { FinanceTabs, type FinanceTabValue } from './components/FinanceTabs'
+import { SavingsRecommendCard } from './components/SavingsRecommendCard'
 import { FINANCE_SECTION_LABELS, buildLoanLimitRateLabel, formatRate } from './financeUi'
 
 export const FinancePage = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const [activeTab, setActiveTab] = useState<FinanceTabValue>('all')
   const [savingsProducts, setSavingsProducts] = useState<FinanceListProduct[]>([])
   const [loanProducts, setLoanProducts] = useState<FinanceListProduct[]>([])
+  const [recommend, setRecommend] = useState<SavingsRecommendResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
+  const returnTo = (location.state as { returnTo?: string } | null)?.returnTo
 
   useEffect(() => {
     const fetchFinanceProducts = async () => {
@@ -28,15 +32,18 @@ export const FinancePage = () => {
         setIsLoading(true)
         setErrorMessage('')
 
-        const [savings, loans] = await Promise.all([
+        const [savings, loans, savingsRecommend] = await Promise.all([
           getFinanceProducts('savings'),
           getFinanceProducts('loan'),
+          getSavingsRecommend().catch(() => null),
         ])
 
         setSavingsProducts(savings)
         setLoanProducts(loans)
+        setRecommend(savingsRecommend)
       } catch {
         setErrorMessage('금융 상품 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.')
+        setRecommend(null)
       } finally {
         setIsLoading(false)
       }
@@ -55,6 +62,11 @@ export const FinancePage = () => {
   }
 
   const handleBack = () => {
+    if (returnTo) {
+      navigate(returnTo, { replace: true })
+      return
+    }
+
     if (window.history.length > 1) {
       navigate(-1)
       return
@@ -81,6 +93,14 @@ export const FinancePage = () => {
     >
       <div className="-mx-4 flex flex-col gap-4 bg-bg-light px-(--side-padding) pb-2">
         <FinanceTabs activeTab={activeTab} onChange={setActiveTab} />
+
+        {activeTab === 'all' && recommend ? (
+          <SavingsRecommendCard
+            item={recommend.recommendation}
+            isNewUser={recommend.isNewUser}
+            onClick={() => navigate(getFinanceDetailPath(recommend.recommendation.productId))}
+          />
+        ) : null}
 
         {isLoading ? (
           <Card className="!rounded-control !border-0 !px-5 !py-6 shadow-sm">

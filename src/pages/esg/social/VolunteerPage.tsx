@@ -131,9 +131,15 @@ export function VolunteerPage() {
               <h2 className="text-[18px] leading-[120%] font-semibold tracking-[-0.02em] text-font-main">
                 모집중인 봉사활동
               </h2>
-              <span className="text-sm leading-[120%] font-medium tracking-[-0.02em] text-primary-400">
-                {volunteerData.volunteers.length}건
-              </span>
+              <button
+                type="button"
+                className="text-sm leading-[120%] font-medium tracking-[-0.02em] text-primary-400"
+                onClick={() =>
+                  navigate(ROUTE_PATHS.activitySocialVolunteerApplications)
+                }
+              >
+                신청한 봉사
+              </button>
             </div>
 
             <div className="space-y-4">

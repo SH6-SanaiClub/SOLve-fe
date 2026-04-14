@@ -1,5 +1,5 @@
 import { apiClient } from './apiClient'
-import type { ChatAction } from '../types/chat'
+import type { ChatAction, ChatHistoryResponse } from '../types/chat'
 
 const CHAT_CONNECTION_ERROR_MESSAGE = '챗봇 연결에 실패했어요. 다시 시도해주세요.'
 const CHAT_STREAM_ERROR_MESSAGE = '응답 처리 중 오류가 발생했어요.'
@@ -7,6 +7,7 @@ const CHAT_STREAM_ERROR_MESSAGE = '응답 처리 중 오류가 발생했어요.'
 export const streamChatMessage = async (
   message: string,
   onChunk: (text: string) => void,
+  onReplace: (text: string) => void,
   onActions: (actions: ChatAction[]) => void,
   onDone: () => void,
   onError: (message: string) => void,
@@ -42,6 +43,7 @@ export const streamChatMessage = async (
   const decoder = new TextDecoder()
   let buffer = ''
   let currentEventType = ''
+  let currentDataLines: string[] = []
   let hasErrored = false
   let hasCompleted = false
 
@@ -57,6 +59,11 @@ export const streamChatMessage = async (
   const handleEventData = (eventType: string, data: string) => {
     if (eventType === 'chunk') {
       onChunk(data)
+      return
+    }
+
+    if (eventType === 'replace') {
+      onReplace(data)
       return
     }
 
@@ -82,6 +89,17 @@ export const streamChatMessage = async (
     }
   }
 
+  const dispatchCurrentEvent = () => {
+    if (!currentEventType && currentDataLines.length === 0) {
+      return
+    }
+
+    const data = currentDataLines.join('\n')
+    handleEventData(currentEventType, data)
+    currentEventType = ''
+    currentDataLines = []
+  }
+
   try {
     while (true) {
       const { done, value } = await reader.read()
@@ -96,6 +114,7 @@ export const streamChatMessage = async (
 
       for (const line of lines) {
         if (!line) {
+          dispatchCurrentEvent()
           continue
         }
 
@@ -105,15 +124,28 @@ export const streamChatMessage = async (
         }
 
         if (line.startsWith('data:')) {
-          const data = getEventData(line)
-          handleEventData(currentEventType, data)
+          currentDataLines.push(getEventData(line))
         }
       }
     }
 
-    if (buffer.startsWith('data:')) {
-      handleEventData(currentEventType, getEventData(buffer))
+    if (buffer.length > 0) {
+      const trailingLines = buffer.split(/\r?\n/)
+      for (const line of trailingLines) {
+        if (!line) {
+          dispatchCurrentEvent()
+          continue
+        }
+        if (line.startsWith('event:')) {
+          currentEventType = line.slice(6).trim()
+          continue
+        }
+        if (line.startsWith('data:')) {
+          currentDataLines.push(getEventData(line))
+        }
+      }
     }
+    dispatchCurrentEvent()
   } catch {
     if (!hasErrored) {
       hasErrored = true
@@ -126,4 +158,13 @@ export const streamChatMessage = async (
   if (!hasCompleted && !hasErrored) {
     onDone()
   }
+}
+
+export const getChatHistory = async () => {
+  const response = await apiClient.get<ChatHistoryResponse>('/v1/chat/messages')
+  return response.data.messages
+}
+
+export const clearChatHistory = async () => {
+  await apiClient.delete('/v1/chat/messages')
 }

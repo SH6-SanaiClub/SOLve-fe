@@ -1,5 +1,5 @@
 ﻿import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Badge, Card, Icons, SectionHeader } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import MainLayout from '../../components/layout/MainLayout'
@@ -17,8 +17,10 @@ import { financeSectionLabels, loanProducts, savingsProducts } from './financeDa
 
 export const FinancePage = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const [activeTab, setActiveTab] = useState<'all' | 'savings' | 'loan'>('all')
   const [recommend, setRecommend] = useState<SavingsRecommendResponse | null>(null)
+  const returnTo = (location.state as { returnTo?: string } | null)?.returnTo
 
   useEffect(() => {
     const fetchSavingsRecommend = async () => {
@@ -43,6 +45,11 @@ export const FinancePage = () => {
   }
 
   const handleBack = () => {
+    if (returnTo) {
+      navigate(returnTo, { replace: true })
+      return
+    }
+
     if (window.history.length > 1) {
       navigate(-1)
       return

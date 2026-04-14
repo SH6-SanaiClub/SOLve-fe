@@ -1,4 +1,4 @@
-﻿import { useNavigate, useParams } from 'react-router-dom'
+﻿import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, InfoRow } from '../../components/common'
 import MainLayout from '../../components/layout/MainLayout'
 import { ROUTE_PATHS, getFinanceApplyPath } from '../../constants/routePaths'
@@ -19,12 +19,19 @@ const renderNoticeBlock = (noticeLines: string[]) => (
 
 export const FinanceDetailPage = () => {
   const navigate = useNavigate()
+  const location = useLocation()
   const { id } = useParams()
+  const returnTo = (location.state as { returnTo?: string } | null)?.returnTo
 
   const product = id ? getFinanceProductById(id) : undefined
   const rateHighlightLabel = product?.heroRateHighlight?.replace(/^최고\s*/, '') ?? ''
 
   const handleBack = () => {
+    if (returnTo) {
+      navigate(returnTo, { replace: true })
+      return
+    }
+
     if (window.history.length > 1) {
       navigate(-1)
       return

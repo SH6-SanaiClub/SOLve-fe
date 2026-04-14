@@ -16,6 +16,7 @@ import { EnvironmentVerifyScreen } from './components/EnvironmentVerifyScreen'
 interface EnvLocationState {
   backgroundLocation?: Location
   fromEnv?: boolean
+  returnTo?: string
 }
 
 function isEnvActivityType(value: string | null): value is EnvActivityType {

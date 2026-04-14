@@ -16,6 +16,13 @@ export const getVolunteerActivities = async (): Promise<VolunteerListResponse> =
   return response.data
 }
 
+export const getVolunteerApplications = async (): Promise<VolunteerListResponse> => {
+  const response = await apiClient.get<VolunteerListResponse>(
+    '/v1/esg/s/volunteers/applications',
+  )
+  return response.data
+}
+
 export const getVolunteerDetail = async (
   volunteerId: number,
 ): Promise<VolunteerDetail> => {

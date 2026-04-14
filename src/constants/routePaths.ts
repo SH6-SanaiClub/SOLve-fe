@@ -5,7 +5,7 @@ export const ROUTE_PATHS = {
   signupAgreement: '/auth/signup-agreement',
   verify: '/auth/verify',
   signupComplete: '/auth/signup-complete',
-  onboarding: '/onboarding',
+  survey: '/survey',
   home: '/home',
   shop: '/shop',
   shopHistory: '/shop/history',
@@ -45,10 +45,11 @@ export const ROUTE_PATHS = {
   myGrade: '/my/grade',
   myHistory: '/my/history',
   myFinance: '/my/finance',
-  myFinanceSavingsHistory: '/my/finance/savings',
+  myFinanceSavingsHistory: '/my/finance/savings/:savingId',
   myFinanceLoanHistory: '/my/finance/loan',
   myPointManage: '/my/point-manage',
   myReport: '/my/report',
+  reportVerify: '/report/verify/:token',
   chatbot: '/chatbot',
   recommend: '/recommend',
 } as const
@@ -91,7 +92,13 @@ export const getFinanceDetailPath = (productId: number | string) =>
 export const getFinanceApplyPath = (productId: number | string) =>
   `/finance/apply/${productId}`
 
+export const getMyFinanceSavingsHistoryPath = (savingId: number | string) =>
+  `/my/finance/savings/${savingId}`
+
 export const getShopDetailPath = (productId: string) => `/shop/${productId}`
 
 export const getEnvVerifyPath = (activityType: string) =>
   `/esg/env/verify?type=${encodeURIComponent(activityType)}`
+
+export const getReportVerifyPath = (token: string) =>
+  `/report/verify/${encodeURIComponent(token)}`

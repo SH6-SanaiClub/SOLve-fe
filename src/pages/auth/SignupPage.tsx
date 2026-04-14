@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+﻿import React, { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { AxiosError } from 'axios'
 import { authService } from '../../services/authService'
@@ -8,6 +8,8 @@ import Input from '../../components/common/Input'
 import Button from '../../components/common/Button'
 import IconButton from '../../components/common/IconButton'
 import { Icons } from '../../components/common/Icons'
+import MainLayout from '../../components/layout/MainLayout'
+import Header from '../../components/layout/Header'
 
 export function SignupPage() {
   const navigate = useNavigate()
@@ -37,6 +39,8 @@ export function SignupPage() {
       navigate(ROUTE_PATHS.signupAgreement, { replace: true })
     }
   }, [navigate, verificationState])
+
+  const handleBack = () => navigate(-1)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
@@ -126,18 +130,21 @@ export function SignupPage() {
   }
 
   return (
-    <div className="app-shell">
-      <section className="page-card flex flex-col gap-6">
-        <div className="-mx-6 -mt-6 flex items-center gap-3 border-b border-gray-200 px-6 py-4">
-          <IconButton
-            onClick={() => navigate(-1)}
-            icon={<Icons.Back />}
-            label="뒤로가기"
-            size="md"
-          />
-          <h1 className="text-xl font-bold text-font-main">회원가입</h1>
-        </div>
-
+    <MainLayout
+      header={
+        <Header
+          left={
+            <IconButton
+              label="뒤로가기"
+              icon={<Icons.Back className="text-font-main" />}
+              onClick={handleBack}
+            />
+          }
+          title="회원가입"
+        />
+      }
+    >
+      <div className="flex flex-col gap-6">
         <div>
           <h2 className="mb-2 text-base font-semibold text-font-main">기본 정보를 입력해주세요</h2>
           <p className="text-xs text-font-sub">
@@ -238,7 +245,7 @@ export function SignupPage() {
             완료
           </Button>
         </form>
-      </section>
-    </div>
+        </div>
+    </MainLayout>
   )
 }

@@ -9,7 +9,7 @@ export function SignupCompletePage() {
   const completeImage = getS3AssetUrl('lulu.webp')
 
   return (
-    <MainLayout className="bg-white">
+    <MainLayout>
       <div className="flex min-h-[calc(100vh-48px)] flex-col px-6 pb-32 pt-6 text-center">
         <div className="flex flex-1 flex-col items-center justify-center">
           <img
@@ -30,7 +30,7 @@ export function SignupCompletePage() {
           </div>
         </div>
 
-        <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-[600px] -translate-x-1/2 bg-white px-6 pb-4 pt-4">
+        <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-[600px] -translate-x-1/2 px-6 pb-4 pt-4">
           <Button
             type="button"
             variant="primary"

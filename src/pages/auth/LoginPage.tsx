@@ -43,47 +43,61 @@ export function LoginPage() {
 
   return (
     <div className="app-shell">
-      <section className="page-card flex flex-col gap-4">
-        <img src={logoImage} alt="SOLve" className="h-9 w-fit object-contain" />
+      <section className="page-card flex min-h-[calc(100vh-48px)] flex-col px-4 pt-8 pb-6">
+        <div className="flex flex-1 flex-col">
+          <div className="flex flex-col items-center pt-20 text-center">
+            <img src={logoImage} alt="SOLve" className="mt-4 h-[56px] w-auto object-contain" />
+            <h1 className="mt-5 text-[24px] leading-none font-bold tracking-[-0.03em] text-font-main">
+              로그인
+            </h1>
+          </div>
 
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-font-main">로그인</h1>
-          <p className="text-base text-font-sub">SOLve 서비스에 로그인합니다.</p>
+          <form onSubmit={handleSubmit} className="mt-12 flex flex-col gap-5">
+            <Input
+              label="아이디"
+              name="loginId"
+              value={loginData.loginId}
+              onChange={handleChange}
+              placeholder="아이디를 입력하세요."
+              required
+            />
+            <Input
+              label="비밀번호"
+              name="password"
+              type="password"
+              value={loginData.password}
+              onChange={handleChange}
+              placeholder="비밀번호를 입력하세요."
+              required
+            />
+
+            <div className="mt-2 flex flex-col gap-3">
+              <Button type="submit" variant="primary" fullWidth className="!h-[50px]">
+                로그인
+              </Button>
+              <Link to={ROUTE_PATHS.signupAgreement}>
+                <Button type="button" variant="outline" fullWidth className="!h-[50px]">
+                  회원가입
+                </Button>
+              </Link>
+            </div>
+          </form>
+
+          <button
+            type="button"
+            className="mt-5 text-center text-sm font-medium text-[#9AA7BA]"
+          >
+            아이디/비밀번호 찾기
+          </button>
+
+          <div className="mt-auto rounded-[12px] bg-[#F3F6FB] px-4 py-4">
+            <p className="text-[12px] font-semibold text-font-main">부정 가입 방지 안내</p>
+            <p className="mt-2 text-[12px] leading-6 text-[#6C7B91]">
+              1인 1계정 원칙을 고수하여 접수 조작 및 중복 수혜를 철저히 방지하고 있습니다.
+              안전한 금융 거래를 위해 협조 부탁드립니다.
+            </p>
+          </div>
         </div>
-
-        <form onSubmit={handleSubmit} className="mt-6 flex flex-col gap-5">
-          <Input
-            label="아이디"
-            name="loginId"
-            value={loginData.loginId}
-            onChange={handleChange}
-            placeholder="아이디를 입력하세요"
-            required
-          />
-          <Input
-            label="비밀번호"
-            name="password"
-            type="password"
-            value={loginData.password}
-            onChange={handleChange}
-            placeholder="비밀번호를 입력하세요"
-            required
-          />
-          <Button type="submit" variant="primary" fullWidth>
-            로그인
-          </Button>
-          <Link to={ROUTE_PATHS.signupAgreement}>
-            <Button type="button" variant="outline" fullWidth>
-              회원가입
-            </Button>
-          </Link>
-        </form>
-
-        <hr className="my-4 border-gray-200" />
-
-        <p className="text-center text-xs leading-relaxed text-font-sub">
-          부정 이용 방지를 위해 본 서비스는 가입 후 24시간 이내에는 서비스 이용이 제한될 수 있습니다.
-        </p>
       </section>
     </div>
   )

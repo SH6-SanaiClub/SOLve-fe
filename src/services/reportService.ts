@@ -1,3 +1,5 @@
+import axios from 'axios'
+import { APP_CONFIG } from '../constants/config'
 import { apiClient } from './apiClient'
 import type {
   ReportIssueResponse,
@@ -34,6 +36,8 @@ export const downloadReportPdf = async (issueId: number): Promise<Blob> => {
 }
 
 export const verifyReport = async (token: string): Promise<ReportVerificationResponse> => {
-  const response = await apiClient.get<ReportVerificationResponse>(`/reports/verify/${token}`)
+  const response = await axios.get<ReportVerificationResponse>(
+    `${APP_CONFIG.apiBaseUrl}/reports/verify/${token}`,
+  )
   return response.data
 }

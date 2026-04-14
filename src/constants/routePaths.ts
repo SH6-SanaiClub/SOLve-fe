@@ -21,6 +21,9 @@ export const ROUTE_PATHS = {
   activitySocialDonation: '/esg/social/donation',
   activitySocialStore: '/esg/social/store',
   activitySocialVolunteer: '/esg/social/volunteer',
+  activitySocialVolunteerAttendance: '/esg/social/volunteers/attendance',
+  activitySocialVolunteerAttendanceComplete:
+    '/esg/social/volunteers/attendance/complete',
   activitySocialVolunteerDetail: '/esg/social/volunteers/:volunteerId',
   activitySocialVolunteerComplete: '/esg/social/volunteers/:volunteerId/complete',
   activitySocialProductDetail: '/esg/social/products/:productId',

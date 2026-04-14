@@ -100,15 +100,6 @@ export function VolunteerAttendanceCompletePage() {
                   <div className="flex flex-col gap-[11px]">
                     <div className="flex items-center justify-between gap-4">
                       <span className="text-[12px] leading-6 font-medium tracking-[-0.02em] text-font-sub">
-                        최종 상태
-                      </span>
-                      <span className="text-right text-[16px] leading-6 font-semibold tracking-[-0.02em] text-font-sub">
-                        {result.status}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between gap-4">
-                      <span className="text-[12px] leading-6 font-medium tracking-[-0.02em] text-font-sub">
                         획득 ESG 포인트
                       </span>
                       <span

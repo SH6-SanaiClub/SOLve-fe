@@ -19,7 +19,7 @@ import {
   updateMyPhoneNumber,
   withdrawMyAccount,
 } from '../../services/userProfileService'
-import { useAuthStore } from '../../store/authStore'
+import { clearClientAuthSession } from '../../utils/authSession'
 import { ShopHeader } from '../shop/components/ShopHeader'
 
 type EditableField = 'email' | 'phone'
@@ -68,7 +68,6 @@ const getAlertMessage = (error: unknown) => {
 
 export const MyProfilePage = () => {
   const navigate = useNavigate()
-  const clearSession = useAuthStore((state) => state.clearSession)
   const [profile, setProfile] = useState(initialProfile)
   const [draftProfile, setDraftProfile] = useState(initialProfile)
   const [activeEditor, setActiveEditor] = useState<EditableField | null>(null)
@@ -328,9 +327,7 @@ export const MyProfilePage = () => {
   }
 
   const handleMoveToLogin = () => {
-    clearSession()
-    localStorage.removeItem('accessToken')
-    localStorage.removeItem('refreshToken')
+    clearClientAuthSession()
     navigate(ROUTE_PATHS.login, { replace: true })
   }
 

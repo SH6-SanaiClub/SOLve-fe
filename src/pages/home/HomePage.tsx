@@ -172,7 +172,7 @@ export function HomePage() {
               <DashboardActionTile
                 title="오늘의 퀴즈"
                 variant="outline"
-                onClick={() => navigate(ROUTE_PATHS.shop)}
+                onClick={() => navigate(ROUTE_PATHS.esgQuiz)}
               />
             </div>
           </section>

@@ -7,7 +7,8 @@ import {
   type Location,
 } from 'react-router-dom'
 import { ROUTE_PATHS } from '../constants/routePaths'
-import { GovernancePage } from '../pages/activities/GovernancePage'
+import { GovernanceQuizPage } from '../pages/esg/governance/GovernanceQuizPage'
+import { GovernanceQuizResultPage } from '../pages/esg/governance/GovernanceQuizResultPage'
 
 import { DonationDetailPage } from '../pages/esg/social/DonationDetailPage'
 import { DonationPaymentPage } from '../pages/esg/social/DonationPaymentPage'
@@ -193,27 +194,13 @@ function AppRoutes() {
               element={<DonationPaymentCompletePage />}
             />
 
-            <Route path={ROUTE_PATHS.esgQuiz} element={<GovernancePage />} />
-            <Route
-              path={ROUTE_PATHS.activityGovernance}
-              element={<GovernancePage />}
-            />
-            <Route
-              path={ROUTE_PATHS.financeDone}
-              element={<FinanceDonePage />}
-            />
-            <Route
-              path={ROUTE_PATHS.financeApply}
-              element={<FinanceApplyPage />}
-            />
-            <Route
-              path={ROUTE_PATHS.financeDetail}
-              element={<FinanceDetailPage />}
-            />
-            <Route
-              path={ROUTE_PATHS.activityGovernance}
-              element={<GovernancePage />}
-            />
+          <Route path={ROUTE_PATHS.esgQuiz} element={<GovernanceQuizPage />} />
+          <Route path={ROUTE_PATHS.esgQuizResult} element={<GovernanceQuizResultPage />} />
+          <Route path={ROUTE_PATHS.activityGovernance} element={<GovernanceQuizPage />} />
+          <Route path={ROUTE_PATHS.financeDone} element={<FinanceDonePage />} />
+          <Route path={ROUTE_PATHS.financeApply} element={<FinanceApplyPage />} />
+          <Route path={ROUTE_PATHS.financeDetail} element={<FinanceDetailPage />} />
+
 
             <Route path={ROUTE_PATHS.finance} element={<FinancePage />} />
             <Route path={ROUTE_PATHS.my} element={<MyPage />} />

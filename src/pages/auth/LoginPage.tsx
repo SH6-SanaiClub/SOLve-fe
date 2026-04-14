@@ -46,7 +46,7 @@ export function LoginPage() {
       <section className="page-card flex min-h-[calc(100vh-48px)] flex-col px-4 pt-8 pb-6">
         <div className="flex flex-1 flex-col">
           <div className="flex flex-col items-center pt-20 text-center">
-            <img src={logoImage} alt="SOLve" className="mt-4 h-[56px] w-auto object-contain" />
+            <img src={logoImage} alt="SOLve" className="mt-4 h-[76px] w-auto object-contain" />
             <h1 className="mt-5 text-[24px] leading-none font-bold tracking-[-0.03em] text-font-main">
               로그인
             </h1>

@@ -48,6 +48,10 @@ export function SignupAgreementPage() {
     setChecked((prev) => ({ ...prev, [key]: value }))
   }
 
+  const handleBack = () => {
+    navigate(-1)
+  }
+
   const getAlertMessage = (error: unknown) => {
     if (axios.isAxiosError(error)) {
       const serverMessage = (error.response?.data as { message?: string } | undefined)?.message?.trim()
@@ -101,7 +105,7 @@ export function SignupAgreementPage() {
             <IconButton
               label="뒤로가기"
               icon={<Icons.Back className="text-font-main" />}
-              onClick={() => navigate(-1)}
+              onClick={handleBack}
             />
           }
           title="회원가입"

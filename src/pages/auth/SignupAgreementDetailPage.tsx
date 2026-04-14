@@ -6,6 +6,7 @@ import Button from '../../components/common/Button'
 import Checkbox from '../../components/common/Checkbox'
 import IconButton from '../../components/common/IconButton'
 import { Icons } from '../../components/common/Icons'
+import Header from '../../components/layout/Header'
 import MainLayout from '../../components/layout/MainLayout'
 import { ROUTE_PATHS } from '../../constants/routePaths'
 import { identityVerificationService } from '../../services/identityVerificationService'
@@ -254,18 +255,21 @@ export function SignupAgreementDetailPage() {
   }
 
   return (
-    <MainLayout>
-      <section className="flex flex-col gap-6">
-        <div className="-mx-(--side-padding) -mt-6 flex items-center gap-3 border-b border-gray-200 px-(--side-padding) py-4">
-          <IconButton
-            onClick={() => navigate(-1)}
-            icon={<Icons.Back />}
-            label="뒤로가기"
-            size="md"
-          />
-          <h1 className="text-xl font-bold text-font-main">회원가입</h1>
-        </div>
-
+    <MainLayout
+      header={
+        <Header
+          left={
+            <IconButton
+              label="뒤로가기"
+              icon={<Icons.Back className="text-font-main" />}
+              onClick={() => navigate(-1)}
+            />
+          }
+          title="회원가입"
+        />
+      }
+    >
+      <section className="flex flex-col gap-6 pb-28">
         <div>
           <h2 className="mt-4 text-lg font-semibold text-font-main">
             안전한 금융 생활을 위해 약관에 동의해주세요
@@ -351,7 +355,9 @@ export function SignupAgreementDetailPage() {
           })}
 
         </div>
+      </section>
 
+      <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-[600px] -translate-x-1/2 bg-bg-light px-6 pt-4 pb-[calc(env(safe-area-inset-bottom)+16px)]">
         <Button
           type="button"
           variant="primary"
@@ -361,7 +367,7 @@ export function SignupAgreementDetailPage() {
         >
           {isVerifying ? '인증 확인 중...' : '본인인증 시작'}
         </Button>
-      </section>
+      </div>
 
       {errorMessage ? (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 px-6">

@@ -7,6 +7,8 @@ import IconButton from '../../components/common/IconButton'
 import { Icons } from '../../components/common/Icons'
 import { ROUTE_PATHS } from '../../constants/routePaths'
 import { identityVerificationService } from '../../services/identityVerificationService'
+import MainLayout from '../../components/layout/MainLayout'
+import Header from '../../components/layout/Header'
 
 const agreementItems = [
   { key: 'terms', label: '[필수] 서비스 이용약관', required: true },
@@ -92,20 +94,25 @@ export function SignupAgreementPage() {
   }
 
   return (
-    <div className="app-shell">
-      <section className="page-card flex flex-col gap-6">
-        <div className="-mx-6 -mt-6 flex items-center gap-3 border-b border-gray-200 px-6 py-4">
-          <IconButton
-            onClick={() => navigate(-1)}
-            icon={<Icons.Back />}
-            label="뒤로가기"
-            size="md"
-          />
-          <h1 className="text-xl font-bold text-font-main">회원가입</h1>
-        </div>
-
+    <MainLayout
+      header={
+        <Header
+          left={
+            <IconButton
+              label="뒤로가기"
+              icon={<Icons.Back className="text-font-main" />}
+              onClick={() => navigate(-1)}
+            />
+          }
+          title="회원가입"
+        />
+      }
+    >
+      <section className="flex flex-col gap-6">
         <div>
-          <h2 className="mt-4 text-lg font-semibold text-font-main">안전한 금융 생활을 위해 약관에 동의해주세요</h2>
+          <h2 className="mt-4 text-lg font-semibold text-font-main">
+            안전한 금융 생활을 위해 약관에 동의해주세요
+          </h2>
           <p className="mt-1 text-sm text-font-sub">서비스 이용을 위한 필수 약관입니다.</p>
         </div>
 
@@ -162,6 +169,6 @@ export function SignupAgreementPage() {
           </div>
         </div>
       )}
-    </div>
+    </MainLayout>
   )
 }

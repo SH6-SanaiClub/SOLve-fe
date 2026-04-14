@@ -23,15 +23,13 @@ import { ValueStorePaymentPage } from '../pages/esg/social/ValueStorePaymentPage
 import { ValueStorePaymentRedirectPage } from '../pages/esg/social/ValueStorePaymentRedirectPage'
 import { ValueStorePage } from '../pages/esg/social/ValueStorePage'
 import { VolunteerCompletePage } from '../pages/esg/social/VolunteerCompletePage'
-import { VolunteerAttendancePage } from '../pages/esg/social/VolunteerAttendancePage'
-import { VolunteerAttendanceCompletePage } from '../pages/esg/social/VolunteerAttendanceCompletePage'
 import { VolunteerDetailPage } from '../pages/esg/social/VolunteerDetailPage'
 import { VolunteerPage } from '../pages/esg/social/VolunteerPage'
 
 import { LoginPage } from '../pages/auth/LoginPage'
 import { SurveyPage } from '../pages/auth/SurveyPage'
 import { SignupPage } from '../pages/auth/SignupPage'
-import { SignupAgreementPage } from '../pages/auth/SignupAgreementPage'
+import { SignupAgreementDetailPage } from '../pages/auth/SignupAgreementDetailPage'
 import { SignupCompletePage } from '../pages/auth/SignupCompletePage'
 import { ChatbotPage } from '../pages/chatbot/ChatbotPage'
 import { FinanceApplyPage } from '../pages/finance/FinanceApplyPage'
@@ -49,7 +47,6 @@ import { MyReportPage } from '../pages/my/MyReportPage'
 import { MySavingsHistoryPage } from '../pages/my/MySavingsHistoryPage'
 import { MyPage } from '../pages/my/MyPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
-import { ReportVerificationPage } from '../pages/report/ReportVerificationPage'
 import { RecommendPage } from '../pages/recommend/RecommendPage'
 import { EnvironmentEntryModalRoute } from '../pages/esg/env/EnvironmentEntryModalRoute'
 import { EnvironmentEntryPage } from '../pages/esg/env/EnvironmentEntryPage'
@@ -79,53 +76,23 @@ function AppRoutes() {
 
         <Route element={<PublicOnlyRoute />}>
           <Route path={ROUTE_PATHS.login} element={<LoginPage />} />
-          <Route
-            path={ROUTE_PATHS.signupAgreement}
-            element={<SignupAgreementPage />}
-          />
-          <Route path={ROUTE_PATHS.verify} element={<SignupAgreementPage />} />
+          <Route path={ROUTE_PATHS.signupAgreement} element={<SignupAgreementDetailPage />} />
+          <Route path={ROUTE_PATHS.verify} element={<SignupAgreementDetailPage />} />
           <Route path={ROUTE_PATHS.signup} element={<SignupPage />} />
-          <Route
-            path={ROUTE_PATHS.signupComplete}
-            element={<SignupCompletePage />}
-          />
+          <Route path={ROUTE_PATHS.signupComplete} element={<SignupCompletePage />} />
         </Route>
 
-        <Route
-          path={ROUTE_PATHS.reportVerify}
-          element={<ReportVerificationPage />}
-        />
-
         <Route element={<ProtectedRoute />}>
-          <Route
-            path={ROUTE_PATHS.activitySocialVolunteerAttendance}
-            element={<VolunteerAttendancePage />}
-          />
-          <Route
-            path={ROUTE_PATHS.activitySocialVolunteerAttendanceComplete}
-            element={<VolunteerAttendanceCompletePage />}
-          />
-          <Route
-            path={ROUTE_PATHS.activitySocialVolunteerComplete}
-            element={<VolunteerCompletePage />}
-          />
-
           <Route path={ROUTE_PATHS.survey} element={<SurveyPage />} />
           <Route element={<SurveyGuard />}>
             <Route path={ROUTE_PATHS.home} element={<HomePage />} />
             <Route path={ROUTE_PATHS.shop} element={<ShopListPage />} />
-            <Route
-              path={ROUTE_PATHS.shopHistory}
-              element={<ShopHistoryPage />}
-            />
+            <Route path={ROUTE_PATHS.shopHistory} element={<ShopHistoryPage />} />
             <Route
               path={ROUTE_PATHS.shopDetail}
               element={<ShopProductDetailPage />}
             />
-            <Route
-              path={ROUTE_PATHS.esgEnv}
-              element={<EnvironmentEntryPage />}
-            />
+            <Route path={ROUTE_PATHS.esgEnv} element={<EnvironmentEntryPage />} />
             <Route
               path={ROUTE_PATHS.activityEnvironment}
               element={<EnvironmentEntryPage />}
@@ -194,13 +161,12 @@ function AppRoutes() {
               element={<DonationPaymentCompletePage />}
             />
 
-          <Route path={ROUTE_PATHS.esgQuiz} element={<GovernanceQuizPage />} />
-          <Route path={ROUTE_PATHS.esgQuizResult} element={<GovernanceQuizResultPage />} />
-          <Route path={ROUTE_PATHS.activityGovernance} element={<GovernanceQuizPage />} />
-          <Route path={ROUTE_PATHS.financeDone} element={<FinanceDonePage />} />
-          <Route path={ROUTE_PATHS.financeApply} element={<FinanceApplyPage />} />
-          <Route path={ROUTE_PATHS.financeDetail} element={<FinanceDetailPage />} />
-
+            <Route path={ROUTE_PATHS.esgQuiz} element={<GovernanceQuizPage />} />
+            <Route path={ROUTE_PATHS.esgQuizResult} element={<GovernanceQuizResultPage />} />
+            <Route path={ROUTE_PATHS.activityGovernance} element={<GovernanceQuizPage />} />
+            <Route path={ROUTE_PATHS.financeDone} element={<FinanceDonePage />} />
+            <Route path={ROUTE_PATHS.financeApply} element={<FinanceApplyPage />} />
+            <Route path={ROUTE_PATHS.financeDetail} element={<FinanceDetailPage />} />
 
             <Route path={ROUTE_PATHS.finance} element={<FinancePage />} />
             <Route path={ROUTE_PATHS.my} element={<MyPage />} />
@@ -208,18 +174,9 @@ function AppRoutes() {
             <Route path={ROUTE_PATHS.myGrade} element={<MyGradePage />} />
             <Route path={ROUTE_PATHS.myHistory} element={<MyHistoryPage />} />
             <Route path={ROUTE_PATHS.myFinance} element={<MyFinancePage />} />
-            <Route
-              path={ROUTE_PATHS.myFinanceSavingsHistory}
-              element={<MySavingsHistoryPage />}
-            />
-            <Route
-              path={ROUTE_PATHS.myFinanceLoanHistory}
-              element={<MyLoanHistoryPage />}
-            />
-            <Route
-              path={ROUTE_PATHS.myPointManage}
-              element={<MyPointManagePage />}
-            />
+            <Route path={ROUTE_PATHS.myFinanceSavingsHistory} element={<MySavingsHistoryPage />} />
+            <Route path={ROUTE_PATHS.myFinanceLoanHistory} element={<MyLoanHistoryPage />} />
+            <Route path={ROUTE_PATHS.myPointManage} element={<MyPointManagePage />} />
             <Route path={ROUTE_PATHS.myReport} element={<MyReportPage />} />
             <Route path={ROUTE_PATHS.chatbot} element={<ChatbotPage />} />
             <Route path={ROUTE_PATHS.recommend} element={<RecommendPage />} />

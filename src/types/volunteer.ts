@@ -29,3 +29,44 @@ export interface VolunteerApplicationResponse {
   activityDate: string
   status: 'APPLIED'
 }
+
+export type VolunteerAttendanceStatus = 'APPLIED' | 'ATTENDED' | 'COMPLETED'
+
+export interface VolunteerAttendanceInfo {
+  userName: string
+  volunteerId: number
+  name: string
+  location: string
+  activityDate: string
+  volunteerHour: number
+  organization: string
+  status: VolunteerAttendanceStatus
+  checkInAt: string | null
+  checkOutAt: string | null
+}
+
+export interface VolunteerCheckInRequest {
+  qrToken: string
+  latitude: number
+  longitude: number
+}
+
+export interface VolunteerCheckInResponse {
+  checkInAt: string
+  status: 'ATTENDED'
+}
+
+export interface VolunteerCheckOutRequest {
+  qrToken: string
+  latitude: number
+  longitude: number
+}
+
+export interface VolunteerCheckOutResponse {
+  name: string
+  checkInAt: string
+  checkOutAt: string
+  status: 'COMPLETED' | 'INCOMPLETE'
+  awardedPoint: number
+  currentPoint: number
+}

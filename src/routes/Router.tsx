@@ -22,6 +22,8 @@ import { ValueStorePaymentPage } from '../pages/esg/social/ValueStorePaymentPage
 import { ValueStorePaymentRedirectPage } from '../pages/esg/social/ValueStorePaymentRedirectPage'
 import { ValueStorePage } from '../pages/esg/social/ValueStorePage'
 import { VolunteerCompletePage } from '../pages/esg/social/VolunteerCompletePage'
+import { VolunteerAttendancePage } from '../pages/esg/social/VolunteerAttendancePage'
+import { VolunteerAttendanceCompletePage } from '../pages/esg/social/VolunteerAttendanceCompletePage'
 import { VolunteerDetailPage } from '../pages/esg/social/VolunteerDetailPage'
 import { VolunteerPage } from '../pages/esg/social/VolunteerPage'
 
@@ -76,25 +78,53 @@ function AppRoutes() {
 
         <Route element={<PublicOnlyRoute />}>
           <Route path={ROUTE_PATHS.login} element={<LoginPage />} />
-          <Route path={ROUTE_PATHS.signupAgreement} element={<SignupAgreementPage />} />
+          <Route
+            path={ROUTE_PATHS.signupAgreement}
+            element={<SignupAgreementPage />}
+          />
           <Route path={ROUTE_PATHS.verify} element={<SignupAgreementPage />} />
           <Route path={ROUTE_PATHS.signup} element={<SignupPage />} />
-          <Route path={ROUTE_PATHS.signupComplete} element={<SignupCompletePage />} />
+          <Route
+            path={ROUTE_PATHS.signupComplete}
+            element={<SignupCompletePage />}
+          />
         </Route>
 
-        <Route path={ROUTE_PATHS.reportVerify} element={<ReportVerificationPage />} />
+        <Route
+          path={ROUTE_PATHS.reportVerify}
+          element={<ReportVerificationPage />}
+        />
 
         <Route element={<ProtectedRoute />}>
+          <Route
+            path={ROUTE_PATHS.activitySocialVolunteerAttendance}
+            element={<VolunteerAttendancePage />}
+          />
+          <Route
+            path={ROUTE_PATHS.activitySocialVolunteerAttendanceComplete}
+            element={<VolunteerAttendanceCompletePage />}
+          />
+          <Route
+            path={ROUTE_PATHS.activitySocialVolunteerComplete}
+            element={<VolunteerCompletePage />}
+          />
+
           <Route path={ROUTE_PATHS.survey} element={<SurveyPage />} />
           <Route element={<SurveyGuard />}>
             <Route path={ROUTE_PATHS.home} element={<HomePage />} />
             <Route path={ROUTE_PATHS.shop} element={<ShopListPage />} />
-            <Route path={ROUTE_PATHS.shopHistory} element={<ShopHistoryPage />} />
+            <Route
+              path={ROUTE_PATHS.shopHistory}
+              element={<ShopHistoryPage />}
+            />
             <Route
               path={ROUTE_PATHS.shopDetail}
               element={<ShopProductDetailPage />}
             />
-            <Route path={ROUTE_PATHS.esgEnv} element={<EnvironmentEntryPage />} />
+            <Route
+              path={ROUTE_PATHS.esgEnv}
+              element={<EnvironmentEntryPage />}
+            />
             <Route
               path={ROUTE_PATHS.activityEnvironment}
               element={<EnvironmentEntryPage />}
@@ -164,10 +194,22 @@ function AppRoutes() {
             />
 
             <Route path={ROUTE_PATHS.esgQuiz} element={<GovernancePage />} />
-            <Route path={ROUTE_PATHS.activityGovernance} element={<GovernancePage />} />
-            <Route path={ROUTE_PATHS.financeDone} element={<FinanceDonePage />} />
-            <Route path={ROUTE_PATHS.financeApply} element={<FinanceApplyPage />} />
-            <Route path={ROUTE_PATHS.financeDetail} element={<FinanceDetailPage />} />
+            <Route
+              path={ROUTE_PATHS.activityGovernance}
+              element={<GovernancePage />}
+            />
+            <Route
+              path={ROUTE_PATHS.financeDone}
+              element={<FinanceDonePage />}
+            />
+            <Route
+              path={ROUTE_PATHS.financeApply}
+              element={<FinanceApplyPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.financeDetail}
+              element={<FinanceDetailPage />}
+            />
             <Route
               path={ROUTE_PATHS.activityGovernance}
               element={<GovernancePage />}
@@ -179,9 +221,18 @@ function AppRoutes() {
             <Route path={ROUTE_PATHS.myGrade} element={<MyGradePage />} />
             <Route path={ROUTE_PATHS.myHistory} element={<MyHistoryPage />} />
             <Route path={ROUTE_PATHS.myFinance} element={<MyFinancePage />} />
-            <Route path={ROUTE_PATHS.myFinanceSavingsHistory} element={<MySavingsHistoryPage />} />
-            <Route path={ROUTE_PATHS.myFinanceLoanHistory} element={<MyLoanHistoryPage />} />
-            <Route path={ROUTE_PATHS.myPointManage} element={<MyPointManagePage />} />
+            <Route
+              path={ROUTE_PATHS.myFinanceSavingsHistory}
+              element={<MySavingsHistoryPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.myFinanceLoanHistory}
+              element={<MyLoanHistoryPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.myPointManage}
+              element={<MyPointManagePage />}
+            />
             <Route path={ROUTE_PATHS.myReport} element={<MyReportPage />} />
             <Route path={ROUTE_PATHS.chatbot} element={<ChatbotPage />} />
             <Route path={ROUTE_PATHS.recommend} element={<RecommendPage />} />

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+﻿import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Badge, Button, Card, InfoRow, ProgressBar, SectionHeader } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
@@ -16,6 +16,7 @@ import type {
   ActivityStatusFilter,
   ActivityStatusLogItem,
   ActivityStatusOverviewResponse,
+  ActivityStatusReason,
 } from '../../types/activityStatus'
 import type { UserGrade } from '../../types/user'
 import { ShopHeader } from '../shop/components/ShopHeader'
@@ -43,6 +44,12 @@ const GRADE_LABELS: Record<UserGrade, string> = {
   EARTH: '지구',
 }
 
+const HIDDEN_ACTIVITY_REASONS: ActivityStatusReason[] = [
+  'ABUSE',
+  'NO_ACTIVITY',
+  'INITIAL_SCORE',
+]
+
 const formatGradeLabel = (grade: UserGrade) => GRADE_LABELS[grade] ?? grade
 
 const formatReferenceMonth = (referenceDate: string) => {
@@ -52,10 +59,10 @@ const formatReferenceMonth = (referenceDate: string) => {
     return ''
   }
 
-  return `${year}년 ${month}월 기준`
+  return year + '년 ' + month + '월 기준'
 }
 
-const formatGraphMonth = (month: number) => `${month}월`
+const formatGraphMonth = (month: number) => month + '월'
 
 const formatListDate = (occurredAt: string) => {
   const [datePart] = occurredAt.split('T')
@@ -65,13 +72,11 @@ const formatListDate = (occurredAt: string) => {
     return occurredAt
   }
 
-  return `${year}.${month}.${day}`
+  return year + '.' + month + '.' + day
 }
 
-const formatScore = (score: number) => {
-  const sign = score > 0 ? '+' : ''
-  return `${sign}${numberFormatter.format(score)}점`
-}
+const filterVisibleActivityLogs = (items: ActivityStatusLogItem[]) =>
+  items.filter((item) => !HIDDEN_ACTIVITY_REASONS.includes(item.reason))
 
 const appendUniqueLogs = (
   previous: ActivityStatusLogItem[],
@@ -199,7 +204,7 @@ export const MyGradePage = () => {
           return
         }
 
-        setLogs(response.items)
+        setLogs(filterVisibleActivityLogs(response.items))
         setTotalLogCount(response.totalCount)
         setHasNext(response.hasNext)
         setNextCursor(response.nextCursor)
@@ -213,7 +218,7 @@ export const MyGradePage = () => {
         setTotalLogCount(0)
         setHasNext(false)
         setNextCursor(null)
-        setLogsError('점수 획득 내역을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.')
+        setLogsError('ESG 활동 내역을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.')
       } finally {
         if (!cancelled) {
           setIsLogsLoading(false)
@@ -248,13 +253,13 @@ export const MyGradePage = () => {
         return
       }
 
-      setLogs((current) => appendUniqueLogs(current, response.items))
+      setLogs((current) => appendUniqueLogs(current, filterVisibleActivityLogs(response.items)))
       setTotalLogCount(response.totalCount)
       setHasNext(response.hasNext)
       setNextCursor(response.nextCursor)
     } catch (error) {
       console.error(error)
-      setLogsError('점수 획득 내역을 더 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.')
+      setLogsError('ESG 활동 내역을 더 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.')
     } finally {
       setIsLoadingMore(false)
     }
@@ -576,7 +581,7 @@ export const MyGradePage = () => {
             <SectionHeader
               title={
                 <span className="flex items-center gap-1.5">
-                  <span>점수 획득 내역</span>
+                  <span>ESG 활동 내역</span>
                   <span className="text-xs font-medium text-gray-400">(최근 1년)</span>
                 </span>
               }
@@ -616,7 +621,7 @@ export const MyGradePage = () => {
             {isLogsLoading ? (
               <div className="flex items-center justify-center rounded-control border border-gray-100 px-4 py-8 text-center">
                 <span className="text-sm font-medium text-font-sub">
-                  점수 획득 내역을 불러오는 중입니다.
+                  ESG 활동 내역을 불러오는 중입니다.
                 </span>
               </div>
             ) : logsError && logs.length === 0 ? (
@@ -639,15 +644,17 @@ export const MyGradePage = () => {
                       </p>
                     </div>
 
-                    <span className="shrink-0 text-sm font-semibold text-primary-400">
-                      {formatScore(item.changeAmount)}
-                    </span>
+                    <div className="flex shrink-0 items-center">
+                      <Badge tone="primary" variant="soft" className="!px-2 !py-1">
+                        {item.category}
+                      </Badge>
+                    </div>
                   </div>
                 ))}
               </div>
             ) : (
               <div className="flex items-center justify-center rounded-control border border-gray-100 px-4 py-8 text-center">
-                <span className="text-sm font-medium text-font-sub">점수 획득 내역이 없습니다.</span>
+                <span className="text-sm font-medium text-font-sub">ESG 활동 내역이 없습니다.</span>
               </div>
             )}
 

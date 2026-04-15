@@ -1,6 +1,18 @@
 import type { UserGrade } from './user'
 
 export type ActivityStatusFilter = 'ALL' | 'E' | 'S' | 'G'
+export type ActivityStatusCategory = Exclude<ActivityStatusFilter, 'ALL'>
+export type ActivityStatusReason =
+  | 'DONATION'
+  | 'VOLUNTEER'
+  | 'PURCHASE'
+  | 'QUIZ'
+  | 'PHOTO'
+  | 'LOAN_REPAY'
+  | 'CONSECUTIVE_BONUS'
+  | 'ABUSE'
+  | 'NO_ACTIVITY'
+  | 'INITIAL_SCORE'
 
 export interface ActivityStatusSummary {
   currentGrade: UserGrade
@@ -38,10 +50,8 @@ export interface ActivityStatusOverviewResponse {
 export interface ActivityStatusLogItem {
   scoreHistoryId: number
   title: string
-  category: Exclude<ActivityStatusFilter, 'ALL'>
-  reason: string
-  changeAmount: number
-  scoreAfter: number
+  category: ActivityStatusCategory
+  reason: ActivityStatusReason
   occurredAt: string
 }
 

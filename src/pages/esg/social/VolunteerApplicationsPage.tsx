@@ -1,6 +1,7 @@
+import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { IconButton, Icons, Card } from '../../../components/common'
+import { Button, Card, IconButton, Icons } from '../../../components/common'
 import BottomNavigation from '../../../components/layout/BottomNavigation'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
@@ -8,16 +9,27 @@ import {
   getVolunteerDetailPath,
   ROUTE_PATHS,
 } from '../../../constants/routePaths'
-import { getVolunteerApplications } from '../../../services/volunteerService'
-import type { VolunteerListResponse } from '../../../types/volunteer'
+import {
+  cancelVolunteerApplication,
+  getVolunteerApplications,
+} from '../../../services/volunteerService'
+import type {
+  VolunteerApplicationItem,
+  VolunteerApplicationListResponse,
+} from '../../../types/volunteer'
 import { VolunteerActivityCard } from './components/VolunteerActivityCard'
 
 export function VolunteerApplicationsPage() {
   const navigate = useNavigate()
   const [volunteerData, setVolunteerData] =
-    useState<VolunteerListResponse | null>(null)
+    useState<VolunteerApplicationListResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
+  const [actionMessage, setActionMessage] = useState('')
+  const [cancelError, setCancelError] = useState('')
+  const [selectedApplication, setSelectedApplication] =
+    useState<VolunteerApplicationItem | null>(null)
+  const [isCancelling, setIsCancelling] = useState(false)
 
   useEffect(() => {
     let isMounted = true
@@ -54,6 +66,20 @@ export function VolunteerApplicationsPage() {
     }
   }, [])
 
+  useEffect(() => {
+    if (!actionMessage) {
+      return
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setActionMessage('')
+    }, 2200)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+    }
+  }, [actionMessage])
+
   const handleBottomNavigation = (key: string) => {
     if (key === 'home') {
       navigate(ROUTE_PATHS.home)
@@ -72,6 +98,69 @@ export function VolunteerApplicationsPage() {
 
     if (key === 'mypage') {
       navigate(ROUTE_PATHS.my)
+    }
+  }
+
+  const getCancelErrorMessage = (cancelActionError: unknown) => {
+    if (axios.isAxiosError(cancelActionError)) {
+      const responseMessage =
+        typeof cancelActionError.response?.data?.message === 'string'
+          ? cancelActionError.response.data.message.trim()
+          : ''
+
+      if (responseMessage) {
+        return responseMessage
+      }
+    }
+
+    return '봉사 신청 취소에 실패했어요. 잠시 후 다시 시도해주세요.'
+  }
+
+  const handleOpenCancelModal = (volunteer: VolunteerApplicationItem) => {
+    setActionMessage('')
+    setCancelError('')
+    setSelectedApplication(volunteer)
+  }
+
+  const handleCloseCancelModal = () => {
+    if (isCancelling) {
+      return
+    }
+
+    setSelectedApplication(null)
+  }
+
+  const handleCancelVolunteerApplication = async () => {
+    if (!selectedApplication) {
+      return
+    }
+
+    setIsCancelling(true)
+    setCancelError('')
+
+    try {
+      await cancelVolunteerApplication(selectedApplication.volunteerApplicationId)
+
+      setVolunteerData((prev) => {
+        if (!prev) {
+          return prev
+        }
+
+        return {
+          volunteers: prev.volunteers.filter(
+            (volunteer) =>
+              volunteer.volunteerApplicationId !==
+              selectedApplication.volunteerApplicationId,
+          ),
+        }
+      })
+      setActionMessage('봉사 신청이 취소되었어요.')
+      setSelectedApplication(null)
+    } catch (cancelActionError) {
+      console.error(cancelActionError)
+      setCancelError(getCancelErrorMessage(cancelActionError))
+    } finally {
+      setIsCancelling(false)
     }
   }
 
@@ -139,6 +228,7 @@ export function VolunteerApplicationsPage() {
                     key={volunteer.volunteerId}
                     volunteer={volunteer}
                     actionLabel="신청 취소"
+                    onActionClick={() => handleOpenCancelModal(volunteer)}
                     onClick={() =>
                       navigate(getVolunteerDetailPath(volunteer.volunteerId))
                     }
@@ -160,6 +250,68 @@ export function VolunteerApplicationsPage() {
             </p>
           </div>
         </section>
+      ) : null}
+
+      {selectedApplication ? (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 px-4"
+          onClick={handleCloseCancelModal}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="volunteer-cancel-modal-title"
+            className="w-full max-w-[340px] rounded-[8px] bg-white px-5 pt-6 pb-5 shadow-[0_8px_24px_rgba(15,23,42,0.16)]"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="text-center">
+              <h2
+                id="volunteer-cancel-modal-title"
+                className="text-center text-lg font-semibold text-font-main"
+              >
+                신청을 취소하시겠습니까?
+              </h2>
+              <p className="mt-2 text-center text-sm leading-6 text-gray-400">
+                봉사 시작 24시간 전까지만 취소할 수 있으며,
+                <br />
+                이후에는 신청 취소가 제한될 수 있습니다.
+              </p>
+              {cancelError ? (
+                <p className="mt-3 text-center text-sm leading-6 text-red-500">
+                  {cancelError}
+                </p>
+              ) : null}
+            </div>
+
+            <div className="mt-5 flex gap-3">
+              <Button
+                variant="gray"
+                fullWidth
+                className="!rounded-[8px]"
+                onClick={handleCloseCancelModal}
+                disabled={isCancelling}
+              >
+                아니요
+              </Button>
+              <Button
+                fullWidth
+                className="!rounded-[8px]"
+                onClick={() => void handleCancelVolunteerApplication()}
+                disabled={isCancelling}
+              >
+                {isCancelling ? '취소 중...' : '네'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
+      {actionMessage ? (
+        <div className="pointer-events-none fixed inset-x-0 bottom-[calc(var(--nav-h)+20px)] z-50 flex justify-center px-4">
+          <div className="rounded-full bg-primary-400 px-4 py-2 text-sm font-medium text-white shadow-lg">
+            {actionMessage}
+          </div>
+        </div>
       ) : null}
     </MainLayout>
   )

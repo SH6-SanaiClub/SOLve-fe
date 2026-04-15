@@ -1,6 +1,8 @@
 import { apiClient } from './apiClient'
 import type {
   ApplyVolunteerRequest,
+  VolunteerApplicationItem,
+  VolunteerApplicationListResponse,
   VolunteerApplicationResponse,
   VolunteerAttendanceInfo,
   VolunteerCheckInRequest,
@@ -8,7 +10,6 @@ import type {
   VolunteerCheckOutRequest,
   VolunteerCheckOutResponse,
   VolunteerDetail,
-  VolunteerListResponse,
 } from '../types/volunteer'
 
 export const getVolunteerActivities = async (): Promise<VolunteerListResponse> => {
@@ -16,11 +17,19 @@ export const getVolunteerActivities = async (): Promise<VolunteerListResponse> =
   return response.data
 }
 
-export const getVolunteerApplications = async (): Promise<VolunteerListResponse> => {
-  const response = await apiClient.get<VolunteerListResponse>(
+export const getVolunteerApplications = async (): Promise<VolunteerApplicationListResponse> => {
+  const response = await apiClient.get<VolunteerApplicationListResponse>(
     '/v1/esg/s/volunteers/applications',
   )
   return response.data
+}
+
+export const cancelVolunteerApplication = async (
+  volunteerApplicationId: VolunteerApplicationItem['volunteerApplicationId'],
+): Promise<void> => {
+  await apiClient.delete(
+    `/v1/esg/s/volunteers/applications/${volunteerApplicationId}`,
+  )
 }
 
 export const getVolunteerDetail = async (

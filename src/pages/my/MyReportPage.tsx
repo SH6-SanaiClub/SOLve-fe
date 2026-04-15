@@ -358,7 +358,7 @@ export const MyReportPage = () => {
                 </div>
 
                 <div className="mt-6 overflow-hidden rounded-control border border-gray-200">
-                  <div className="grid grid-cols-2 bg-white">
+                  <div className="grid grid-cols-2 bg-white/50">
                     <div className="border-r border-b border-gray-100 px-4 py-4">
                       <p className="text-xs font-medium text-gray-400">현재 등급</p>
                       <p className="mt-2 text-base font-semibold text-font-main">

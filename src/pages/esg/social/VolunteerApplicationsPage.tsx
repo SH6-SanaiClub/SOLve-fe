@@ -172,7 +172,7 @@ export function VolunteerApplicationsPage() {
             <IconButton
               label="뒤로가기"
               icon={<Icons.Back className="text-font-main" />}
-              onClick={() => navigate(-1)}
+              onClick={() => navigate(ROUTE_PATHS.activitySocialVolunteer)}
             />
           }
           title="봉사"

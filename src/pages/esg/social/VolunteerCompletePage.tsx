@@ -90,7 +90,17 @@ export function VolunteerCompletePage() {
                 </div>
               </div>
 
-              <div className="mt-5 w-full">
+              <div className="mt-5 grid w-full grid-cols-2 gap-3">
+                <Button
+                  fullWidth
+                  size="md"
+                  variant="sub"
+                  onClick={() =>
+                    navigate(ROUTE_PATHS.activitySocialVolunteerApplications)
+                  }
+                >
+                  신청 목록으로 가기
+                </Button>
                 <Button
                   fullWidth
                   size="md"
@@ -123,7 +133,16 @@ export function VolunteerCompletePage() {
                 </Button>
               </div>
             </div>
-            <div className="mt-6 w-full">
+            <div className="mt-6 grid w-full grid-cols-2 gap-3">
+              <Button
+                fullWidth
+                variant="sub"
+                onClick={() =>
+                  navigate(ROUTE_PATHS.activitySocialVolunteerApplications)
+                }
+              >
+                신청 목록으로 가기
+              </Button>
               <Button
                 fullWidth
                 variant="primary"

@@ -10,6 +10,7 @@ import type {
   VolunteerCheckOutRequest,
   VolunteerCheckOutResponse,
   VolunteerDetail,
+  VolunteerListResponse,
 } from '../types/volunteer'
 
 export const getVolunteerActivities = async (): Promise<VolunteerListResponse> => {

@@ -4,10 +4,7 @@ import { BottomActionBar, Button, IconButton } from '../../../components/common'
 import { Icons } from '../../../components/common'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
-import {
-  getVolunteerCompletePath,
-  ROUTE_PATHS,
-} from '../../../constants/routePaths'
+import { getVolunteerCompletePath } from '../../../constants/routePaths'
 import {
   applyVolunteer,
   getVolunteerDetail,

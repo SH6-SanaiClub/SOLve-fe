@@ -58,6 +58,19 @@ import { ShopProductDetailPage } from '../pages/shop/ShopProductDetailPage'
 import { SurveyGuard } from './SurveyGuard'
 import { ProtectedRoute } from './ProtectedRoute'
 import { PublicOnlyRoute } from './PublicOnlyRoute'
+import { AdminLayout } from '../components/admin/AdminLayout'
+import { AdminProtectedRoute } from '../components/admin/AdminProtectedRoute'
+import { AdminLoginPage } from '../pages/admin/AdminLoginPage'
+import { AdminActivitiesPage } from '../pages/admin/activities/AdminActivitiesPage'
+import { AdminActivityFormPage } from '../pages/admin/activities/AdminActivityFormPage'
+import { AdminDashboardPage } from '../pages/admin/dashboard/AdminDashboardPage'
+import { AdminFinanceFormPage } from '../pages/admin/finance/AdminFinanceFormPage'
+import { AdminFinancePage } from '../pages/admin/finance/AdminFinancePage'
+import { AdminFinanceSubscriptionsPage } from '../pages/admin/finance/AdminFinanceSubscriptionsPage'
+import { AdminShopFormPage } from '../pages/admin/shop/AdminShopFormPage'
+import { AdminShopPage } from '../pages/admin/shop/AdminShopPage'
+import { AdminUserDetailPage } from '../pages/admin/users/AdminUserDetailPage'
+import { AdminUserListPage } from '../pages/admin/users/AdminUserListPage'
 
 interface RouterLocationState {
   backgroundLocation?: Location
@@ -74,6 +87,8 @@ function AppRoutes() {
           path={ROUTE_PATHS.root}
           element={<Navigate replace to={ROUTE_PATHS.home} />}
         />
+
+        <Route path={ROUTE_PATHS.adminLogin} element={<AdminLoginPage />} />
 
         <Route element={<PublicOnlyRoute />}>
           <Route path={ROUTE_PATHS.login} element={<LoginPage />} />
@@ -186,6 +201,89 @@ function AppRoutes() {
             <Route path={ROUTE_PATHS.chatbot} element={<ChatbotPage />} />
             <Route path={ROUTE_PATHS.recommend} element={<RecommendPage />} />
           </Route>
+        </Route>
+
+        <Route element={<AdminProtectedRoute />}>
+          <Route
+            path={ROUTE_PATHS.adminDashboard}
+            element={
+              <AdminLayout>
+                <AdminDashboardPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminUsers}
+            element={
+              <AdminLayout>
+                <AdminUserListPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminUserDetail}
+            element={
+              <AdminLayout>
+                <AdminUserDetailPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminActivities}
+            element={
+              <AdminLayout>
+                <AdminActivitiesPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminActivityForm}
+            element={
+              <AdminLayout>
+                <AdminActivityFormPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminShop}
+            element={
+              <AdminLayout>
+                <AdminShopPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminShopForm}
+            element={
+              <AdminLayout>
+                <AdminShopFormPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminFinance}
+            element={
+              <AdminLayout>
+                <AdminFinancePage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminFinanceForm}
+            element={
+              <AdminLayout>
+                <AdminFinanceFormPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminFinanceSubscriptions}
+            element={
+              <AdminLayout>
+                <AdminFinanceSubscriptionsPage />
+              </AdminLayout>
+            }
+          />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

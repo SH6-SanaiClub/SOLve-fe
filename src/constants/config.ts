@@ -15,6 +15,7 @@ export const APP_CONFIG = {
 
   storageKeys: {
     auth: 'solve-auth',
+    adminAuth: 'admin-auth',
   },
   pwa: {
     themeColor: '#0046FF',

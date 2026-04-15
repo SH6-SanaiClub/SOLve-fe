@@ -46,6 +46,7 @@ export const ROUTE_PATHS = {
   myGrade: '/my/grade',
   myHistory: '/my/history',
   myFinance: '/my/finance',
+  myFinanceLoanManage: '/my/finance/loans',
   myFinanceSavingsHistory: '/my/finance/savings/:savingId',
   myFinanceLoanHistory: '/my/finance/loan',
   myPointManage: '/my/point-manage',

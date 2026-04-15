@@ -6,6 +6,7 @@
   FinanceRateValue,
   FinanceUnavailableReason,
 } from '../../types/finance'
+import { ROUTE_PATHS } from '../../constants/routePaths'
 
 const numberFormatter = new Intl.NumberFormat('ko-KR')
 
@@ -123,6 +124,7 @@ export const buildSavingsDoneState = (product: FinanceListProduct): FinanceDoneS
     },
   ],
   primaryActionLabel: '\uB0B4 \uC801\uAE08 \uD655\uC778\uD558\uAE30',
+  primaryActionPath: ROUTE_PATHS.myFinance,
   secondaryActionLabel: '\uBA54\uC778\uC73C\uB85C \uAC00\uAE30',
 })
 
@@ -149,5 +151,6 @@ export const buildLoanDoneState = (
     { label: '\uB300\uCD9C \uAE30\uAC04', value: `${preview.durationMonths}\uAC1C\uC6D4` },
   ],
   primaryActionLabel: '\uB0B4 \uB300\uCD9C \uD604\uD669 \uBCF4\uAE30',
+  primaryActionPath: ROUTE_PATHS.myFinanceLoanManage,
   secondaryActionLabel: '\uBA54\uC778\uC73C\uB85C \uAC00\uAE30',
 })

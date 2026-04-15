@@ -41,6 +41,7 @@ import { MyFinancePage } from '../pages/my/MyFinancePage'
 import { MyGradePage } from '../pages/my/MyGradePage'
 import { MyHistoryPage } from '../pages/my/MyHistoryPage'
 import { MyLoanHistoryPage } from '../pages/my/MyLoanHistoryPage'
+import { MyLoanManagePage } from '../pages/my/MyLoanManagePage'
 import { MyPointManagePage } from '../pages/my/MyPointManagePage'
 import { MyProfilePage } from '../pages/my/MyProfilePage'
 import { MyReportPage } from '../pages/my/MyReportPage'
@@ -48,6 +49,7 @@ import { MySavingsHistoryPage } from '../pages/my/MySavingsHistoryPage'
 import { MyPage } from '../pages/my/MyPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
 import { RecommendPage } from '../pages/recommend/RecommendPage'
+import { ReportVerificationPage } from '../pages/report/ReportVerificationPage'
 import { EnvironmentEntryModalRoute } from '../pages/esg/env/EnvironmentEntryModalRoute'
 import { EnvironmentEntryPage } from '../pages/esg/env/EnvironmentEntryPage'
 import { EnvironmentVerifyPage } from '../pages/esg/env/EnvironmentVerifyPage'
@@ -73,6 +75,8 @@ function AppRoutes() {
           path={ROUTE_PATHS.root}
           element={<Navigate replace to={ROUTE_PATHS.home} />}
         />
+
+        <Route path={ROUTE_PATHS.reportVerify} element={<ReportVerificationPage />} />
 
         <Route element={<PublicOnlyRoute />}>
           <Route path={ROUTE_PATHS.login} element={<LoginPage />} />
@@ -174,6 +178,7 @@ function AppRoutes() {
             <Route path={ROUTE_PATHS.myGrade} element={<MyGradePage />} />
             <Route path={ROUTE_PATHS.myHistory} element={<MyHistoryPage />} />
             <Route path={ROUTE_PATHS.myFinance} element={<MyFinancePage />} />
+            <Route path={ROUTE_PATHS.myFinanceLoanManage} element={<MyLoanManagePage />} />
             <Route path={ROUTE_PATHS.myFinanceSavingsHistory} element={<MySavingsHistoryPage />} />
             <Route path={ROUTE_PATHS.myFinanceLoanHistory} element={<MyLoanHistoryPage />} />
             <Route path={ROUTE_PATHS.myPointManage} element={<MyPointManagePage />} />

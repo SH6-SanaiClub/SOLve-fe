@@ -38,10 +38,16 @@ const menuItems = [
     path: ROUTE_PATHS.activitySocialStore,
   },
   {
-    key: 'finance',
-    label: '금융 상품 관리',
+    key: 'financeSavings',
+    label: '적금 관리',
     icon: <Landmark size={18} />,
     path: ROUTE_PATHS.myFinance,
+  },
+  {
+    key: 'financeLoan',
+    label: '대출 관리',
+    icon: <Landmark size={18} />,
+    path: ROUTE_PATHS.myFinanceLoanManage,
   },
   {
     key: 'point',
@@ -55,7 +61,9 @@ const accountMenuItems = menuItems.filter((item) => item.key === 'profile')
 const activityMenuItems = menuItems.filter((item) =>
   ['grade', 'storePurchase', 'report', 'point'].includes(item.key),
 )
-const financeMenuItems = menuItems.filter((item) => item.key === 'finance')
+const financeMenuItems = menuItems.filter((item) =>
+  ['financeSavings', 'financeLoan'].includes(item.key),
+)
 
 export const MyPage = () => {
   const navigate = useNavigate()

@@ -31,6 +31,14 @@ interface FinanceDetailLocationState {
   productType?: FinanceProductType
 }
 
+const LEGACY_SAVINGS_SLUG_TO_NAME: Record<string, string> = {
+  'green-step-up-savings': '그린 스텝업 적금',
+  'earth-guardian-savings': '지구 수호대 적금',
+  'warm-companion-savings': '따뜻한 동행 적금',
+  'smart-finance-savings': '바른 금융 스마트 적금',
+  'esg-master-savings': 'ESG 마스터 적금',
+}
+
 const renderNoticeBlock = (noticeLines: string[]) => (
   <div className="px-[3px]">
     <h3 className="text-[12px] font-semibold leading-[1.2] text-gray-500">알아두세요</h3>
@@ -54,6 +62,7 @@ export const FinanceDetailPage = () => {
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState('')
+  const isNumericId = id ? /^\d+$/.test(id) : false
 
   useEffect(() => {
     const fetchFinanceDetail = async () => {
@@ -68,6 +77,10 @@ export const FinanceDetailPage = () => {
         setErrorMessage('')
 
         if (routeState?.productType === 'LOAN') {
+          if (!isNumericId) {
+            throw new Error('NOT_FOUND')
+          }
+
           const preview = await getFinanceLoanPreview(id)
           setLoanPreview(preview)
           setSavingsProduct(null)
@@ -75,44 +88,38 @@ export const FinanceDetailPage = () => {
           return
         }
 
-        if (routeState?.productType === 'SAVINGS') {
-          const savings = await getFinanceProducts('savings')
-          const selected = savings.find((product) => String(product.id) === id)
+        const savings = await getFinanceProducts('savings')
+        const selectedSaving = savings.find((product) => {
+          if (String(product.id) === id) {
+            return true
+          }
 
-          if (!selected) {
+          if (!id) {
+            return false
+          }
+
+          return LEGACY_SAVINGS_SLUG_TO_NAME[id] === product.name
+        })
+
+        if (routeState?.productType === 'SAVINGS' || selectedSaving) {
+          if (!selectedSaving) {
             throw new Error('NOT_FOUND')
           }
 
-          setSavingsProduct(selected)
+          setSavingsProduct(selectedSaving)
           setLoanPreview(null)
           setProductType('SAVINGS')
           return
         }
 
-        const [loanResult, savingsResult] = await Promise.allSettled([
-          getFinanceLoanPreview(id),
-          getFinanceProducts('savings'),
-        ])
-
-        if (loanResult.status === 'fulfilled') {
-          setLoanPreview(loanResult.value)
-          setSavingsProduct(null)
-          setProductType('LOAN')
-          return
+        if (!isNumericId) {
+          throw new Error('NOT_FOUND')
         }
 
-        if (savingsResult.status === 'fulfilled') {
-          const selected = savingsResult.value.find((product) => String(product.id) === id)
-
-          if (selected) {
-            setSavingsProduct(selected)
-            setLoanPreview(null)
-            setProductType('SAVINGS')
-            return
-          }
-        }
-
-        throw new Error('NOT_FOUND')
+        const preview = await getFinanceLoanPreview(id)
+        setLoanPreview(preview)
+        setSavingsProduct(null)
+        setProductType('LOAN')
       } catch {
         setErrorMessage('금융 상품 상세 정보를 불러오지 못했어요.')
       } finally {
@@ -121,7 +128,7 @@ export const FinanceDetailPage = () => {
     }
 
     void fetchFinanceDetail()
-  }, [id, routeState?.productType])
+  }, [id, isNumericId, routeState?.productType])
 
   const handleBack = () => {
     if (returnTo) {
@@ -357,4 +364,3 @@ export const FinanceDetailPage = () => {
     />
   )
 }
-

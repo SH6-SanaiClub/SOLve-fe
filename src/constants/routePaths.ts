@@ -55,6 +55,17 @@ export const ROUTE_PATHS = {
   reportVerify: '/report/verify/:token',
   chatbot: '/chatbot',
   recommend: '/recommend',
+  adminLogin: '/admin/login',
+  adminDashboard: '/admin/dashboard',
+  adminUsers: '/admin/users',
+  adminUserDetail: '/admin/users/:userId',
+  adminActivities: '/admin/activities',
+  adminActivityForm: '/admin/activities/form',
+  adminShop: '/admin/shop',
+  adminShopForm: '/admin/shop/form',
+  adminFinance: '/admin/finance',
+  adminFinanceForm: '/admin/finance/form',
+  adminFinanceSubscriptions: '/admin/finance/:productId/subscriptions',
 } as const
 
 export const getDonationDetailPath = (donationId: number | string) =>
@@ -105,3 +116,59 @@ export const getEnvVerifyPath = (activityType: string) =>
 
 export const getReportVerifyPath = (token: string) =>
   `/report/verify/${encodeURIComponent(token)}`
+
+export const getAdminUserDetailPath = (userId: number | string) =>
+  `/admin/users/${userId}`
+
+export const getAdminActivityFormPath = ({
+  type,
+  mode,
+  id,
+}: {
+  type: 'activity' | 'donation' | 'volunteer' | 'eco-product'
+  mode: 'create' | 'edit'
+  id?: number | string
+}) => {
+  const params = new URLSearchParams({ type, mode })
+
+  if (id !== undefined) {
+    params.set('id', String(id))
+  }
+
+  return `/admin/activities/form?${params.toString()}`
+}
+
+export const getAdminShopFormPath = ({
+  mode,
+  id,
+}: {
+  mode: 'create' | 'edit'
+  id?: number | string
+}) => {
+  const params = new URLSearchParams({ mode })
+
+  if (id !== undefined) {
+    params.set('id', String(id))
+  }
+
+  return `/admin/shop/form?${params.toString()}`
+}
+
+export const getAdminFinanceFormPath = ({
+  mode,
+  id,
+}: {
+  mode: 'create' | 'edit'
+  id?: number | string
+}) => {
+  const params = new URLSearchParams({ mode })
+
+  if (id !== undefined) {
+    params.set('id', String(id))
+  }
+
+  return `/admin/finance/form?${params.toString()}`
+}
+
+export const getAdminFinanceSubscriptionsPath = (productId: number | string) =>
+  `/admin/finance/${productId}/subscriptions`

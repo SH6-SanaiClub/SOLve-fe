@@ -61,7 +61,7 @@ export interface FinanceProduct {
 }
 
 export interface SavingsRecommendItem {
-  productId: string
+  productId: number
   productName: string
   matchScore: number
   expectedMaxRate: string
@@ -74,7 +74,7 @@ export interface SavingsRecommendItem {
 
 export interface SavingsRecommendResponse {
   isNewUser: boolean
-  recommendation: SavingsRecommendItem
+  recommendation: SavingsRecommendItem | null
 }
 
 export interface FinanceListProduct {

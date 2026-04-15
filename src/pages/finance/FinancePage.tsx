@@ -78,6 +78,12 @@ export const FinancePage = () => {
   const loanProduct = loanProducts[0]
   const showSavingsSection = activeTab === 'all' || activeTab === 'savings'
   const showLoanSection = activeTab === 'all' || activeTab === 'loan'
+  const recommendedItem = recommend?.recommendation ?? null
+  const visibleRecommendation =
+    activeTab === 'all' &&
+    recommendedItem &&
+    savingsProducts.length > 0 &&
+    !recommendedItem.isAlreadyJoined
 
   return (
     <MainLayout
@@ -94,11 +100,15 @@ export const FinancePage = () => {
       <div className="-mx-4 flex flex-col gap-4 bg-bg-light px-(--side-padding) pb-2">
         <FinanceTabs activeTab={activeTab} onChange={setActiveTab} />
 
-        {activeTab === 'all' && recommend ? (
+        {visibleRecommendation && recommendedItem ? (
           <SavingsRecommendCard
-            item={recommend.recommendation}
-            isNewUser={recommend.isNewUser}
-            onClick={() => navigate(getFinanceDetailPath(recommend.recommendation.productId))}
+            item={recommendedItem}
+            isNewUser={recommend?.isNewUser ?? false}
+            onClick={() =>
+              navigate(getFinanceDetailPath(recommendedItem.productId), {
+                state: { productType: 'SAVINGS' },
+              })
+            }
           />
         ) : null}
 

@@ -33,6 +33,7 @@ export interface FinanceProductCompletion {
   description: string
   fields: FinanceInfoField[]
   primaryActionLabel: string
+  primaryActionPath?: string
   secondaryActionLabel: string
 }
 
@@ -191,5 +192,6 @@ export interface FinanceDoneState {
   description: string
   fields: FinanceInfoField[]
   primaryActionLabel: string
+  primaryActionPath?: string
   secondaryActionLabel: string
 }

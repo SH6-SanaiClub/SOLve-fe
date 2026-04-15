@@ -4,6 +4,8 @@ import { IconButton, Icons } from '../components/common'
 import headerLogo from '../assets/home/logo.png'
 import { ROUTE_PATHS } from '../constants/routePaths'
 import { useAuthStore } from '../store/authStore'
+import { authService } from '../services/authService'
+import { clearClientAuthSession } from '../utils/authSession'
 
 interface PageScaffoldProps {
   title: string
@@ -14,13 +16,23 @@ interface PageScaffoldProps {
 export function PageScaffold({ title, description, children }: PageScaffoldProps) {
   const navigate = useNavigate()
   const location = useLocation()
-  const { isAuthenticated, clearSession } = useAuthStore()
+  const { isAuthenticated } = useAuthStore()
   const returnTo = (location.state as { returnTo?: string } | null)?.returnTo
 
   const handleLogout = () => {
     if (window.confirm('로그아웃 하시겠습니까?')) {
-      clearSession()
-      navigate(ROUTE_PATHS.login)
+      void (async () => {
+        const refreshToken = localStorage.getItem('refreshToken')
+
+        try {
+          if (refreshToken) {
+            await authService.logout(refreshToken)
+          }
+        } finally {
+          clearClientAuthSession()
+          navigate(ROUTE_PATHS.login)
+        }
+      })()
     }
   }
 

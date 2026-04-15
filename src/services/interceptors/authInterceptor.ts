@@ -4,7 +4,7 @@ import { useAuthStore } from '../../store'
 function isPublicAuthRequest(url?: string) {
   return Boolean(
     url &&
-      ['/v1/auth/login', '/v1/auth/signup', '/v1/auth/check-id', '/v1/auth/verify-identity'].some(
+      ['/v1/auth/login', '/v1/auth/signup', '/v1/auth/check-id', '/v1/auth/verify-identity', '/v1/auth/logout'].some(
         (path) => url.includes(path),
       ),
   )

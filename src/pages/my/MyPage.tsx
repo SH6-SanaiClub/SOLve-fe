@@ -1,6 +1,6 @@
 ﻿import { Coins, FileChartColumn, Landmark, ShieldCheck, UserRound } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { Card, Icons, SectionHeader } from '../../components/common'
+import { Card, Icons } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import MainLayout from '../../components/layout/MainLayout'
 import {
@@ -39,10 +39,16 @@ const menuItems = [
     path: ROUTE_PATHS.activitySocialStore,
   },
   {
-    key: 'finance',
-    label: '금융 상품 관리',
+    key: 'financeSavings',
+    label: '적금 관리',
     icon: <Landmark size={18} />,
     path: ROUTE_PATHS.myFinance,
+  },
+  {
+    key: 'financeLoan',
+    label: '대출 관리',
+    icon: <Landmark size={18} />,
+    path: ROUTE_PATHS.myFinanceLoanManage,
   },
   {
     key: 'point',
@@ -56,7 +62,9 @@ const accountMenuItems = menuItems.filter((item) => item.key === 'profile')
 const activityMenuItems = menuItems.filter((item) =>
   ['grade', 'storePurchase', 'report', 'point'].includes(item.key),
 )
-const financeMenuItems = menuItems.filter((item) => item.key === 'finance')
+const financeMenuItems = menuItems.filter((item) =>
+  ['financeSavings', 'financeLoan'].includes(item.key),
+)
 
 export const MyPage = () => {
   const navigate = useNavigate()
@@ -87,27 +95,49 @@ export const MyPage = () => {
     navigate(ROUTE_PATHS.login)
   }
 
-  const renderMenuCard = (items: typeof menuItems) => (
-    <Card className="!gap-0 !p-0">
-      {items.map((item, index) => (
-        <button
-          key={item.key}
-          type="button"
-          onClick={() => navigate(item.path)}
-          className={`flex w-full items-center justify-between px-5 py-5 text-left ${
-            index < items.length - 1 ? 'border-b border-gray-100' : ''
-          }`}
-        >
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-100 bg-gray-50 text-gray-500">
-              {item.icon}
-            </div>
-            <span className="text-[15px] font-medium text-font-main">{item.label}</span>
-          </div>
+  const renderMenuItems = (items: typeof menuItems, showBottomBorder = false) => (
+    <>
+      {items.map((item, index) => {
+        const hasDivider = index < items.length - 1 || showBottomBorder
 
-          <Icons.ArrowRight className="text-gray-300" size={20} />
-        </button>
-      ))}
+        return (
+          <button
+            key={item.key}
+            type="button"
+            onClick={() => navigate(item.path)}
+            className={`flex w-full items-center justify-between px-5 py-5 text-left ${
+              hasDivider ? 'border-b border-gray-100' : ''
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-100 bg-gray-50 text-gray-500">
+                {item.icon}
+              </div>
+              <span className="text-[15px] font-medium text-font-main">{item.label}</span>
+            </div>
+
+            <Icons.ArrowRight className="text-gray-300" size={20} />
+          </button>
+        )
+      })}
+    </>
+  )
+
+  const renderActivityFinanceMenuCard = () => (
+    <Card className="!gap-0 !p-0 mt-3">
+      <div className="px-5 pb-2 pt-5">
+        <p className="text-xs font-semibold tracking-[0.18em] text-gray-400">활동</p>
+      </div>
+      {renderMenuItems(activityMenuItems, financeMenuItems.length > 0)}
+
+      {financeMenuItems.length > 0 ? (
+        <>
+          <div className="px-5 pb-2 pt-5">
+            <p className="text-xs font-semibold tracking-[0.18em] text-gray-400">금융</p>
+          </div>
+          {renderMenuItems(financeMenuItems)}
+        </>
+      ) : null}
     </Card>
   )
 
@@ -125,9 +155,15 @@ export const MyPage = () => {
     >
       <section className="mt-2 flex flex-col gap-5">
         <section className="flex flex-col gap-3">
-          <SectionHeader title="계정" className="px-1" />
+          {renderActivityFinanceMenuCard()}
+        </section>
 
+
+        <section className="flex flex-col gap-3">
           <Card className="!gap-0 !p-0">
+            <div className="px-5 pb-2 pt-5">
+              <p className="text-xs font-semibold tracking-[0.18em] text-gray-400">계정</p>
+            </div>
             {accountMenuItems.map((item) => (
               <button
                 key={item.key}
@@ -159,15 +195,6 @@ export const MyPage = () => {
           </Card>
         </section>
 
-        <section className="flex flex-col gap-3">
-          <SectionHeader title="활동" className="px-1" />
-          {renderMenuCard(activityMenuItems)}
-        </section>
-
-        <section className="flex flex-col gap-3">
-          <SectionHeader title="금융" className="px-1" />
-          {renderMenuCard(financeMenuItems)}
-        </section>
       </section>
     </MainLayout>
   )

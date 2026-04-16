@@ -22,13 +22,16 @@ const MainLayout: React.FC<Props> = ({ children, header, nav, className = '' }) 
   const contentPaddingBottom = nav ? 'pb-[calc(var(--nav-h)+20px)]' : 'pb-6';
 
   return (
-    <div className={`min-h-screen w-full max-w-[600px] mx-auto bg-bg-light relative flex flex-col font-pretendard ${className}`}>
+    <div
+      className={`w-full max-w-[600px] mx-auto bg-bg-light relative flex flex-col overflow-hidden font-pretendard ${className}`}
+      style={{ minHeight: '100dvh', height: '100dvh' }}
+    >
       
       {header}
 
       {/* 2. 콘텐츠 영역 */}
       <main className="
-        flex-1 w-full 
+        flex-1 min-h-0 w-full overflow-y-auto overscroll-y-contain
         px-(--side-padding)
       ">
         {/* 페이지 내부 요소들은 여기서부터 gap만 신경 쓰면 됩니다 */}

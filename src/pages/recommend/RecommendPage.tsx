@@ -14,6 +14,7 @@ import {
   getValueStoreProductDetailPath,
   ROUTE_PATHS,
 } from '../../constants/routePaths'
+import mainMascotImage from '../../assets/home/main-mascot.png'
 import { useAuth } from '../../hooks/useAuth'
 import { useHomeDashboardSummary } from '../home/hooks/useHomeDashboardSummary'
 import { getDonationDetail } from '../../services/donationService'
@@ -119,6 +120,45 @@ const getPopularActivityGuard = (
 
   return null
 }
+
+const RecommendLoadingState = () => (
+  <div
+    className="fixed left-1/2 z-40 flex w-full max-w-[600px] -translate-x-1/2 items-center justify-center px-6"
+    style={{
+      top: 'var(--header-h)',
+      bottom: 'calc(var(--nav-h) + env(safe-area-inset-bottom))',
+    }}
+  >
+    <div className="absolute inset-0 bg-[rgba(241,245,249,0.72)] backdrop-blur-[2px]" />
+
+    <div className="relative w-full max-w-[280px] rounded-[28px] border border-white/80 bg-white/96 px-6 py-7 text-center shadow-[0_18px_40px_rgba(15,23,42,0.10)]">
+      <div className="mx-auto flex h-[110px] w-[110px] items-center justify-center rounded-full bg-[radial-gradient(circle_at_top,_rgba(0,70,255,0.16),_rgba(255,255,255,0.95)_68%)]">
+        <img
+          src={mainMascotImage}
+          alt="SOLve 마스코트"
+          className="h-[84px] w-[84px] object-contain animate-bounce"
+        />
+      </div>
+
+      <p className="mt-5 text-[18px] font-semibold tracking-[-0.02em] text-font-main">
+        맞춤 추천중...
+      </p>
+      <p className="mt-2 text-sm leading-6 text-font-sub break-keep">
+        잠시만 기다리면 딱 맞는 활동을 보여드릴게요.
+      </p>
+
+      <div className="mt-4 flex items-center justify-center gap-2">
+        {[1, 2, 3].map((index) => (
+          <span
+            key={index}
+            className="h-2.5 w-2.5 rounded-full bg-primary-400 animate-pulse"
+            style={{ animationDelay: `${index * 0.18}s` }}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+)
 
 export const RecommendPage = () => {
   const navigate = useNavigate()
@@ -271,13 +311,7 @@ export const RecommendPage = () => {
         />
       }
     >
-      {isLoading ? (
-        <div className="mt-2 flex flex-col gap-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-40 w-full rounded-control bg-gray-100 animate-pulse" />
-          ))}
-        </div>
-      ) : error ? (
+      {error ? (
         <div className="flex items-center justify-center py-20">
           <p className="text-sm text-font-sub">{error}</p>
         </div>
@@ -324,6 +358,8 @@ export const RecommendPage = () => {
             : undefined
         }
       />
+
+      {isLoading ? <RecommendLoadingState /> : null}
     </MainLayout>
   )
 }

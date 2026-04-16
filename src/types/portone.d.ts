@@ -1,4 +1,4 @@
-export interface PortOneRequestPayParams {
+﻿export interface PortOneRequestPayParams {
   channelKey: string
   pay_method: string
   merchant_uid: string
@@ -28,6 +28,7 @@ export interface PortOneCertificationRequestParams {
   phone?: string
   carrier?: string
   popup?: boolean
+  m_redirect_url?: string
 }
 
 export interface PortOneCertificationResponse {
@@ -55,3 +56,4 @@ declare global {
 }
 
 export {}
+

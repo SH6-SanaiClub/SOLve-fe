@@ -18,6 +18,7 @@ interface Props {
   contentRef?: React.Ref<HTMLElement>;
   subHeader?: React.ReactNode;
   subHeaderHeight?: number;
+  contentSpacing?: 'default' | 'comfortable' | 'spacious';
 }
 
 const MainLayout: React.FC<Props> = ({
@@ -28,14 +29,25 @@ const MainLayout: React.FC<Props> = ({
   contentRef,
   subHeader,
   subHeaderHeight = 48,
+  contentSpacing = 'default',
 }) => {
-  const topInset = header ? 'var(--header-h)' : '0px';
+  const contentTopGapMap = {
+    default: 0,
+    comfortable: 12,
+    spacious: 20,
+  } as const;
+  const contentTopGap = contentTopGapMap[contentSpacing];
+  const headerInset = header
+    ? 'calc(var(--header-h) + env(safe-area-inset-top))'
+    : '0px';
   const contentPaddingTop = subHeader
-    ? `calc(${topInset} + ${subHeaderHeight}px)`
+    ? `calc(${headerInset} + ${subHeaderHeight}px + ${contentTopGap}px)`
     : header
-      ? 'var(--header-h)'
+      ? `calc(${headerInset} + ${contentTopGap}px)`
       : '1.5rem';
-  const contentPaddingBottom = nav ? 'calc(var(--nav-h) + 20px)' : '1.5rem';
+  const contentPaddingBottom = nav
+    ? 'calc(var(--nav-h) + env(safe-area-inset-bottom) + 20px)'
+    : '1.5rem';
 
   return (
     <div
@@ -47,8 +59,11 @@ const MainLayout: React.FC<Props> = ({
 
       {subHeader ? (
         <div
-          className="fixed top-(--header-h) left-1/2 z-40 w-full max-w-[600px] -translate-x-1/2"
-          style={{ height: `${subHeaderHeight}px` }}
+          className="fixed left-1/2 z-40 w-full max-w-[600px] -translate-x-1/2"
+          style={{
+            top: 'calc(var(--header-h) + env(safe-area-inset-top))',
+            height: `${subHeaderHeight}px`,
+          }}
         >
           {subHeader}
         </div>
@@ -58,7 +73,12 @@ const MainLayout: React.FC<Props> = ({
       <main className="
         flex-1 min-h-0 w-full overflow-y-auto overscroll-y-auto [-webkit-overflow-scrolling:touch]
         px-(--side-padding)
-      " ref={contentRef}>
+      "
+      ref={contentRef}
+      style={{
+        scrollPaddingTop: contentPaddingTop,
+        scrollPaddingBottom: contentPaddingBottom,
+      }}>
         {/* 페이지 내부 요소들은 여기서부터 gap만 신경 쓰면 됩니다 */}
         <div
           className="flex flex-col gap-4"

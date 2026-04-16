@@ -19,10 +19,18 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ left, title, right, bgColor = 'bg-white', className = '' }) => {
     return (
-        <header className={`fixed top-0 left-1/2 -translate-x-1/2 z-50 
-      w-full max-w-[600px] h-(--header-h) px-(--side-padding) py-[12px] 
+        <header
+            className={`fixed top-0 left-1/2 -translate-x-1/2 z-50 
+      w-full max-w-[600px] px-(--side-padding)
       flex items-center justify-between ${bgColor} ${className}
-    `}>
+    `}
+            style={{
+                boxSizing: 'border-box',
+                height: 'calc(var(--header-h) + env(safe-area-inset-top))',
+                paddingTop: 'calc(env(safe-area-inset-top) + var(--header-v-pad))',
+                paddingBottom: 'var(--header-v-pad)',
+            }}
+        >
             <div className="flex items-center gap-[8px] min-h-[32px]">
                 {left && (
                     <div className="flex items-center justify-center min-w-[24px]">

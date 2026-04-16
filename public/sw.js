@@ -1,4 +1,5 @@
 const STATIC_CACHE = 'solve-static-v3'
+const CHAT_HISTORY_CACHE = 'chat-history-v1'
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -26,7 +27,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((keys) =>
       Promise.all(
         keys
-          .filter((key) => key !== STATIC_CACHE)
+          .filter((key) => key !== STATIC_CACHE && key !== CHAT_HISTORY_CACHE)
           .map((key) => caches.delete(key)),
       ),
     ),
@@ -52,6 +53,31 @@ self.addEventListener('fetch', (event) => {
     requestUrl.pathname.startsWith('/node_modules/') ||
     requestUrl.search.includes('import')
   ) {
+    return
+  }
+
+  if (requestUrl.pathname === '/api/v1/chat/messages') {
+    event.respondWith(
+      caches.open(CHAT_HISTORY_CACHE).then(async (cache) => {
+        const cachedResponse = await cache.match(event.request)
+        const networkFetch = fetch(event.request)
+          .then((response) => {
+            if (response.ok) {
+              void cache.put(event.request, response.clone())
+            }
+
+            return response
+          })
+          .catch(() => cachedResponse || Response.error())
+
+        if (cachedResponse) {
+          event.waitUntil(networkFetch.then(() => undefined))
+          return cachedResponse
+        }
+
+        return networkFetch
+      }),
+    )
     return
   }
 

@@ -9,6 +9,7 @@ import {
   getVolunteerDetailPath,
   ROUTE_PATHS,
 } from '../../../constants/routePaths'
+import useReturnNavigation from '../../../hooks/useReturnNavigation'
 import { getVolunteerActivities } from '../../../services/volunteerService'
 import type { VolunteerListResponse } from '../../../types/volunteer'
 import { VolunteerActivityCard } from './components/VolunteerActivityCard'
@@ -16,6 +17,7 @@ import { SocialActivityTabs } from './components/SocialActivityTabs'
 
 export function VolunteerPage() {
   const navigate = useNavigate()
+  const { goBack } = useReturnNavigation(ROUTE_PATHS.home)
   const [volunteerData, setVolunteerData] =
     useState<VolunteerListResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -85,7 +87,7 @@ export function VolunteerPage() {
             <IconButton
               label="뒤로가기"
               icon={<Icons.Back className="text-font-main" />}
-              onClick={() => navigate(ROUTE_PATHS.home)}
+              onClick={goBack}
             />
           }
           title="S 활동"
@@ -93,6 +95,7 @@ export function VolunteerPage() {
       }
       nav={<BottomNavigation value="home" onChange={handleBottomNavigation} />}
       subHeader={<SocialActivityTabs activeTab="volunteer" />}
+      contentSpacing="comfortable"
     >
       {isLoading ? (
         <section className="space-y-3 pt-2">

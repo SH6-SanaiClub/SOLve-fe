@@ -96,6 +96,7 @@ export const FinancePage = () => {
         />
       }
       subHeader={<FinanceTabs activeTab={activeTab} onChange={setActiveTab} />}
+      contentSpacing="comfortable"
       className="bg-bg-light"
     >
       <div className="-mx-4 flex flex-col gap-4 bg-bg-light px-(--side-padding) pb-2">

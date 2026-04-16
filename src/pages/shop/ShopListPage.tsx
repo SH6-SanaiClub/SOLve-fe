@@ -114,6 +114,7 @@ export const ShopListPage = () => {
         />
       }
       subHeader={<ShopTabs items={shopTabs} value={selectedTab} onChange={setSelectedTab} />}
+      contentSpacing="comfortable"
     >
       <div className="-mx-4 flex flex-col gap-[var(--space-4)]">
         <div className="flex flex-col gap-[var(--space-4)] bg-bg-light px-(--side-padding) pb-[var(--space-4)]">

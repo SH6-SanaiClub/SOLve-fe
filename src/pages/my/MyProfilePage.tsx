@@ -1,6 +1,6 @@
 ﻿import axios from 'axios'
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Badge, Button, Card, InfoRow, Input, SectionHeader } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import MainLayout from '../../components/layout/MainLayout'
@@ -16,10 +16,9 @@ import {
   getMyProfile,
   updateMyEmail,
   updateMyPassword,
-  updateMyPhoneNumber,
   withdrawMyAccount,
 } from '../../services/userProfileService'
-import { useAuthStore } from '../../store/authStore'
+import { clearClientAuthSession } from '../../utils/authSession'
 import { ShopHeader } from '../shop/components/ShopHeader'
 
 type EditableField = 'email' | 'phone'
@@ -68,7 +67,7 @@ const getAlertMessage = (error: unknown) => {
 
 export const MyProfilePage = () => {
   const navigate = useNavigate()
-  const clearSession = useAuthStore((state) => state.clearSession)
+  const location = useLocation()
   const [profile, setProfile] = useState(initialProfile)
   const [draftProfile, setDraftProfile] = useState(initialProfile)
   const [activeEditor, setActiveEditor] = useState<EditableField | null>(null)
@@ -135,6 +134,30 @@ export const MyProfilePage = () => {
     void fetchProfile()
   }, [])
 
+
+  useEffect(() => {
+    const state = location.state as
+      | { phoneVerificationUpdated?: boolean; updatedPhoneNumber?: string }
+      | null
+
+    if (!state?.phoneVerificationUpdated || !state.updatedPhoneNumber) {
+      return
+    }
+
+    const updatedPhoneNumber = state.updatedPhoneNumber
+
+    setProfile((currentProfile) => ({
+      ...currentProfile,
+      phone: updatedPhoneNumber,
+    }))
+    setDraftProfile((currentProfile) => ({
+      ...currentProfile,
+      phone: updatedPhoneNumber,
+    }))
+    setActiveEditor(null)
+    setSuccessMessage('휴대폰 번호가 변경되었습니다.')
+    navigate(location.pathname, { replace: true })
+  }, [location.pathname, location.state, navigate])
   const handleBottomNavigation = (key: string) => {
     const nextPath =
       BOTTOM_NAVIGATION_ROUTE_BY_KEY[key as keyof typeof BOTTOM_NAVIGATION_ROUTE_BY_KEY]
@@ -195,18 +218,7 @@ export const MyProfilePage = () => {
     setErrorMessage('')
 
     try {
-      const impUid = await identityVerificationService.requestImpUid()
-      const response = await updateMyPhoneNumber(impUid)
-
-      setProfile((currentProfile) => ({
-        ...currentProfile,
-        phone: response.phoneNumber,
-      }))
-      setDraftProfile((currentProfile) => ({
-        ...currentProfile,
-        phone: response.phoneNumber,
-      }))
-      setActiveEditor(null)
+      await identityVerificationService.startProfilePhoneVerification()
     } catch (error) {
       setErrorMessage(getAlertMessage(error))
     } finally {
@@ -328,9 +340,7 @@ export const MyProfilePage = () => {
   }
 
   const handleMoveToLogin = () => {
-    clearSession()
-    localStorage.removeItem('accessToken')
-    localStorage.removeItem('refreshToken')
+    clearClientAuthSession()
     navigate(ROUTE_PATHS.login, { replace: true })
   }
 
@@ -663,3 +673,5 @@ export const MyProfilePage = () => {
     </MainLayout>
   )
 }
+
+

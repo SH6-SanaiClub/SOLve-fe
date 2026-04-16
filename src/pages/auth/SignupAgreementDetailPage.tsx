@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import axios from 'axios'
 import { ChevronDown } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
@@ -232,7 +232,11 @@ export function SignupAgreementDetailPage() {
     setErrorMessage('')
 
     try {
-      const verifyResult = await identityVerificationService.verify()
+      const verifyResult = await identityVerificationService.startSignupVerification()
+
+      if ('redirected' in verifyResult) {
+        return
+      }
 
       if (!verifyResult.verified) {
         throw new Error('본인인증 검증에 실패했습니다.')

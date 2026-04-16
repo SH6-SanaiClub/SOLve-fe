@@ -23,4 +23,8 @@ export const authService = {
 
     return response.data
   },
+
+  logout: async (refreshToken: string) => {
+    await apiClient.post('/v1/auth/logout', { refreshToken })
+  },
 }

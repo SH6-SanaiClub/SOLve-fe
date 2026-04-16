@@ -10,13 +10,21 @@ import IconButton from '../../components/common/IconButton'
 import { Icons } from '../../components/common/Icons'
 import MainLayout from '../../components/layout/MainLayout'
 import Header from '../../components/layout/Header'
+import {
+  clearSignupVerificationState,
+  readSignupVerificationState,
+} from '../../utils/signupVerificationStorage'
 
 export function SignupPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const verificationState = location.state as
+  const locationVerificationState = location.state as
     | { verificationToken?: string; preservedLoginId?: string }
     | null
+  const storedVerificationState = readSignupVerificationState()
+  const verificationState = locationVerificationState?.verificationToken
+    ? locationVerificationState
+    : storedVerificationState
   const preservedLoginId = verificationState?.preservedLoginId?.trim() ?? ''
   const isReactivationSignup = preservedLoginId.length > 0
 
@@ -33,7 +41,15 @@ export function SignupPage() {
   const [passwordConfirm, setPasswordConfirm] = useState('')
   const [idCheckMessage, setIdCheckMessage] = useState('')
   const [idCheckColor, setIdCheckColor] = useState('')
-
+  const isFormValid = 
+      formData.loginId && 
+      (isReactivationSignup || isIdChecked) && 
+      formData.password && 
+      formData.password === passwordConfirm && 
+      formData.name && 
+      formData.birthdate && 
+      formData.phoneNumber && 
+      formData.email;
   useEffect(() => {
     if (!verificationState?.verificationToken) {
       navigate(ROUTE_PATHS.signupAgreement, { replace: true })
@@ -117,6 +133,7 @@ export function SignupPage() {
         verificationToken: verificationState.verificationToken,
       }
       await authService.signup(requestData)
+      clearSignupVerificationState()
       navigate(ROUTE_PATHS.signupComplete)
     } catch (err) {
       if (err instanceof AxiosError) {
@@ -144,8 +161,8 @@ export function SignupPage() {
         />
       }
     >
-      <div className="flex flex-col gap-6">
-        <div>
+      <div className="flex flex-col gap-6 pb-[140px] pt-6">
+        <div className="pt-2">
           <h2 className="mb-2 text-base font-semibold text-font-main">기본 정보를 입력해주세요</h2>
           <p className="text-xs text-font-sub">
             {isReactivationSignup
@@ -154,7 +171,7 @@ export function SignupPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <form id="signup-form"onSubmit={handleSubmit} className="flex flex-col gap-5">
           {isReactivationSignup ? (
             <div className="rounded-control border border-primary-100 bg-primary-50 px-4 py-4">
               <p className="text-xs font-medium text-primary-600">기존 아이디</p>
@@ -163,7 +180,7 @@ export function SignupPage() {
           ) : (
             <div className="flex flex-col">
               <div className="flex items-start gap-2">
-                <div className="flex min-w-0 flex-1 flex-col">
+                <div className="relative flex min-w-0 flex-1 flex-col">
                   <Input
                     label="아이디"
                     name="loginId"
@@ -175,13 +192,16 @@ export function SignupPage() {
                   />
 
                   {idCheckMessage && (
-                    <p className="mt-1.5 pr-0.5 text-right text-[11px] font-medium" style={{ color: idCheckColor }}>
+                    <p 
+          className="absolute -bottom-5 right-0 text-[11px] font-medium" 
+          style={{ color: idCheckColor }}
+        >
                       {idCheckColor === 'green' ? '✓' : '✕'} {idCheckMessage}
                     </p>
                   )}
                 </div>
 
-                <div className="shrink-0 pt-6">
+                <div className="shrink-0 pt-6.5">
                   <Button type="button" onClick={handleCheckId} variant="sub" className="w-[100px] text-sm">
                     중복확인
                   </Button>
@@ -196,7 +216,7 @@ export function SignupPage() {
             type="password"
             value={formData.password}
             onChange={handleChange}
-            placeholder="영문, 숫자, 특수문자 조합 8-16자"
+            placeholder="비밀번호를 입력하세요"
             required
           />
 
@@ -219,6 +239,7 @@ export function SignupPage() {
             value={formData.birthdate}
             onChange={handleChange}
             placeholder="YYYY-MM-DD"
+            className="w-full appearance-none bg-transparent outline-none min-w-0" 
             required
           />
 
@@ -240,11 +261,22 @@ export function SignupPage() {
             placeholder="이메일을 입력하세요"
             required
           />
-
-          <Button type="submit" variant="primary" fullWidth size="md" className="mt-4">
-            완료
-          </Button>
         </form>
+        <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
+  <div className="pointer-events-auto mx-auto w-full max-w-[600px] border-t border-gray-200 bg-white px-(--side-padding) pb-[calc(16px+env(safe-area-inset-bottom))] pt-4 shadow-[var(--shadow-card)]">
+    <Button
+      form="signup-form" // form id와 연결하여 밖에서도 submit 가능하게 함
+      type="submit"
+      variant="primary"
+      size="md"
+      fullWidth
+      className="!h-[56px]"
+      disabled={!isFormValid}
+    >
+      완료
+    </Button>
+  </div>
+</div>
         </div>
     </MainLayout>
   )

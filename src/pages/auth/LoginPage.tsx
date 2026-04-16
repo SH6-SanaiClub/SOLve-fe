@@ -1,5 +1,4 @@
 ﻿import React, { useState } from 'react'
-import { AxiosError } from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
 import logoImage from '../../assets/home/logo.png'
 import Input from '../../components/common/Input'
@@ -16,10 +15,12 @@ export function LoginPage() {
     loginId: '',
     password: '',
   })
+  const [errorMessage, setErrorMessage] = useState('')
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setLoginData((prev) => ({ ...prev, [name]: value }))
+    setErrorMessage('')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,19 +34,16 @@ export function LoginPage() {
       })
       navigate('/')
     } catch (err) {
-      if (err instanceof AxiosError) {
-        const errorMessage =
-          (err.response?.data as { message?: string })?.message || '로그인에 실패했습니다.'
-        alert(errorMessage)
-      }
+      const serverMessage = (err as { response?: { data?: { message?: string } } })?.response?.data?.message
+      setErrorMessage(serverMessage || '로그인에 실패했습니다.')
     }
   }
 
   return (
-    <div className="app-shell">
-      <section className="page-card flex min-h-[calc(100vh-48px)] flex-col px-4 pt-8 pb-6">
+    <div className="app-shell !pb-6">
+      <section className="page-card flex min-h-[calc(100vh-72px)] flex-col px-4 pt-8 pb-6">
         <div className="flex flex-1 flex-col">
-          <div className="flex flex-col items-center pt-20 text-center">
+          <div className="flex flex-col items-center pt-10 text-center">
             <img src={logoImage} alt="SOLve" className="mt-4 h-[76px] w-auto object-contain" />
             <h1 className="mt-5 text-[24px] leading-none font-bold tracking-[-0.03em] text-font-main">
               로그인
@@ -71,6 +69,8 @@ export function LoginPage() {
               required
             />
 
+            {errorMessage ? <p className="-mt-1 text-sm text-error">{errorMessage}</p> : null}
+
             <div className="mt-2 flex flex-col gap-3">
               <Button type="submit" variant="primary" fullWidth className="!h-[50px]">
                 로그인
@@ -83,14 +83,7 @@ export function LoginPage() {
             </div>
           </form>
 
-          <button
-            type="button"
-            className="mt-5 text-center text-sm font-medium text-[#9AA7BA]"
-          >
-            아이디/비밀번호 찾기
-          </button>
-
-          <div className="mt-auto rounded-[12px] bg-[#F3F6FB] px-4 py-4">
+          <div className="mt-10 rounded-[12px] bg-[#F3F6FB] px-4 py-4">
             <p className="text-[12px] font-semibold text-font-main">부정 가입 방지 안내</p>
             <p className="mt-2 text-[12px] leading-6 text-[#6C7B91]">
               1인 1계정 원칙을 고수하여 접수 조작 및 중복 수혜를 철저히 방지하고 있습니다.
@@ -102,3 +95,4 @@ export function LoginPage() {
     </div>
   )
 }
+

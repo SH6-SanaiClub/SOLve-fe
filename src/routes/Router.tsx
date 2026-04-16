@@ -1,4 +1,4 @@
-import {
+﻿import {
   BrowserRouter,
   Navigate,
   Route,
@@ -22,7 +22,10 @@ import { ValueStorePaymentCompletePage } from '../pages/esg/social/ValueStorePay
 import { ValueStorePaymentPage } from '../pages/esg/social/ValueStorePaymentPage'
 import { ValueStorePaymentRedirectPage } from '../pages/esg/social/ValueStorePaymentRedirectPage'
 import { ValueStorePage } from '../pages/esg/social/ValueStorePage'
+import { VolunteerAttendanceCompletePage } from '../pages/esg/social/VolunteerAttendanceCompletePage'
+import { VolunteerAttendancePage } from '../pages/esg/social/VolunteerAttendancePage'
 import { VolunteerCompletePage } from '../pages/esg/social/VolunteerCompletePage'
+import { VolunteerApplicationsPage } from '../pages/esg/social/VolunteerApplicationsPage'
 import { VolunteerDetailPage } from '../pages/esg/social/VolunteerDetailPage'
 import { VolunteerPage } from '../pages/esg/social/VolunteerPage'
 
@@ -31,6 +34,7 @@ import { SurveyPage } from '../pages/auth/SurveyPage'
 import { SignupPage } from '../pages/auth/SignupPage'
 import { SignupAgreementDetailPage } from '../pages/auth/SignupAgreementDetailPage'
 import { SignupCompletePage } from '../pages/auth/SignupCompletePage'
+import { SignupVerificationRedirectPage } from '../pages/auth/SignupVerificationRedirectPage'
 import { ChatbotPage } from '../pages/chatbot/ChatbotPage'
 import { FinanceApplyPage } from '../pages/finance/FinanceApplyPage'
 import { FinanceDetailPage } from '../pages/finance/FinanceDetailPage'
@@ -59,6 +63,19 @@ import { ShopProductDetailPage } from '../pages/shop/ShopProductDetailPage'
 import { SurveyGuard } from './SurveyGuard'
 import { ProtectedRoute } from './ProtectedRoute'
 import { PublicOnlyRoute } from './PublicOnlyRoute'
+import { AdminLayout } from '../components/admin/AdminLayout'
+import { AdminProtectedRoute } from '../components/admin/AdminProtectedRoute'
+import { AdminLoginPage } from '../pages/admin/AdminLoginPage'
+import { AdminActivitiesPage } from '../pages/admin/activities/AdminActivitiesPage'
+import { AdminActivityFormPage } from '../pages/admin/activities/AdminActivityFormPage'
+import { AdminDashboardPage } from '../pages/admin/dashboard/AdminDashboardPage'
+import { AdminFinanceFormPage } from '../pages/admin/finance/AdminFinanceFormPage'
+import { AdminFinancePage } from '../pages/admin/finance/AdminFinancePage'
+import { AdminFinanceSubscriptionsPage } from '../pages/admin/finance/AdminFinanceSubscriptionsPage'
+import { AdminShopFormPage } from '../pages/admin/shop/AdminShopFormPage'
+import { AdminShopPage } from '../pages/admin/shop/AdminShopPage'
+import { AdminUserDetailPage } from '../pages/admin/users/AdminUserDetailPage'
+import { AdminUserListPage } from '../pages/admin/users/AdminUserListPage'
 
 interface RouterLocationState {
   backgroundLocation?: Location
@@ -76,12 +93,13 @@ function AppRoutes() {
           element={<Navigate replace to={ROUTE_PATHS.home} />}
         />
 
+        <Route path={ROUTE_PATHS.verify} element={<SignupVerificationRedirectPage />} />
+        <Route path={ROUTE_PATHS.adminLogin} element={<AdminLoginPage />} />
         <Route path={ROUTE_PATHS.reportVerify} element={<ReportVerificationPage />} />
 
         <Route element={<PublicOnlyRoute />}>
           <Route path={ROUTE_PATHS.login} element={<LoginPage />} />
           <Route path={ROUTE_PATHS.signupAgreement} element={<SignupAgreementDetailPage />} />
-          <Route path={ROUTE_PATHS.verify} element={<SignupAgreementDetailPage />} />
           <Route path={ROUTE_PATHS.signup} element={<SignupPage />} />
           <Route path={ROUTE_PATHS.signupComplete} element={<SignupCompletePage />} />
         </Route>
@@ -122,6 +140,18 @@ function AppRoutes() {
             <Route
               path={ROUTE_PATHS.activitySocialVolunteer}
               element={<VolunteerPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.activitySocialVolunteerApplications}
+              element={<VolunteerApplicationsPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.activitySocialVolunteerAttendance}
+              element={<VolunteerAttendancePage />}
+            />
+            <Route
+              path={ROUTE_PATHS.activitySocialVolunteerAttendanceComplete}
+              element={<VolunteerAttendanceCompletePage />}
             />
             <Route
               path={ROUTE_PATHS.activitySocialVolunteerDetail}
@@ -188,6 +218,89 @@ function AppRoutes() {
           </Route>
         </Route>
 
+        <Route element={<AdminProtectedRoute />}>
+          <Route
+            path={ROUTE_PATHS.adminDashboard}
+            element={
+              <AdminLayout>
+                <AdminDashboardPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminUsers}
+            element={
+              <AdminLayout>
+                <AdminUserListPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminUserDetail}
+            element={
+              <AdminLayout>
+                <AdminUserDetailPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminActivities}
+            element={
+              <AdminLayout>
+                <AdminActivitiesPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminActivityForm}
+            element={
+              <AdminLayout>
+                <AdminActivityFormPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminShop}
+            element={
+              <AdminLayout>
+                <AdminShopPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminShopForm}
+            element={
+              <AdminLayout>
+                <AdminShopFormPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminFinance}
+            element={
+              <AdminLayout>
+                <AdminFinancePage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminFinanceForm}
+            element={
+              <AdminLayout>
+                <AdminFinanceFormPage />
+              </AdminLayout>
+            }
+          />
+          <Route
+            path={ROUTE_PATHS.adminFinanceSubscriptions}
+            element={
+              <AdminLayout>
+                <AdminFinanceSubscriptionsPage />
+              </AdminLayout>
+            }
+          />
+        </Route>
+
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
 
@@ -212,3 +325,5 @@ export function AppRouter() {
     </BrowserRouter>
   )
 }
+
+

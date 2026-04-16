@@ -8,7 +8,8 @@ import {
   BOTTOM_NAVIGATION_ROUTE_BY_KEY,
 } from '../../constants/bottomNavigation'
 import { ROUTE_PATHS } from '../../constants/routePaths'
-import { useAuth } from '../../hooks/useAuth'
+import { authService } from '../../services/authService'
+import { clearClientAuthSession } from '../../utils/authSession'
 import { ShopHeader } from '../shop/components/ShopHeader'
 import { LogOut, Store } from 'lucide-react'
 
@@ -61,7 +62,6 @@ const financeMenuItems = menuItems.filter((item) =>
 
 export const MyPage = () => {
   const navigate = useNavigate()
-  const { clearSession } = useAuth()
 
   const handleBottomNavigation = (key: string) => {
     const nextPath =
@@ -72,12 +72,20 @@ export const MyPage = () => {
     }
   }
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     if (!window.confirm('로그아웃 하시겠습니까?')) {
       return
     }
 
-    clearSession()
+    const refreshToken = localStorage.getItem('refreshToken')
+
+    try {
+      if (refreshToken) {
+        await authService.logout(refreshToken)
+      }
+    } finally {
+      clearClientAuthSession()
+    }
     navigate(ROUTE_PATHS.login)
   }
 

@@ -1,9 +1,9 @@
-const STATIC_CACHE = 'solve-static-v2'
+const STATIC_CACHE = 'solve-static-v3'
 const APP_SHELL = [
   '/',
   '/index.html',
   '/manifest.webmanifest',
-  '/favicon.svg',
+  '/logo.png',
   '/icons.svg',
   '/pwa-icon.svg',
   '/pwa-maskable.svg',
@@ -75,7 +75,7 @@ self.addEventListener('fetch', (event) => {
         return await fetch(event.request)
       } catch (error) {
         if (event.request.destination === 'image') {
-          return (await caches.match('/favicon.svg')) || Response.error()
+          return (await caches.match('/logo.png')) || Response.error()
         }
 
         return Response.error()

@@ -36,7 +36,7 @@ const menuItems = [
     key: 'storePurchase',
     label: '가치가게 구매 내역',
     icon: <Store size={18} />,
-    path: ROUTE_PATHS.activitySocialStore,
+    path: ROUTE_PATHS.shopHistory,
   },
   {
     key: 'finance',

@@ -263,7 +263,8 @@ export const ChatbotPage = () => {
       <MainLayout
         header={
           <Header
-            bgColor="bg-transparent"
+            bgColor="bg-white"
+            className="border-b border-[#E7EDF7] shadow-[0_10px_28px_rgba(15,23,42,0.06)]"
             left={
               <IconButton
                 label="뒤로가기"
@@ -272,13 +273,13 @@ export const ChatbotPage = () => {
                 onClick={handleBack}
               />
             }
-            title="Chatbot"
+            title="SOLve 도우미"
             right={
               messages.length > 0 ? (
                 <button
                   type="button"
                   onClick={() => void handleResetChat()}
-                  className="text-xs font-medium text-font-sub transition-colors"
+                  className="inline-flex h-9 items-center rounded-full bg-white px-3.5 text-xs font-semibold text-primary-600 transition-colors hover:text-primary-700"
                 >
                   새로 채팅하기
                 </button>
@@ -299,7 +300,7 @@ export const ChatbotPage = () => {
                 <div className="mb-5 h-20 w-20 overflow-hidden rounded-full bg-white shadow-sm">
                   <img src={BOT_PROFILE_IMAGE_URL} alt="SOLve 챗봇" className="h-full w-full object-cover" />
                 </div>
-                <p className="text-[24px] font-semibold tracking-tight text-font-main">SOLve 사용 도우미</p>
+                <p className="text-[24px] font-semibold tracking-tight text-font-main">SOLve 도우미</p>
                 <p className="mt-2 text-sm leading-6 text-font-sub">
                   궁금한 점이 있으면 물어보세요.
                   <br />

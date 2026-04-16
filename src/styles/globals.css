@@ -18,6 +18,14 @@ body {
   min-height: 100vh;
 }
 
+@media (pointer: coarse) {
+  input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']),
+  textarea,
+  select {
+    font-size: 16px !important;
+  }
+}
+
 .app-shell {
   min-height: 100vh;
   width: min(100%, 600px);

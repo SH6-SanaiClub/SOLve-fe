@@ -1,4 +1,4 @@
-import {
+﻿import {
   BrowserRouter,
   Navigate,
   Route,
@@ -34,6 +34,7 @@ import { SurveyPage } from '../pages/auth/SurveyPage'
 import { SignupPage } from '../pages/auth/SignupPage'
 import { SignupAgreementDetailPage } from '../pages/auth/SignupAgreementDetailPage'
 import { SignupCompletePage } from '../pages/auth/SignupCompletePage'
+import { SignupVerificationRedirectPage } from '../pages/auth/SignupVerificationRedirectPage'
 import { ChatbotPage } from '../pages/chatbot/ChatbotPage'
 import { FinanceApplyPage } from '../pages/finance/FinanceApplyPage'
 import { FinanceDetailPage } from '../pages/finance/FinanceDetailPage'
@@ -92,14 +93,13 @@ function AppRoutes() {
           element={<Navigate replace to={ROUTE_PATHS.home} />}
         />
 
+        <Route path={ROUTE_PATHS.verify} element={<SignupVerificationRedirectPage />} />
         <Route path={ROUTE_PATHS.adminLogin} element={<AdminLoginPage />} />
-        
         <Route path={ROUTE_PATHS.reportVerify} element={<ReportVerificationPage />} />
 
         <Route element={<PublicOnlyRoute />}>
           <Route path={ROUTE_PATHS.login} element={<LoginPage />} />
           <Route path={ROUTE_PATHS.signupAgreement} element={<SignupAgreementDetailPage />} />
-          <Route path={ROUTE_PATHS.verify} element={<SignupAgreementDetailPage />} />
           <Route path={ROUTE_PATHS.signup} element={<SignupPage />} />
           <Route path={ROUTE_PATHS.signupComplete} element={<SignupCompletePage />} />
         </Route>
@@ -325,3 +325,5 @@ export function AppRouter() {
     </BrowserRouter>
   )
 }
+
+

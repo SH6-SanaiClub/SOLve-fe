@@ -1,6 +1,7 @@
 import {
   getDonationDetailPath,
   getEnvVerifyPath,
+  getVolunteerDetailPath,
   getValueStoreProductDetailPath,
   ROUTE_PATHS,
 } from '../../constants/routePaths'
@@ -65,7 +66,7 @@ export const getActivityPath = (activity: RecommendedActivity) => {
     case 'QUIZ':
       return ROUTE_PATHS.activityGovernance
     case 'VOLUNTEER':
-      return ROUTE_PATHS.activitySocial
+      return getVolunteerDetailPath(activity.referenceId)
     default:
       return null
   }

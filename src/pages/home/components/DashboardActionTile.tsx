@@ -52,22 +52,24 @@ export function DashboardActionTile({
   return (
     <Card
       className={[
-        'justify-center',
+        'justify-center overflow-hidden',
         sizeStyle.card,
         variantStyle.card,
         className,
       ].join(' ')}
       {...props}
     >
-      <div className="flex min-h-full w-full items-center justify-between gap-4">
-        <div className="min-w-0 text-left">
+      <div className="flex min-h-full w-full items-center justify-between gap-4 overflow-hidden">
+        <div className="min-w-0 flex-1 overflow-hidden text-left">
           <p className={`leading-none tracking-tight ${sizeStyle.title}`}>{title}</p>
           {descriptionItems?.length ? (
-            <div className={`mt-1 flex flex-wrap items-center gap-1 font-medium ${sizeStyle.description} ${variantStyle.description}`}>
+            <div
+              className={`mt-1 flex max-w-full flex-wrap items-center gap-x-1 gap-y-0.5 font-medium ${sizeStyle.description} ${variantStyle.description}`}
+            >
               {descriptionItems.map((item, index) => (
-                <div key={item} className="flex items-center gap-1">
+                <div key={item} className="flex max-w-full items-center gap-1">
                   {index > 0 ? <span aria-hidden="true">|</span> : null}
-                  <span>{item}</span>
+                  <span className="truncate">{item}</span>
                 </div>
               ))}
             </div>

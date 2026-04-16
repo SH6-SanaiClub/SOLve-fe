@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 
 // 공통 메인 레이아웃 (MainLayout) 컴포넌트
@@ -31,6 +31,10 @@ const MainLayout: React.FC<Props> = ({
   subHeaderHeight = 48,
   contentSpacing = 'default',
 }) => {
+  const [scrollbarVisible, setScrollbarVisible] = useState(false);
+  const scrollElementRef = useRef<HTMLElement | null>(null);
+  const hideScrollbarTimerRef = useRef<number | null>(null);
+  const isMouseDraggingRef = useRef(false);
   const contentTopGapMap = {
     default: 0,
     comfortable: 12,
@@ -48,6 +52,81 @@ const MainLayout: React.FC<Props> = ({
   const contentPaddingBottom = nav
     ? 'calc(var(--nav-h) + env(safe-area-inset-bottom) + 20px)'
     : '1.5rem';
+
+  const clearHideScrollbarTimer = useCallback(() => {
+    if (hideScrollbarTimerRef.current !== null) {
+      window.clearTimeout(hideScrollbarTimerRef.current);
+      hideScrollbarTimerRef.current = null;
+    }
+  }, []);
+
+  const showScrollbarTemporarily = useCallback(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    setScrollbarVisible(true);
+    clearHideScrollbarTimer();
+    hideScrollbarTimerRef.current = window.setTimeout(() => {
+      setScrollbarVisible(false);
+      hideScrollbarTimerRef.current = null;
+    }, 560);
+  }, [clearHideScrollbarTimer]);
+
+  const setContentNode = useCallback((node: HTMLElement | null) => {
+    scrollElementRef.current = node;
+
+    if (!contentRef) {
+      return;
+    }
+
+    if (typeof contentRef === 'function') {
+      contentRef(node);
+      return;
+    }
+
+    contentRef.current = node;
+  }, [contentRef]);
+
+  useEffect(() => {
+    const scrollElement = scrollElementRef.current;
+
+    if (!scrollElement || typeof window === 'undefined') {
+      return;
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      if (event.pointerType === 'mouse') {
+        isMouseDraggingRef.current = true;
+      }
+    };
+
+    const handlePointerUp = () => {
+      isMouseDraggingRef.current = false;
+    };
+
+    const handleScroll = () => {
+      if (isMouseDraggingRef.current) {
+        showScrollbarTemporarily();
+      }
+    };
+
+    scrollElement.addEventListener('pointerdown', handlePointerDown, {
+      passive: true,
+    });
+    scrollElement.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('pointerup', handlePointerUp, { passive: true });
+    window.addEventListener('pointercancel', handlePointerUp, { passive: true });
+
+    return () => {
+      isMouseDraggingRef.current = false;
+      clearHideScrollbarTimer();
+      scrollElement.removeEventListener('pointerdown', handlePointerDown);
+      scrollElement.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('pointerup', handlePointerUp);
+      window.removeEventListener('pointercancel', handlePointerUp);
+    };
+  }, [clearHideScrollbarTimer, showScrollbarTemporarily]);
 
   return (
     <div
@@ -70,15 +149,18 @@ const MainLayout: React.FC<Props> = ({
       ) : null}
 
       {/* 2. 콘텐츠 영역 */}
-      <main className="
-        flex-1 min-h-0 w-full overflow-y-auto overscroll-y-auto [-webkit-overflow-scrolling:touch]
-        px-(--side-padding)
-      "
-      ref={contentRef}
-      style={{
-        scrollPaddingTop: contentPaddingTop,
-        scrollPaddingBottom: contentPaddingBottom,
-      }}>
+      <main
+        className="
+          app-scroll-area flex-1 min-h-0 w-full overflow-y-auto overscroll-y-auto
+          [-webkit-overflow-scrolling:touch] px-(--side-padding)
+        "
+        data-scrollbar-visible={scrollbarVisible ? 'true' : 'false'}
+        ref={setContentNode}
+        style={{
+          scrollPaddingTop: contentPaddingTop,
+          scrollPaddingBottom: contentPaddingBottom,
+        }}
+      >
         {/* 페이지 내부 요소들은 여기서부터 gap만 신경 쓰면 됩니다 */}
         <div
           className="flex flex-col gap-4"

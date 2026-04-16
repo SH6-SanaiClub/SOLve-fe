@@ -91,9 +91,8 @@ export function DonationPage() {
         />
       }
       nav={<BottomNavigation value="home" onChange={handleBottomNavigation} />}
+      subHeader={<SocialActivityTabs activeTab="donation" />}
     >
-      <SocialActivityTabs activeTab="donation" />
-
       {isLoading ? (
         <div className="flex flex-col gap-6">
           <section className="space-y-6 pt-2">

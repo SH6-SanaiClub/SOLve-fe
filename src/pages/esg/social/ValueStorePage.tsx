@@ -82,9 +82,8 @@ export function ValueStorePage() {
         />
       }
       nav={<BottomNavigation value="home" onChange={handleBottomNavigation} />}
+      subHeader={<SocialActivityTabs activeTab="store" />}
     >
-      <SocialActivityTabs activeTab="store" />
-
       {isLoading ? (
         <div className="flex flex-col gap-6">
           <section className="space-y-4 pt-2">

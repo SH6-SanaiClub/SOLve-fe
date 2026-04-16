@@ -15,11 +15,27 @@ interface Props {
   children: React.ReactNode;
   header?: React.ReactNode; // Header 컴포넌트
   nav?: React.ReactNode;    // BottomNavigation 컴포넌트
+  contentRef?: React.Ref<HTMLElement>;
+  subHeader?: React.ReactNode;
+  subHeaderHeight?: number;
 }
 
-const MainLayout: React.FC<Props> = ({ children, header, nav, className = '' }) => {
-  const contentPaddingTop = header ? 'pt-(--header-h)' : 'pt-0';
-  const contentPaddingBottom = nav ? 'pb-[calc(var(--nav-h)+20px)]' : 'pb-6';
+const MainLayout: React.FC<Props> = ({
+  children,
+  header,
+  nav,
+  className = '',
+  contentRef,
+  subHeader,
+  subHeaderHeight = 48,
+}) => {
+  const topInset = header ? 'var(--header-h)' : '0px';
+  const contentPaddingTop = subHeader
+    ? `calc(${topInset} + ${subHeaderHeight}px)`
+    : header
+      ? 'var(--header-h)'
+      : '1.5rem';
+  const contentPaddingBottom = nav ? 'calc(var(--nav-h) + 20px)' : '1.5rem';
 
   return (
     <div
@@ -29,13 +45,25 @@ const MainLayout: React.FC<Props> = ({ children, header, nav, className = '' }) 
       
       {header}
 
+      {subHeader ? (
+        <div
+          className="fixed top-(--header-h) left-1/2 z-40 w-full max-w-[600px] -translate-x-1/2"
+          style={{ height: `${subHeaderHeight}px` }}
+        >
+          {subHeader}
+        </div>
+      ) : null}
+
       {/* 2. 콘텐츠 영역 */}
       <main className="
-        flex-1 min-h-0 w-full overflow-y-auto overscroll-y-contain
+        flex-1 min-h-0 w-full overflow-y-auto overscroll-y-auto [-webkit-overflow-scrolling:touch]
         px-(--side-padding)
-      ">
+      " ref={contentRef}>
         {/* 페이지 내부 요소들은 여기서부터 gap만 신경 쓰면 됩니다 */}
-        <div className={`flex flex-col gap-4 py-6 ${contentPaddingTop} ${contentPaddingBottom}`}>
+        <div
+          className="flex flex-col gap-4"
+          style={{ paddingTop: contentPaddingTop, paddingBottom: contentPaddingBottom }}
+        >
           {children}
         </div>
       </main>

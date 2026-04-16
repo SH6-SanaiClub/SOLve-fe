@@ -1,3 +1,4 @@
+import { useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Card, IconButton, Icons, InfoRow, ProgressBar, SectionHeader } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
@@ -10,9 +11,11 @@ import {
 import { getS3AssetUrl } from '../../constants/assetUrls'
 import { ROUTE_PATHS } from '../../constants/routePaths'
 import { useAuth } from '../../hooks/useAuth'
+import { usePullToRefresh } from '../../hooks/usePullToRefresh'
 import type { WeeklyActivityStatus } from '../../types/home'
 import type { UserGrade } from '../../types/user'
 import { DashboardActionTile } from './components/DashboardActionTile'
+import { PullRefreshSpinner } from './components/PullRefreshSpinner'
 import { WeeklyActivityTracker } from './components/WeeklyActivityTracker'
 import { useHomeDashboardSummary } from './hooks/useHomeDashboardSummary'
 
@@ -64,7 +67,12 @@ export function HomePage() {
   const location = useLocation()
   const navigate = useNavigate()
   const { user } = useAuth()
-  const { summary } = useHomeDashboardSummary()
+  const { summary, refreshSummary } = useHomeDashboardSummary()
+  const contentRef = useRef<HTMLElement | null>(null)
+  const { isPulling, isRefreshing, pullDistance, pullProgress } = usePullToRefresh({
+    containerRef: contentRef,
+    onRefresh: refreshSummary,
+  })
 
   const userName = summary?.name ?? user?.name ?? '000'
   const gradeLabel = getGradeLabel(summary?.currentGrade ?? user?.currentGrade)
@@ -90,6 +98,7 @@ export function HomePage() {
 
   return (
     <MainLayout
+      contentRef={contentRef}
       header={
         <Header
           bgColor="bg-bg-light"
@@ -114,90 +123,114 @@ export function HomePage() {
         />
       }
     >
-      <div className="mt-5 flex flex-col gap-3">
-        <section className="pl-3">
-          <div className="flex min-w-0 flex-col justify-center py-2">
-            <p className="text-xl leading-[1.1] tracking-tight font-semibold">
-              <span className="text-primary-500">{userName}</span>
-              <span className="text-gray-700">님,</span>
-            </p>
-            <p className="text-xl leading-[1.1] tracking-tight font-semibold text-gray-700">
-              오늘의 실천을 시작해볼까요?
-            </p>
+      <div className="relative">
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-center"
+          style={{
+            opacity: pullDistance > 0 || isRefreshing ? 1 : 0,
+            transform: `translateY(${Math.max(pullDistance * 0.72 - 6, 0)}px)`,
+            transition: isPulling ? 'none' : 'opacity 180ms ease, transform 180ms ease',
+          }}
+        >
+          <PullRefreshSpinner
+            progress={pullProgress}
+            isRefreshing={isRefreshing}
+            visible={pullDistance > 0 || isRefreshing}
+          />
+        </div>
+
+        <div
+          style={{
+            transform: `translateY(${pullDistance}px)`,
+            transition: isPulling ? 'none' : 'transform 180ms ease',
+          }}
+        >
+          <div className="mt-5 flex flex-col gap-3">
+            <section className="pl-3">
+              <div className="flex min-w-0 flex-col justify-center py-2">
+                <p className="text-xl leading-[1.1] tracking-tight font-semibold">
+                  <span className="text-primary-500">{userName}</span>
+                  <span className="text-gray-700">님,</span>
+                </p>
+                <p className="text-xl leading-[1.1] tracking-tight font-semibold text-gray-700">
+                  오늘의 실천을 시작해볼까요?
+                </p>
+              </div>
+            </section>
+
+            <div className="flex flex-col gap-6">
+              <Card className="!h-[136px]">
+                <div className="space-y-3">
+                  <SectionHeader
+                    title={
+                      <span className="text-lg font-semibold text-gray-700">
+                        나의 등급 <span className="text-primary-500">{gradeLabel}</span>
+                      </span>
+                    }
+                    right={
+                      <span className="text-xs font-medium text-gray-400">
+                        {gradeProgress.current} / {gradeProgress.target}
+                      </span>
+                    }
+                  />
+                  <ProgressBar value={gradeProgress.visualValue} max={100} />
+                  <div className="h-px w-full bg-gray-100" />
+                  <InfoRow
+                    label={<span className="text-base font-medium text-gray-500">보유 포인트</span>}
+                    value={<span className="text-base font-medium text-gray-500">{formattedPoints}</span>}
+                    className="items-center"
+                  />
+                </div>
+              </Card>
+
+              <section className="flex flex-col gap-3">
+                <DashboardActionTile
+                  title="S 활동하기"
+                  descriptionItems={['기부', '가치가게', '봉사']}
+                  variant="primary"
+                  size="lg"
+                  onClick={() => navigate(ROUTE_PATHS.activitySocialDonation)}
+                />
+
+                <div className="grid grid-cols-2 gap-4">
+                  <DashboardActionTile
+                    title="친환경 활동"
+                    variant="outline"
+                    onClick={() =>
+                      navigate(ROUTE_PATHS.esgEnv, { state: { backgroundLocation: location } })
+                    }
+                  />
+                  <DashboardActionTile
+                    title="오늘의 퀴즈"
+                    variant="outline"
+                    onClick={() => navigate(ROUTE_PATHS.esgQuiz)}
+                  />
+                </div>
+              </section>
+
+              <Card className="!h-[141px]">
+                <div className="space-y-4">
+                  <SectionHeader
+                    title={<span className="text-base font-semibold text-gray-700">이번주 나의 활동</span>}
+                    right={<span className="text-xs font-medium text-gray-400">{weekRangeLabel}</span>}
+                  />
+                  <WeeklyActivityTracker items={weeklyActivities} />
+                </div>
+              </Card>
+
+              <Card
+                onClick={() => navigate(ROUTE_PATHS.recommend)}
+                className="!h-[46px] !p-0"
+              >
+                <div className="flex h-[44px] items-center justify-between gap-3 px-5">
+                  <span className="text-base leading-none font-semibold text-gray-700">
+                    AI 맞춤 활동 추천
+                  </span>
+                  <Icons.ArrowRight className="text-gray-700" size={18} />
+                </div>
+              </Card>
+            </div>
           </div>
-        </section>
-
-        <div className="flex flex-col gap-6">
-          <Card className="!h-[136px]">
-            <div className="space-y-3">
-              <SectionHeader
-                title={
-                  <span className="text-lg font-semibold text-gray-700">
-                    나의 등급 <span className="text-primary-500">{gradeLabel}</span>
-                  </span>
-                }
-                right={
-                  <span className="text-xs font-medium text-gray-400">
-                    {gradeProgress.current} / {gradeProgress.target}
-                  </span>
-                }
-              />
-              <ProgressBar value={gradeProgress.visualValue} max={100} />
-              <div className="h-px w-full bg-gray-100" />
-              <InfoRow
-                label={<span className="text-base font-medium text-gray-500">보유 포인트</span>}
-                value={<span className="text-base font-medium text-gray-500">{formattedPoints}</span>}
-                className="items-center"
-              />
-            </div>
-          </Card>
-
-          <section className="flex flex-col gap-3">
-            <DashboardActionTile
-              title="S 활동하기"
-              descriptionItems={['기부', '가치가게', '봉사']}
-              variant="primary"
-              size="lg"
-              onClick={() => navigate(ROUTE_PATHS.activitySocialDonation)}
-            />
-
-            <div className="grid grid-cols-2 gap-4">
-              <DashboardActionTile
-                title="친환경 활동"
-                variant="outline"
-                onClick={() =>
-                  navigate(ROUTE_PATHS.esgEnv, { state: { backgroundLocation: location } })
-                }
-              />
-              <DashboardActionTile
-                title="오늘의 퀴즈"
-                variant="outline"
-                onClick={() => navigate(ROUTE_PATHS.esgQuiz)}
-              />
-            </div>
-          </section>
-
-          <Card className="!h-[141px]">
-            <div className="space-y-4">
-              <SectionHeader
-                title={<span className="text-base font-semibold text-gray-700">이번주 나의 활동</span>}
-                right={<span className="text-xs font-medium text-gray-400">{weekRangeLabel}</span>}
-              />
-              <WeeklyActivityTracker items={weeklyActivities} />
-            </div>
-          </Card>
-
-          <Card
-            onClick={() => navigate(ROUTE_PATHS.recommend)}
-            className="!h-[46px] !p-0"
-          >
-            <div className="flex h-[44px] items-center justify-between gap-3 px-5">
-              <span className="text-base leading-none font-semibold text-gray-700">
-                AI 맞춤 활동 추천
-              </span>
-              <Icons.ArrowRight className="text-gray-700" size={18} />
-            </div>
-          </Card>
         </div>
       </div>
     </MainLayout>

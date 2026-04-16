@@ -23,7 +23,7 @@ export const SocialActivityTabs = ({ activeTab }: SocialActivityTabsProps) => {
   const navigate = useNavigate()
 
   return (
-    <div className="sticky top-(--header-h) z-40 mx-[-16px] flex border-b border-gray-200 bg-white">
+    <div className="mx-[-16px] flex border-b border-gray-200 bg-white">
       {tabItems.map((item) => {
         const isActive = item.value === activeTab
 

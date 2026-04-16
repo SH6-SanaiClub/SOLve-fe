@@ -92,9 +92,8 @@ export function VolunteerPage() {
         />
       }
       nav={<BottomNavigation value="home" onChange={handleBottomNavigation} />}
+      subHeader={<SocialActivityTabs activeTab="volunteer" />}
     >
-      <SocialActivityTabs activeTab="volunteer" />
-
       {isLoading ? (
         <section className="space-y-3 pt-2">
           {Array.from({ length: 4 }).map((_, index) => (

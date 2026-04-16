@@ -1,38 +1,19 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+﻿import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import {
-  Card,
-  IconButton,
-  Icons,
-  InfoRow,
-  ProgressBar,
-  SectionHeader,
-} from '../../components/common'
+import { Badge, Card, IconButton, Icons, InfoRow, ProgressBar, SectionHeader } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import Header from '../../components/layout/Header'
 import MainLayout from '../../components/layout/MainLayout'
-import { getS3AssetUrl } from '../../constants/assetUrls'
 import {
   BOTTOM_NAVIGATION_ITEMS,
   BOTTOM_NAVIGATION_ROUTE_BY_KEY,
 } from '../../constants/bottomNavigation'
-import {
-  ROUTE_PATHS,
-  getDonationDetailPath,
-  getEnvVerifyPath,
-  getValueStoreProductDetailPath,
-} from '../../constants/routePaths'
+import { getS3AssetUrl } from '../../constants/assetUrls'
+import { ROUTE_PATHS } from '../../constants/routePaths'
 import { useAuth } from '../../hooks/useAuth'
 import { usePullToRefresh } from '../../hooks/usePullToRefresh'
-import { getDonationDetail } from '../../services/donationService'
-import { getValueStoreProductDetail } from '../../services/productService'
-import { getActivityRecommend } from '../../services/recommendService'
-import type { EnvActivityType } from '../../types/environmentVerification'
 import type { WeeklyActivityStatus } from '../../types/home'
-import type { RecommendedActivity } from '../../types/recommend'
 import type { UserGrade } from '../../types/user'
-import { ActivityCard } from '../recommend/components/ActivityCard'
-import { PopularActivityGuideModal } from '../recommend/components/PopularActivityGuideModal'
 import { DashboardActionTile } from './components/DashboardActionTile'
 import { PullRefreshSpinner } from './components/PullRefreshSpinner'
 import { WeeklyActivityTracker } from './components/WeeklyActivityTracker'
@@ -58,20 +39,6 @@ const emptyWeeklyActivities: WeeklyActivityStatus[] = [
   { day: '일', completed: false },
 ]
 
-type PopularActivityGuard =
-  | {
-      title: string
-      message: string
-      confirmLabel?: undefined
-      nextPath?: undefined
-    }
-  | {
-      title: string
-      message: string
-      confirmLabel: string
-      nextPath: string
-    }
-
 function getGradeLabel(grade?: UserGrade | null) {
   if (!grade) {
     return '새싹'
@@ -96,87 +63,6 @@ function getCurrentWeekRangeLabel() {
   return `${format(startDate)} - ${format(endDate)}`
 }
 
-const getEnvActivityTypeFromActivity = (
-  activity: RecommendedActivity,
-): EnvActivityType | null => {
-  const normalizedText = `${activity.name} ${activity.description ?? ''}`.toLowerCase()
-
-  if (normalizedText.includes('텀블러') || normalizedText.includes('tumbler')) {
-    return 'tumbler'
-  }
-
-  if (
-    normalizedText.includes('자전거') ||
-    normalizedText.includes('따릉이') ||
-    normalizedText.includes('shared-bike') ||
-    normalizedText.includes('bike')
-  ) {
-    return 'shared-bike'
-  }
-
-  if (
-    normalizedText.includes('전기차') ||
-    normalizedText.includes('ev') ||
-    normalizedText.includes('렌트카') ||
-    normalizedText.includes('대여')
-  ) {
-    return 'ev-rental'
-  }
-
-  return null
-}
-
-const getActivityPath = (activity: RecommendedActivity) => {
-  switch (activity.activityType) {
-    case 'DONATION':
-      return getDonationDetailPath(activity.referenceId)
-    case 'PURCHASE':
-      return getValueStoreProductDetailPath(activity.referenceId)
-    case 'PHOTO': {
-      const envActivityType = getEnvActivityTypeFromActivity(activity)
-
-      return envActivityType
-        ? getEnvVerifyPath(envActivityType)
-        : ROUTE_PATHS.activityEnvironment
-    }
-    case 'QUIZ':
-      return ROUTE_PATHS.activityGovernance
-    case 'VOLUNTEER':
-      return ROUTE_PATHS.activitySocial
-    default:
-      return null
-  }
-}
-
-const shouldUseEnvBackNavigation = (activity: RecommendedActivity) =>
-  activity.activityType === 'PHOTO'
-
-const getPopularActivityGuard = (
-  activity: RecommendedActivity,
-  nextPath: string | null,
-): PopularActivityGuard | null => {
-  if (
-    activity.alreadyParticipatedToday &&
-    (activity.activityType === 'PHOTO' || activity.activityType === 'QUIZ')
-  ) {
-    return {
-      title: '오늘은 이미 참여했어요',
-      message: '오늘 이미 참여한 활동이에요. 내일 다시 참여할 수 있어요!',
-    }
-  }
-
-  if (activity.monthlyLimitReached && nextPath) {
-    return {
-      title: '이번 달 점수를 모두 채웠어요',
-      message: `이번 달 ${activity.scoreCategory} 활동 점수는 모두 채웠어요. 참여하면 점수는 쌓이지 않지만 포인트는 적립돼요. 그래도 참여하시겠어요?`,
-      confirmLabel: '활동하러 가기',
-      nextPath,
-    }
-  }
-
-  return null
-}
-
 export function HomePage() {
   const location = useLocation()
   const navigate = useNavigate()
@@ -184,60 +70,11 @@ export function HomePage() {
   const { summary, refreshSummary } = useHomeDashboardSummary()
   const contentRef = useRef<HTMLElement | null>(null)
   const chatbotImageRef = useRef<HTMLImageElement | null>(null)
-  const isMountedRef = useRef(true)
-
-  const [popularActivity, setPopularActivity] = useState<RecommendedActivity | null>(
-    null,
-  )
-  const [popularActivityImageUrl, setPopularActivityImageUrl] = useState<string | null>(
-    null,
-  )
-  const [popularActivityGuard, setPopularActivityGuard] =
-    useState<PopularActivityGuard | null>(null)
   const [displayedPoints, setDisplayedPoints] = useState(0)
 
-  useEffect(() => {
-    isMountedRef.current = true
-
-    return () => {
-      isMountedRef.current = false
-    }
-  }, [])
-
-  const refreshPopularActivity = useCallback(async () => {
-    try {
-      const result = await getActivityRecommend()
-      const nextPopularActivity = result.popularActivity ?? null
-
-      let nextImageUrl: string | null = null
-
-      if (nextPopularActivity?.activityType === 'DONATION') {
-        const detail = await getDonationDetail(nextPopularActivity.referenceId)
-        nextImageUrl = detail.imageUrl ?? null
-      } else if (nextPopularActivity?.activityType === 'PURCHASE') {
-        const detail = await getValueStoreProductDetail(nextPopularActivity.referenceId)
-        nextImageUrl = detail.imageUrl ?? null
-      }
-
-      if (!isMountedRef.current) {
-        return
-      }
-
-      setPopularActivity(nextPopularActivity)
-      setPopularActivityImageUrl(nextImageUrl)
-    } catch {
-      if (!isMountedRef.current) {
-        return
-      }
-
-      setPopularActivity(null)
-      setPopularActivityImageUrl(null)
-    }
-  }, [])
-
   const handleRefresh = useCallback(async () => {
-    await Promise.all([refreshSummary(), refreshPopularActivity()])
-  }, [refreshPopularActivity, refreshSummary])
+    await refreshSummary()
+  }, [refreshSummary])
 
   const { isPulling, isRefreshing, pullDistance, pullProgress } = usePullToRefresh({
     containerRef: contentRef,
@@ -305,10 +142,6 @@ export function HomePage() {
   }, [])
 
   useEffect(() => {
-    void refreshPopularActivity()
-  }, [refreshPopularActivity])
-
-  useEffect(() => {
     if (typeof window === 'undefined') {
       return
     }
@@ -320,7 +153,6 @@ export function HomePage() {
       animationFrameId = window.requestAnimationFrame(() => {
         setDisplayedPoints(totalPoints)
       })
-
       return () => {
         window.cancelAnimationFrame(animationFrameId)
       }
@@ -359,30 +191,6 @@ export function HomePage() {
 
     if (nextPath) {
       navigate(nextPath)
-    }
-  }
-
-  const handlePopularActivityClick = () => {
-    if (!popularActivity) {
-      navigate(ROUTE_PATHS.esgQuiz)
-      return
-    }
-
-    const nextPath = getActivityPath(popularActivity)
-    const guard = getPopularActivityGuard(popularActivity, nextPath)
-
-    if (guard) {
-      setPopularActivityGuard(guard)
-      return
-    }
-
-    if (nextPath) {
-      navigate(
-        nextPath,
-        shouldUseEnvBackNavigation(popularActivity)
-          ? { state: { fromEnv: true } }
-          : undefined,
-      )
     }
   }
 
@@ -480,11 +288,7 @@ export function HomePage() {
                   <div className="h-px w-full bg-gray-100" />
                   <InfoRow
                     label={<span className="text-base font-medium text-gray-500">보유 포인트</span>}
-                    value={
-                      <span className="text-base font-medium text-gray-500">
-                        {formattedPoints}
-                      </span>
-                    }
+                    value={<span className="text-base font-medium text-gray-500">{formattedPoints}</span>}
                     className="items-center"
                   />
                 </div>
@@ -504,9 +308,7 @@ export function HomePage() {
                     title="친환경 활동"
                     variant="outline"
                     onClick={() =>
-                      navigate(ROUTE_PATHS.esgEnv, {
-                        state: { backgroundLocation: location },
-                      })
+                      navigate(ROUTE_PATHS.esgEnv, { state: { backgroundLocation: location } })
                     }
                   />
                   <DashboardActionTile
@@ -520,82 +322,134 @@ export function HomePage() {
               <Card className="!h-[141px]">
                 <div className="space-y-4">
                   <SectionHeader
-                    title={
-                      <span className="text-base font-semibold text-gray-700">
-                        이번주 나의 활동
-                      </span>
-                    }
-                    right={
-                      <span className="text-xs font-medium text-gray-400">
-                        {weekRangeLabel}
-                      </span>
-                    }
+                    title={<span className="text-base font-semibold text-gray-700">이번주 나의 활동</span>}
+                    right={<span className="text-xs font-medium text-gray-400">{weekRangeLabel}</span>}
                   />
                   <WeeklyActivityTracker items={weeklyActivities} />
                 </div>
               </Card>
 
-              <Card onClick={() => navigate(ROUTE_PATHS.recommend)} className="!h-[46px] !p-0">
+              <Card
+                onClick={() => navigate(ROUTE_PATHS.recommend)}
+                className="hidden !h-[46px] !p-0"
+              >
                 <div className="flex h-[44px] items-center justify-between gap-3 px-5">
-                  <span className="text-base leading-none font-semibold text-gray-700">
+                  <span className="text-sm leading-none font-semibold text-gray-700">
                     AI 맞춤 활동 추천
                   </span>
                   <Icons.ArrowRight className="text-gray-700" size={18} />
                 </div>
               </Card>
 
-              <section className="flex flex-col gap-2">
-                <div className="px-1">
-                  <p className="text-xs font-medium text-gray-500">
-                    지금 인기 있는 활동이에요
-                  </p>
-                </div>
-
-                {popularActivity ? (
-                  <ActivityCard
-                    activity={popularActivity}
-                    imageUrl={popularActivityImageUrl}
-                    onClick={handlePopularActivityClick}
-                  />
-                ) : (
-                  <Card
-                    onClick={() => navigate(ROUTE_PATHS.esgQuiz)}
-                    className="!gap-0 !overflow-hidden !border !border-gray-100 !p-0 shadow-sm"
-                  >
-                    <div className="bg-white px-4 py-4">
-                      <p className="text-sm font-semibold text-gray-700">오늘의 ESG 퀴즈</p>
-                      <p className="mt-3 text-xs font-semibold text-primary-400">
-                        +10점 · +300P
+              <Card
+                onClick={() => navigate(ROUTE_PATHS.esgQuiz)}
+                className="hidden !gap-0 !overflow-hidden !border !border-orange-100 !p-0 shadow-[0_10px_24px_rgba(15,23,42,0.06)]"
+              >
+                <div className="bg-linear-to-r from-orange-50 via-white to-white px-5 pt-4 pb-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
+                        <Badge tone="danger" variant="soft" className="!px-[10px] !py-[4px]">
+                          HOT
+                        </Badge>
+                        <span className="text-xs font-medium text-gray-500">
+                          지금 가장 많이 참여 중인 활동
+                        </span>
+                      </div>
+                      <p className="mt-3 text-base font-semibold text-gray-700">오늘의 ESG 퀴즈</p>
+                      <p className="mt-1 text-sm leading-5 text-gray-500">
+                        짧게 참여하고 점수와 포인트를 함께 받을 수 있어요
                       </p>
                     </div>
-                  </Card>
-                )}
+                    <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm">
+                      <Icons.ArrowRight size={16} />
+                    </div>
+                  </div>
+
+                  <div className="mt-4 flex items-center justify-between gap-3">
+                    <span className="text-sm font-semibold text-gray-300">+10점 · +300P</span>
+                    <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-gray-500 shadow-sm">
+                      1분 참여
+                    </span>
+                  </div>
+                </div>
+              </Card>
+
+              <section className="hidden flex-col gap-3">
+                <Card
+                  onClick={() => navigate(ROUTE_PATHS.recommend)}
+                  className="!gap-0 !overflow-hidden !border !border-gray-100 !p-0 shadow-sm"
+                >
+                  <div className="bg-white px-5 py-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <p className="text-base font-semibold text-gray-700">
+                          AI 맞춤 활동 추천
+                        </p>
+                        <p className="mt-1 text-sm leading-5 text-gray-500">
+                          내 활동 기록을 바탕으로 어울리는 활동을 추천해드려요
+                        </p>
+                      </div>
+
+                      <Icons.ArrowRight className="mt-1 shrink-0 text-gray-400" size={18} />
+                    </div>
+                  </div>
+                </Card>
+
+                <Card
+                  onClick={() => navigate(ROUTE_PATHS.esgQuiz)}
+                  className="!gap-0 !overflow-hidden !border !border-gray-100 !p-0 shadow-sm"
+                >
+                  <div className="bg-white px-5 py-4">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <Badge tone="danger" variant="soft" className="!px-[10px] !py-[4px]">
+                          인기
+                        </Badge>
+                        <span className="text-xs font-medium text-gray-500">
+                          지금 가장 많이 참여 중인 활동
+                        </span>
+                        <p className="mt-2 text-base font-semibold text-gray-700">오늘의 ESG 퀴즈</p>
+                        <p className="mt-1 text-sm leading-5 text-gray-500">
+                          짧게 참여하고 점수와 포인트를 함께 받을 수 있어요
+                        </p>
+                      </div>
+
+                      <Icons.ArrowRight className="mt-1 shrink-0 text-gray-400" size={18} />
+                    </div>
+
+                    <div className="mt-4 flex items-center justify-between gap-3 border-t border-gray-100 pt-3">
+                      <span className="text-sm font-semibold text-primary-500">+10점 · +300P</span>
+                      <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-gray-500 shadow-sm">
+                        약 1분
+                      </span>
+                    </div>
+                  </div>
+                </Card>
+              </section>
+
+              <section className="flex flex-col gap-3">
+                <Card
+                  onClick={() => navigate(ROUTE_PATHS.recommend)}
+                  className="!gap-0 !overflow-hidden !border !border-gray-100 !p-0 shadow-sm"
+                >
+                  <div className="bg-white px-5 py-4">
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="min-w-0">
+                        <p className="text-base font-semibold text-gray-700">AI 맞춤 활동 추천</p>
+                        <p className="text-xs leading-5 text-gray-500">
+                          내 활동에 맞는 추천을 확인해보세요
+                        </p>
+                      </div>
+                      <Icons.ArrowRight className="shrink-0 text-gray-500" size={24} />
+                    </div>
+                  </div>
+                </Card>
               </section>
             </div>
           </div>
         </div>
       </div>
-
-      <PopularActivityGuideModal
-        open={Boolean(popularActivityGuard)}
-        title={popularActivityGuard?.title ?? ''}
-        message={popularActivityGuard?.message ?? ''}
-        confirmLabel={popularActivityGuard?.confirmLabel}
-        onClose={() => setPopularActivityGuard(null)}
-        onConfirm={
-          popularActivityGuard?.nextPath
-            ? () => {
-                navigate(
-                  popularActivityGuard.nextPath,
-                  popularActivity?.activityType === 'PHOTO'
-                    ? { state: { fromEnv: true } }
-                    : undefined,
-                )
-                setPopularActivityGuard(null)
-              }
-            : undefined
-        }
-      />
     </MainLayout>
   )
 }

@@ -49,6 +49,33 @@ const formatVolunteerTimeRange = (
   return `${formatTime(startDate)} ~ ${formatTime(endDate)}`
 }
 
+const resolveImageUrl = (imageUrl?: string | null) => {
+  if (!imageUrl) {
+    return ''
+  }
+
+  if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
+    return imageUrl
+  }
+
+  const baseUrl = import.meta.env.VITE_API_BASE_URL ?? '/api'
+  const normalizedBaseUrl = baseUrl.endsWith('/')
+    ? baseUrl.slice(0, -1)
+    : baseUrl
+  const normalizedImageUrl = imageUrl.startsWith('/')
+    ? imageUrl
+    : `/${imageUrl}`
+
+  if (
+    normalizedBaseUrl.startsWith('http://') ||
+    normalizedBaseUrl.startsWith('https://')
+  ) {
+    return `${normalizedBaseUrl}${normalizedImageUrl}`
+  }
+
+  return normalizedImageUrl
+}
+
 export function VolunteerDetailPage() {
   const navigate = useNavigate()
   const { volunteerId } = useParams()
@@ -144,10 +171,10 @@ export function VolunteerDetailPage() {
           title="봉사"
         />
       }
-      className="bg-gray-100"
+      className="bg-gray-50"
     >
       {error ? (
-        <section className="mx-[-16px] flex min-h-[calc(100vh-var(--header-h)-48px)] items-center bg-gray-100 px-4 pb-6">
+        <section className="mx-[-16px] flex min-h-[calc(100vh-var(--header-h)-48px)] items-center bg-gray-50 px-4 pb-6">
           <div className="w-full rounded-card border border-red-100 bg-white px-5 py-6 text-center shadow-card">
             <h2 className="text-lg font-semibold text-font-main">
               봉사활동을 불러오지 못했어요
@@ -156,9 +183,11 @@ export function VolunteerDetailPage() {
           </div>
         </section>
       ) : (
-        <section className="mx-[-16px] min-h-[calc(100vh-var(--header-h)-48px)] bg-gray-100 pt-2 pb-[120px]">
+        <section className="mx-[-16px] min-h-[calc(100vh-var(--header-h)-48px)] bg-gray-50 pt-2 pb-[120px]">
           {isLoading ? (
             <div className="space-y-2">
+              <section className="h-[260px] animate-pulse bg-primary-100" />
+
               <section className="bg-white px-[24px] py-6">
                 <div className="space-y-3">
                   <div className="h-4 w-24 animate-pulse rounded-full bg-gray-200" />
@@ -190,70 +219,84 @@ export function VolunteerDetailPage() {
             </div>
           ) : volunteerDetail ? (
             <div className="space-y-2">
-              <section className="bg-white px-[24px] py-6">
+              <section className="h-[260px] overflow-hidden bg-primary-100">
+                {resolveImageUrl(volunteerDetail.imageUrl) ? (
+                  <img
+                    src={resolveImageUrl(volunteerDetail.imageUrl)}
+                    alt={volunteerDetail.name}
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <div className="h-full w-full bg-gray-200" />
+                )}
+              </section>
+
+              <section className="px-[24px] pt-6">
                 <div className="flex flex-col gap-2">
                   <p className="text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
                     {volunteerDetail.organization}
                   </p>
-                  <h2 className="text-[18px] leading-[140%] font-bold tracking-[-0.02em] text-font-main">
+                  <h2 className="text-[22px] leading-[140%] font-bold tracking-[-0.02em] text-font-main">
                     {volunteerDetail.name}
                   </h2>
                 </div>
               </section>
 
-              <section className="bg-white px-[24px] py-6">
-                <div className="space-y-5">
-                  <div className="flex items-start justify-between gap-5">
-                    <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
-                      모집기관
-                    </p>
-                    <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
-                      {volunteerDetail.organization}
-                    </p>
-                  </div>
+              <section className="px-[24px] pt-6">
+                <div className="rounded-control bg-gray-100 px-4 py-5">
+                  <div className="space-y-5">
+                    <div className="flex items-start justify-between gap-5">
+                      <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+                        모집기관
+                      </p>
+                      <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
+                        {volunteerDetail.organization}
+                      </p>
+                    </div>
 
-                  <div className="flex items-start justify-between gap-5">
-                    <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
-                      봉사장소
-                    </p>
-                    <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
-                      {volunteerDetail.location}
-                    </p>
-                  </div>
+                    <div className="flex items-start justify-between gap-5">
+                      <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+                        봉사장소
+                      </p>
+                      <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
+                        {volunteerDetail.location}
+                      </p>
+                    </div>
 
-                  <div className="flex items-start justify-between gap-5">
-                    <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
-                      봉사날짜
-                    </p>
-                    <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
-                      {formatVolunteerDate(volunteerDetail.activityDate)}
-                    </p>
-                  </div>
+                    <div className="flex items-start justify-between gap-5">
+                      <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+                        봉사날짜
+                      </p>
+                      <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
+                        {formatVolunteerDate(volunteerDetail.activityDate)}
+                      </p>
+                    </div>
 
-                  <div className="flex items-start justify-between gap-5">
-                    <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
-                      봉사시간
-                    </p>
-                    <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
-                      {formatVolunteerTimeRange(
-                        volunteerDetail.activityDate,
-                        volunteerDetail.volunteerHour,
-                      )}
-                    </p>
-                  </div>
+                    <div className="flex items-start justify-between gap-5">
+                      <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+                        봉사시간
+                      </p>
+                      <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
+                        {formatVolunteerTimeRange(
+                          volunteerDetail.activityDate,
+                          volunteerDetail.volunteerHour,
+                        )}
+                      </p>
+                    </div>
 
-                  <div className="flex items-start justify-between gap-5">
-                    <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
-                      모집인원
-                    </p>
-                    <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
-                      {volunteerDetail.capacity}명
-                    </p>
+                    <div className="flex items-start justify-between gap-5">
+                      <p className="shrink-0 text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+                        모집인원
+                      </p>
+                      <p className="text-right text-sm leading-6 font-normal tracking-[-0.02em] text-gray-600">
+                        {volunteerDetail.capacity}명
+                      </p>
+                    </div>
                   </div>
                 </div>
               </section>
 
-              <section className="bg-white px-[24px] py-6">
+              <section className="px-[24px] pt-6">
                 <p className="whitespace-pre-line text-base leading-8 font-normal tracking-[-0.02em] text-gray-500">
                   {volunteerDetail.description}
                 </p>

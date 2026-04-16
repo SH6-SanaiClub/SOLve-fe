@@ -1,5 +1,6 @@
-﻿import { useEffect, useState } from 'react'
+﻿import { useEffect, useLayoutEffect, useState } from 'react'
 import { AlertCircle, CheckCircle2, LoaderCircle } from 'lucide-react'
+import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, IconButton, Icons } from '../../../components/common'
 import Header from '../../../components/layout/Header'
@@ -50,9 +51,27 @@ export function GovernanceQuizPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [errorDetails, setErrorDetails] = useState<{
+    status: string
+    code: string
+    message: string
+  } | null>(null)
 
-  useEffect(() => {
-    window.scrollTo(0, 0)
+  useLayoutEffect(() => {
+    const scrollToTop = () => {
+      window.scrollTo(0, 0)
+      document.documentElement.scrollTop = 0
+      document.body.scrollTop = 0
+      document.scrollingElement?.scrollTo(0, 0)
+    }
+
+    scrollToTop()
+
+    const frameId = window.requestAnimationFrame(scrollToTop)
+
+    return () => {
+      window.cancelAnimationFrame(frameId)
+    }
   }, [])
   useEffect(() => {
     let mounted = true
@@ -60,6 +79,7 @@ export function GovernanceQuizPage() {
     const loadQuiz = async () => {
       setIsLoading(true)
       setError(null)
+      setErrorDetails(null)
 
       try {
         const todayQuiz = await getTodayGovernanceQuiz()
@@ -81,12 +101,29 @@ export function GovernanceQuizPage() {
         if (todayQuiz.status === 'empty') {
           setError(todayQuiz.message ?? '오늘의 퀴즈를 아직 불러오지 못했어요.')
         }
-      } catch {
+      } catch (caughtError) {
         if (!mounted) {
           return
         }
 
-        setError('오늘의 퀴즈를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.')
+        setError('??? ??? ???? ????. ?? ? ?? ??? ???.')
+
+        if (axios.isAxiosError(caughtError)) {
+          setErrorDetails({
+            status: String(caughtError.response?.status ?? 'unknown'),
+            code: caughtError.code ?? 'unknown',
+            message:
+              (caughtError.response?.data as { message?: string } | null)?.message ??
+              caughtError.message ??
+              'unknown',
+          })
+        } else if (caughtError instanceof Error) {
+          setErrorDetails({
+            status: 'unknown',
+            code: 'unknown',
+            message: caughtError.message,
+          })
+        }
       } finally {
         if (mounted) {
           setIsLoading(false)
@@ -211,9 +248,9 @@ export function GovernanceQuizPage() {
         />
       }
     >
-      <section className="mb-[-24px] flex h-[calc(100dvh-56px-48px)] flex-col overflow-hidden px-2 pt-3 pb-0">
+      <section className="flex h-[calc(100dvh-56px)] flex-col overflow-hidden px-2 pt-3 pb-0">
         <div className="flex flex-1 flex-col">
-          <div className="space-y-3">
+          <div className="shrink-0 space-y-3">
             <p className="text-[14px] font-semibold text-[#6C7B91]">오늘의 금융 Quiz</p>
 
             <div className="mt-2 rounded-[16px] border border-white/80 bg-white px-5 py-4 shadow-[0_8px_20px_rgba(111,137,194,0.10)]">
@@ -243,13 +280,22 @@ export function GovernanceQuizPage() {
           </div>
 
           {error && !quiz?.options.length ? (
-            <div className="mt-3 flex items-start gap-2 rounded-[12px] border border-[#FFD3D3] bg-[#FFF4F4] px-4 py-2.5 text-[13px] leading-[1.45] text-[#D64545]">
-              <AlertCircle size={16} className="mt-0.5 shrink-0" />
-              <span>{error}</span>
+            <div className="mt-3 rounded-[12px] border border-[#FFD3D3] bg-[#FFF4F4] px-4 py-2.5 text-[13px] leading-[1.45] text-[#D64545]">
+              <div className="flex items-start gap-2">
+                <AlertCircle size={16} className="mt-0.5 shrink-0" />
+                <span>{error}</span>
+              </div>
+              {errorDetails ? (
+                <div className="mt-2 border-t border-[#F2C3C3] pt-2 text-[12px] leading-[1.5] text-[#A94444]">
+                  <p>status: {errorDetails.status}</p>
+                  <p>code: {errorDetails.code}</p>
+                  <p>message: {errorDetails.message}</p>
+                </div>
+              ) : null}
             </div>
           ) : null}
 
-          <div className="flex flex-1 min-h-0 flex-col">
+          <div className="flex flex-1 flex-col overflow-hidden pt-4">
             {quiz?.options.length ? (
               <div className="flex flex-1 min-h-0 flex-col">
                 <div className="h-5 shrink-0" />
@@ -261,7 +307,7 @@ export function GovernanceQuizPage() {
                   <span className="h-px flex-1 bg-[#D3DDEA]" aria-hidden="true" />
                 </div>
                 <div className="h-5 shrink-0" />
-                <div className="flex flex-col gap-3.5">
+                <div className="mt-2 flex flex-col gap-3">
                   {quiz.options.map((option) => (
                     <QuizChoiceButton
                       key={option.id}
@@ -276,7 +322,7 @@ export function GovernanceQuizPage() {
             ) : null}
           </div>
 
-          <div className="shrink-0 pb-0">
+          <div className="mt-auto shrink-0 space-y-3 pt-4">
             {quiz && quiz.options.length > 0 ? (
               <div className="rounded-[12px] border border-[#D9E4FF] bg-[#F7FAFF] px-4 py-2 text-[12px] leading-[1.35] text-[#607089]">
                 <div className="flex items-start gap-2">
@@ -291,7 +337,6 @@ export function GovernanceQuizPage() {
               variant="primary"
               size="md"
               fullWidth
-              className="mt-2"
               disabled={!selectedOptionId || isLoading || isSubmitting || !quiz}
               onClick={handleSubmit}
             >
@@ -303,3 +348,5 @@ export function GovernanceQuizPage() {
     </MainLayout>
   )
 }
+
+

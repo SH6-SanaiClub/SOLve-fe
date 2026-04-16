@@ -171,7 +171,7 @@ export function SignupPage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+        <form id="signup-form"onSubmit={handleSubmit} className="flex flex-col gap-5">
           {isReactivationSignup ? (
             <div className="rounded-control border border-primary-100 bg-primary-50 px-4 py-4">
               <p className="text-xs font-medium text-primary-600">기존 아이디</p>

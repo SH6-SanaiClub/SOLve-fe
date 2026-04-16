@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import mainMascotImage from '../../assets/home/main-mascot.png'
 import { IconButton, Icons } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import Header from '../../components/layout/Header'
@@ -9,25 +10,25 @@ import {
   BOTTOM_NAVIGATION_ROUTE_BY_KEY,
 } from '../../constants/bottomNavigation'
 import {
+  ROUTE_PATHS,
   getDonationDetailPath,
   getEnvVerifyPath,
   getValueStoreProductDetailPath,
-  ROUTE_PATHS,
 } from '../../constants/routePaths'
-import mainMascotImage from '../../assets/home/main-mascot.png'
 import { useAuth } from '../../hooks/useAuth'
-import { useHomeDashboardSummary } from '../home/hooks/useHomeDashboardSummary'
 import { getDonationDetail } from '../../services/donationService'
 import { getValueStoreProductDetail } from '../../services/productService'
 import { getActivityRecommend } from '../../services/recommendService'
 import type { EnvActivityType } from '../../types/environmentVerification'
 import type { ActivityRecommendResponse, RecommendedActivity } from '../../types/recommend'
-import { AiSummaryCard } from './components/AiSummaryCard'
+import { useHomeDashboardSummary } from '../home/hooks/useHomeDashboardSummary'
 import { ActivityCard } from './components/ActivityCard'
-import { PopularActivityGuideModal } from './components/PopularActivityGuideModal'
+import { AiSummaryCard } from './components/AiSummaryCard'
 import { PopularActivityCard } from './components/PopularActivityCard'
+import { PopularActivityGuideModal } from './components/PopularActivityGuideModal'
 
 type ActivityImageMap = Record<string, string>
+
 type PopularActivityGuard =
   | {
       title: string
@@ -84,7 +85,9 @@ const getActivityPath = (activity: RecommendedActivity) => {
     case 'PHOTO': {
       const envActivityType = getEnvActivityTypeFromActivity(activity)
 
-      return envActivityType ? getEnvVerifyPath(envActivityType) : ROUTE_PATHS.activityEnvironment
+      return envActivityType
+        ? getEnvVerifyPath(envActivityType)
+        : ROUTE_PATHS.activityEnvironment
     }
     case 'QUIZ':
       return ROUTE_PATHS.activityGovernance
@@ -102,7 +105,10 @@ const getPopularActivityGuard = (
   activity: RecommendedActivity,
   nextPath: string | null,
 ): PopularActivityGuard | null => {
-  if (activity.alreadyParticipatedToday && (activity.activityType === 'PHOTO' || activity.activityType === 'QUIZ')) {
+  if (
+    activity.alreadyParticipatedToday &&
+    (activity.activityType === 'PHOTO' || activity.activityType === 'QUIZ')
+  ) {
     return {
       title: '오늘은 이미 참여했어요',
       message: '오늘 이미 참여한 활동이에요. 내일 다시 참여할 수 있어요!',
@@ -164,11 +170,13 @@ export const RecommendPage = () => {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { summary } = useHomeDashboardSummary()
+
   const [data, setData] = useState<ActivityRecommendResponse | null>(null)
   const [activityImageMap, setActivityImageMap] = useState<ActivityImageMap>({})
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [popularActivityGuard, setPopularActivityGuard] = useState<PopularActivityGuard | null>(null)
+  const [popularActivityGuard, setPopularActivityGuard] =
+    useState<PopularActivityGuard | null>(null)
 
   useEffect(() => {
     const fetchRecommend = async () => {
@@ -192,6 +200,7 @@ export const RecommendPage = () => {
     }
 
     let isMounted = true
+
     const uniqueActivities = [
       ...data.activities,
       ...(data.popularActivity ? [data.popularActivity] : []),
@@ -264,7 +273,9 @@ export const RecommendPage = () => {
     if (nextPath) {
       navigate(
         nextPath,
-        shouldUseEnvBackNavigation(activity) ? { state: { fromEnv: true } } : undefined,
+        shouldUseEnvBackNavigation(activity)
+          ? { state: { fromEnv: true } }
+          : undefined,
       )
     }
   }
@@ -281,7 +292,9 @@ export const RecommendPage = () => {
     if (nextPath) {
       navigate(
         nextPath,
-        shouldUseEnvBackNavigation(activity) ? { state: { fromEnv: true } } : undefined,
+        shouldUseEnvBackNavigation(activity)
+          ? { state: { fromEnv: true } }
+          : undefined,
       )
     }
   }

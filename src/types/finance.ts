@@ -3,6 +3,8 @@ export type FinancialProductType = FinanceProductType
 export type FinanceProductListQueryType = 'loan' | 'savings'
 export type FinanceUnavailableReason =
   | 'AVAILABLE'
+  | 'ALREADY_JOINED'
+  | 'LOW_SCORE_FOR_ESG_MASTER'
   | 'LOW_SCORE'
   | 'HAS_ACTIVE_LOAN'
   | 'LOAN_BLOCKED'
@@ -87,6 +89,7 @@ export interface FinanceListProduct {
   appliedRate: FinanceRateValue | null
   loanLimit: number | null
   available: boolean
+  unavailableReason: FinanceUnavailableReason | null
   durationMonths: number
   monthlyPaymentAmount: number | null
   description: string | null
@@ -137,7 +140,7 @@ export interface FinanceMyLoan {
   status: FinanceApplicationStatus
   durationMonths: number
   nextRepaymentDate: string
-  createdAt: string
+  joinedAt: string
 }
 
 export interface FinanceMySaving {

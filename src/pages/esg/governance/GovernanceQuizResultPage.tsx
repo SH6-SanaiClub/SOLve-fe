@@ -35,7 +35,7 @@ function AnswerRow({
       : 'bg-[#E14B4B] text-white'
 
   return (
-    <div className={`flex items-center gap-3 rounded-[12px] border px-4 py-3 ${toneStyles}`}>
+    <div className={`flex items-center gap-3 rounded-[10px] border px-4 py-3 ${toneStyles}`}>
       <span className={`flex h-5 w-5 items-center justify-center rounded-full ${iconStyles}`}>
         {tone === 'blue' ? <Check size={12} strokeWidth={3} /> : <X size={12} strokeWidth={3} />}
       </span>
@@ -163,7 +163,7 @@ export function GovernanceQuizResultPage() {
       <div className="fixed inset-0 top-[56px] bg-[rgba(15,23,42,0.18)]" aria-hidden="true" />
 
       <section className="relative z-10 flex min-h-[calc(100vh-56px-48px)] items-center justify-center py-6">
-        <article className="w-full max-w-[360px] rounded-[20px] bg-white px-5 pt-7 pb-5 shadow-[0_24px_48px_rgba(15,23,42,0.12)]">
+        <article className="w-full max-w-[360px] rounded-[10px] bg-white px-5 pt-7 pb-5 shadow-[0_24px_48px_rgba(15,23,42,0.12)]">
           <div className="flex flex-col items-center text-center">
             <div
               className={[
@@ -201,7 +201,7 @@ export function GovernanceQuizResultPage() {
 
           <div
             className={[
-              'mt-5 rounded-[14px] border px-4 py-4',
+              'mt-5 rounded-[10px] border px-4 py-4',
               result.isCorrect
                 ? 'border-[#D8E4FF] bg-[#F8FBFF]'
                 : 'border-[#FFD9D9] bg-[#FFF7F7]',

@@ -10,13 +10,21 @@ import IconButton from '../../components/common/IconButton'
 import { Icons } from '../../components/common/Icons'
 import MainLayout from '../../components/layout/MainLayout'
 import Header from '../../components/layout/Header'
+import {
+  clearSignupVerificationState,
+  readSignupVerificationState,
+} from '../../utils/signupVerificationStorage'
 
 export function SignupPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const verificationState = location.state as
+  const locationVerificationState = location.state as
     | { verificationToken?: string; preservedLoginId?: string }
     | null
+  const storedVerificationState = readSignupVerificationState()
+  const verificationState = locationVerificationState?.verificationToken
+    ? locationVerificationState
+    : storedVerificationState
   const preservedLoginId = verificationState?.preservedLoginId?.trim() ?? ''
   const isReactivationSignup = preservedLoginId.length > 0
 
@@ -117,6 +125,7 @@ export function SignupPage() {
         verificationToken: verificationState.verificationToken,
       }
       await authService.signup(requestData)
+      clearSignupVerificationState()
       navigate(ROUTE_PATHS.signupComplete)
     } catch (err) {
       if (err instanceof AxiosError) {
@@ -145,7 +154,7 @@ export function SignupPage() {
       }
     >
       <div className="flex flex-col gap-6">
-        <div>
+        <div className="pt-2">
           <h2 className="mb-2 text-base font-semibold text-font-main">기본 정보를 입력해주세요</h2>
           <p className="text-xs text-font-sub">
             {isReactivationSignup
@@ -181,7 +190,7 @@ export function SignupPage() {
                   )}
                 </div>
 
-                <div className="shrink-0 pt-6">
+                <div className="shrink-0 pt-6.5">
                   <Button type="button" onClick={handleCheckId} variant="sub" className="w-[100px] text-sm">
                     중복확인
                   </Button>

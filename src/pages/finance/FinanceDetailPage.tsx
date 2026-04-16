@@ -25,6 +25,7 @@ import {
   buildSavingsDoneState,
   buildSavingsRateSummary,
   formatRate,
+  getFinanceUnavailableReasonLabel,
 } from './financeUi'
 
 interface FinanceDetailLocationState {
@@ -157,6 +158,11 @@ export const FinanceDetailPage = () => {
       return
     }
 
+    if (!savingsProduct.available) {
+      setErrorMessage(getFinanceUnavailableReasonLabel(savingsProduct.unavailableReason))
+      return
+    }
+
     try {
       setIsSubmitting(true)
       await applyFinanceSavings({ productId: savingsProduct.id })
@@ -269,6 +275,10 @@ export const FinanceDetailPage = () => {
   if (productType === 'SAVINGS' && savingsProduct) {
     const detailFields = buildSavingsDetailFields(savingsProduct)
     const rateHighlightLabel = formatRate(savingsProduct.maxRate)
+    const isSavingsAvailable = savingsProduct.available
+    const savingsUnavailableLabel = getFinanceUnavailableReasonLabel(
+      savingsProduct.unavailableReason,
+    )
 
     return (
       <div className="relative min-h-screen bg-bg-light font-pretendard">
@@ -326,6 +336,11 @@ export const FinanceDetailPage = () => {
                 <p className="mt-[6px] text-[12px] leading-[22.75px] text-gray-600">
                   {savingsProduct.description ?? ''}
                 </p>
+                {!isSavingsAvailable ? (
+                  <p className="mt-2 text-[12px] leading-[22.75px] text-primary-500">
+                    {savingsUnavailableLabel}
+                  </p>
+                ) : null}
               </Card>
 
               {renderNoticeBlock(FINANCE_NOTICE_LINES)}
@@ -347,9 +362,9 @@ export const FinanceDetailPage = () => {
               size="md"
               onClick={handleSavingsApply}
               className="!h-[56px]"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !isSavingsAvailable}
             >
-              {isSubmitting ? '가입 처리 중...' : '가입하기'}
+              {isSubmitting ? '가입 처리 중...' : isSavingsAvailable ? '가입하기' : savingsUnavailableLabel}
             </Button>
           </div>
         </div>

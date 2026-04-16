@@ -6,7 +6,6 @@ import MainLayout from '../../components/layout/MainLayout'
 import { ROUTE_PATHS } from '../../constants/routePaths'
 import { useAuth } from '../../hooks/useAuth'
 import { submitSurvey } from '../../services/surveyService'
-import type { UserType } from '../../types/user'
 import { SurveyCompleteModal } from './components/SurveyCompleteModal'
 
 const QUESTIONS = [
@@ -42,23 +41,12 @@ const QUESTIONS = [
   },
 ] as const
 
-const calcUserType = (answers: Record<string, number>): UserType => {
-  const e = answers.q1 ?? 0
-  const s = answers.q2 ?? 0
-  const g = answers.q3 ?? 0
-  const max = Math.max(e, s, g)
-
-  const winners = [
-    e === max ? 'E' : null,
-    s === max ? 'S' : null,
-    g === max ? 'G' : null,
-  ].filter(Boolean)
-
-  if (winners.length > 1) {
-    return 'ALL-ROUNDER'
+const buildSurveySubmitPayload = (answers: Record<string, number>) => {
+  return {
+    environmentWeight: answers.q1 ?? 0,
+    socialWeight: answers.q2 ?? 0,
+    financeWeight: answers.q3 ?? 0,
   }
-
-  return winners[0] === 'E' ? 'GREEN' : winners[0] === 'S' ? 'SOCIAL' : 'FINANCE'
 }
 
 export function SurveyPage() {
@@ -68,6 +56,7 @@ export function SurveyPage() {
   const [answers, setAnswers] = useState<Record<string, number>>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false)
+  const [submitErrorMessage, setSubmitErrorMessage] = useState('')
 
   const currentQuestion = QUESTIONS[step]
   const isLastStep = step === QUESTIONS.length - 1
@@ -81,6 +70,7 @@ export function SurveyPage() {
   }, [isCompleteModalOpen, navigate, user?.isSurveyCompleted])
 
   const handleSelect = (score: number) => {
+    setSubmitErrorMessage('')
     setAnswers((prev) => ({ ...prev, [currentQuestion.id]: score }))
   }
 
@@ -95,23 +85,30 @@ export function SurveyPage() {
     }
 
     setIsSubmitting(true)
+    setSubmitErrorMessage('')
 
     try {
-      const userType = calcUserType(answers)
+      const status = await submitSurvey(buildSurveySubmitPayload(answers))
 
-      await submitSurvey(userType)
+      if (!status.surveyCompleted) {
+        setSubmitErrorMessage('설문 저장에 실패했습니다. 다시 시도해 주세요.')
+        return
+      }
 
       if (user) {
         updateUser({
           ...user,
-          isSurveyCompleted: true,
-          userType,
+          isSurveyCompleted: status.surveyCompleted,
+          userType: status.userType,
         })
       }
 
       setIsCompleteModalOpen(true)
-    } catch {
-      navigate(ROUTE_PATHS.home, { replace: true })
+    } catch (error) {
+      const serverMessage = (
+        error as { response?: { data?: { message?: string } } }
+      )?.response?.data?.message
+      setSubmitErrorMessage(serverMessage || '설문 저장에 실패했습니다. 다시 시도해 주세요.')
     } finally {
       setIsSubmitting(false)
     }
@@ -207,6 +204,10 @@ export function SurveyPage() {
               })}
             </div>
           </Card>
+
+          {submitErrorMessage ? (
+            <p className="px-1 text-sm font-medium text-error">{submitErrorMessage}</p>
+          ) : null}
         </div>
 
         <div className="fixed bottom-0 left-1/2 z-10 w-full max-w-[600px] -translate-x-1/2 bg-bg-light px-6 pb-4 pt-4">

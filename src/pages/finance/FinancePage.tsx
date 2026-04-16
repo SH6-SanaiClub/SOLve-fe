@@ -108,11 +108,11 @@ export const FinancePage = () => {
           onChange={handleBottomNavigation}
         />
       }
+      subHeader={<FinanceTabs activeTab={activeTab} onChange={setActiveTab} />}
+      contentSpacing="comfortable"
       className="bg-bg-light"
     >
       <div className="-mx-4 flex flex-col gap-4 bg-bg-light px-(--side-padding) pb-2">
-        <FinanceTabs activeTab={activeTab} onChange={setActiveTab} />
-
         {visibleRecommendation && recommendedItem ? (
           <SavingsRecommendCard
             item={recommendedItem}

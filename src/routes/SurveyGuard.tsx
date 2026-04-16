@@ -3,7 +3,6 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom'
 import { ROUTE_PATHS } from '../constants/routePaths'
 import { useAuth } from '../hooks/useAuth'
 import { getSurveyStatus } from '../services/surveyService'
-import type { UserType } from '../types/user'
 
 export function SurveyGuard() {
   const { user, isAuthenticated, updateUser } = useAuth()
@@ -34,7 +33,7 @@ export function SurveyGuard() {
           updateUser({
             ...user,
             isSurveyCompleted: status.surveyCompleted,
-            userType: status.userType as UserType,
+            userType: status.userType,
           })
         }
       } catch (error) {

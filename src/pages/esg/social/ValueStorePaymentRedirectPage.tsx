@@ -5,6 +5,10 @@ import MainLayout from '../../../components/layout/MainLayout'
 import { getValueStoreProductPaymentCompletePath } from '../../../constants/routePaths'
 import { verifyProductPayment } from '../../../services/paymentService'
 
+const PRODUCT_PAYMENT_ADDRESS_KEY_PREFIX = 'product-payment-delivery-address:'
+const PRODUCT_PAYMENT_LATEST_ADDRESS_KEY =
+  'product-payment-delivery-address:latest'
+
 export function ValueStorePaymentRedirectPage() {
   const location = useLocation()
   const navigate = useNavigate()
@@ -16,6 +20,27 @@ export function ValueStorePaymentRedirectPage() {
   const merchantUid = searchParams.get('merchant_uid')
   const impSuccess = searchParams.get('imp_success')
   const success = searchParams.get('success')
+  const deliveryAddressFromState =
+    (location.state as { deliveryAddress?: string } | null)?.deliveryAddress ??
+    ''
+  const deliveryAddressFromStorage = merchantUid
+    ? sessionStorage.getItem(
+        `${PRODUCT_PAYMENT_ADDRESS_KEY_PREFIX}${merchantUid}`,
+      ) ?? ''
+    : ''
+  const deliveryAddressFromLocalStorage = merchantUid
+    ? localStorage.getItem(
+        `${PRODUCT_PAYMENT_ADDRESS_KEY_PREFIX}${merchantUid}`,
+      ) ?? ''
+    : ''
+  const latestDeliveryAddress =
+    localStorage.getItem(PRODUCT_PAYMENT_LATEST_ADDRESS_KEY) ?? ''
+  const deliveryAddress =
+    deliveryAddressFromState ||
+    deliveryAddressFromStorage ||
+    deliveryAddressFromLocalStorage ||
+    latestDeliveryAddress ||
+    ''
   const immediateError =
     !Number.isInteger(parsedProductId) || parsedProductId <= 0
       ? '올바른 결제 정보가 아니에요.'
@@ -23,6 +48,8 @@ export function ValueStorePaymentRedirectPage() {
         ? '결제가 완료되지 않았어요. 다시 시도해주세요.'
         : !impUid || !merchantUid
           ? '결제 검증에 필요한 정보가 없어요.'
+          : !deliveryAddress
+            ? '배송지 정보가 없어요. 다시 결제를 시도해주세요.'
           : ''
   const verificationKey =
     !immediateError && impUid && merchantUid
@@ -48,6 +75,7 @@ export function ValueStorePaymentRedirectPage() {
         productId: parsedProductId,
         impUid,
         merchantUid,
+        deliveryAddress,
       }
 
       try {
@@ -60,6 +88,13 @@ export function ValueStorePaymentRedirectPage() {
         if (verificationKey) {
           sessionStorage.setItem(verificationKey, 'done')
         }
+        sessionStorage.removeItem(
+          `${PRODUCT_PAYMENT_ADDRESS_KEY_PREFIX}${merchantUid}`,
+        )
+        localStorage.removeItem(
+          `${PRODUCT_PAYMENT_ADDRESS_KEY_PREFIX}${merchantUid}`,
+        )
+        localStorage.removeItem(PRODUCT_PAYMENT_LATEST_ADDRESS_KEY)
 
         navigate(getValueStoreProductPaymentCompletePath(parsedProductId), {
           replace: true,
@@ -97,6 +132,7 @@ export function ValueStorePaymentRedirectPage() {
     merchantUid,
     navigate,
     parsedProductId,
+    deliveryAddress,
     verificationKey,
   ])
 

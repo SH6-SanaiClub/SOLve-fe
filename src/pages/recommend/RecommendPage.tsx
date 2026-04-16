@@ -8,117 +8,20 @@ import {
   BOTTOM_NAVIGATION_ITEMS,
   BOTTOM_NAVIGATION_ROUTE_BY_KEY,
 } from '../../constants/bottomNavigation'
-import {
-  getDonationDetailPath,
-  getEnvVerifyPath,
-  getValueStoreProductDetailPath,
-  ROUTE_PATHS,
-} from '../../constants/routePaths'
 import { useAuth } from '../../hooks/useAuth'
-import { useHomeDashboardSummary } from '../home/hooks/useHomeDashboardSummary'
 import { getDonationDetail } from '../../services/donationService'
 import { getValueStoreProductDetail } from '../../services/productService'
 import { getActivityRecommend } from '../../services/recommendService'
-import type { EnvActivityType } from '../../types/environmentVerification'
 import type { ActivityRecommendResponse, RecommendedActivity } from '../../types/recommend'
-import { AiSummaryCard } from './components/AiSummaryCard'
+import { useHomeDashboardSummary } from '../home/hooks/useHomeDashboardSummary'
 import { ActivityCard } from './components/ActivityCard'
-import { PopularActivityGuideModal } from './components/PopularActivityGuideModal'
-import { PopularActivityCard } from './components/PopularActivityCard'
+import { AiSummaryCard } from './components/AiSummaryCard'
+import { getActivityPath, shouldUseEnvBackNavigation } from './recommendActivityUtils'
 
 type ActivityImageMap = Record<string, string>
-type PopularActivityGuard =
-  | {
-      title: string
-      message: string
-      confirmLabel?: undefined
-      nextPath?: undefined
-    }
-  | {
-      title: string
-      message: string
-      confirmLabel: string
-      nextPath: string
-    }
 
 const getActivityKey = (activity: RecommendedActivity) =>
   `${activity.activityType}-${activity.referenceId}`
-
-const getEnvActivityTypeFromActivity = (
-  activity: RecommendedActivity,
-): EnvActivityType | null => {
-  const normalizedText = `${activity.name} ${activity.description ?? ''}`.toLowerCase()
-
-  if (normalizedText.includes('텀블러') || normalizedText.includes('tumbler')) {
-    return 'tumbler'
-  }
-
-  if (
-    normalizedText.includes('자전거') ||
-    normalizedText.includes('따릉이') ||
-    normalizedText.includes('shared-bike') ||
-    normalizedText.includes('bike')
-  ) {
-    return 'shared-bike'
-  }
-
-  if (
-    normalizedText.includes('전기차') ||
-    normalizedText.includes('ev') ||
-    normalizedText.includes('렌트카') ||
-    normalizedText.includes('대여')
-  ) {
-    return 'ev-rental'
-  }
-
-  return null
-}
-
-const getActivityPath = (activity: RecommendedActivity) => {
-  switch (activity.activityType) {
-    case 'DONATION':
-      return getDonationDetailPath(activity.referenceId)
-    case 'PURCHASE':
-      return getValueStoreProductDetailPath(activity.referenceId)
-    case 'PHOTO': {
-      const envActivityType = getEnvActivityTypeFromActivity(activity)
-
-      return envActivityType ? getEnvVerifyPath(envActivityType) : ROUTE_PATHS.activityEnvironment
-    }
-    case 'QUIZ':
-      return ROUTE_PATHS.activityGovernance
-    case 'VOLUNTEER':
-      return ROUTE_PATHS.activitySocial
-    default:
-      return null
-  }
-}
-
-const shouldUseEnvBackNavigation = (activity: RecommendedActivity) =>
-  activity.activityType === 'PHOTO'
-
-const getPopularActivityGuard = (
-  activity: RecommendedActivity,
-  nextPath: string | null,
-): PopularActivityGuard | null => {
-  if (activity.alreadyParticipatedToday && (activity.activityType === 'PHOTO' || activity.activityType === 'QUIZ')) {
-    return {
-      title: '오늘은 이미 참여했어요',
-      message: '오늘 이미 참여한 활동이에요. 내일 다시 참여할 수 있어요!',
-    }
-  }
-
-  if (activity.monthlyLimitReached && nextPath) {
-    return {
-      title: '이번 달 점수를 모두 채웠어요',
-      message: `이번 달 ${activity.scoreCategory} 활동 점수는 모두 채웠어요. 참여하면 점수는 쌓이지 않지만 포인트는 적립돼요. 그래도 참여하시겠어요?`,
-      confirmLabel: '활동하러 가기',
-      nextPath,
-    }
-  }
-
-  return null
-}
 
 export const RecommendPage = () => {
   const navigate = useNavigate()
@@ -128,7 +31,6 @@ export const RecommendPage = () => {
   const [activityImageMap, setActivityImageMap] = useState<ActivityImageMap>({})
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [popularActivityGuard, setPopularActivityGuard] = useState<PopularActivityGuard | null>(null)
 
   useEffect(() => {
     const fetchRecommend = async () => {
@@ -152,10 +54,7 @@ export const RecommendPage = () => {
     }
 
     let isMounted = true
-    const uniqueActivities = [
-      ...data.activities,
-      ...(data.popularActivity ? [data.popularActivity] : []),
-    ].filter(
+    const uniqueActivities = data.activities.filter(
       (activity, index, activities) =>
         activities.findIndex(
           (candidate) => getActivityKey(candidate) === getActivityKey(activity),
@@ -229,25 +128,6 @@ export const RecommendPage = () => {
     }
   }
 
-  const handlePopularActivityClick = (activity: RecommendedActivity) => {
-    const nextPath = getActivityPath(activity)
-    const guard = getPopularActivityGuard(activity, nextPath)
-
-    if (guard) {
-      setPopularActivityGuard(guard)
-      return
-    }
-
-    if (nextPath) {
-      navigate(
-        nextPath,
-        shouldUseEnvBackNavigation(activity) ? { state: { fromEnv: true } } : undefined,
-      )
-    }
-  }
-
-  const popularActivity = data?.popularActivity ?? null
-
   return (
     <MainLayout
       header={
@@ -274,7 +154,7 @@ export const RecommendPage = () => {
       {isLoading ? (
         <div className="mt-2 flex flex-col gap-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-40 w-full rounded-control bg-gray-100 animate-pulse" />
+            <div key={i} className="h-40 w-full animate-pulse rounded-control bg-gray-100" />
           ))}
         </div>
       ) : error ? (
@@ -293,37 +173,8 @@ export const RecommendPage = () => {
               onClick={() => handleActivityClick(activity)}
             />
           ))}
-
-          {popularActivity ? (
-            <PopularActivityCard
-              activity={popularActivity}
-              imageUrl={activityImageMap[getActivityKey(popularActivity)]}
-              onClick={() => handlePopularActivityClick(popularActivity)}
-            />
-          ) : null}
         </div>
       ) : null}
-
-      <PopularActivityGuideModal
-        open={Boolean(popularActivityGuard)}
-        title={popularActivityGuard?.title ?? ''}
-        message={popularActivityGuard?.message ?? ''}
-        confirmLabel={popularActivityGuard?.confirmLabel}
-        onClose={() => setPopularActivityGuard(null)}
-        onConfirm={
-          popularActivityGuard?.nextPath
-            ? () => {
-                navigate(
-                  popularActivityGuard.nextPath,
-                  popularActivity?.activityType === 'PHOTO'
-                    ? { state: { fromEnv: true } }
-                    : undefined,
-                )
-                setPopularActivityGuard(null)
-              }
-            : undefined
-        }
-      />
     </MainLayout>
   )
 }

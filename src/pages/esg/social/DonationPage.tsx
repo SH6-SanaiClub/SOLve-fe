@@ -10,6 +10,7 @@ import {
   getDonationDetailPath,
   ROUTE_PATHS,
 } from '../../../constants/routePaths'
+import useReturnNavigation from '../../../hooks/useReturnNavigation'
 import { DonationCampaignCard } from './components/DonationCampaignCard'
 import { DonationSummaryBanner } from './components/DonationSummaryBanner'
 import { SocialActivityTabs } from './components/SocialActivityTabs'
@@ -24,6 +25,7 @@ const formatNumber = (value: number) =>
 
 export function DonationPage() {
   const navigate = useNavigate()
+  const { goBack } = useReturnNavigation(ROUTE_PATHS.home)
   const [donationData, setDonationData] = useState<DonationListResponse | null>(
     null,
   )
@@ -50,10 +52,6 @@ export function DonationPage() {
   useEffect(() => {
     void fetchDonationCampaigns()
   }, [])
-
-  const handleBack = () => {
-    navigate(ROUTE_PATHS.home)
-  }
 
   const handleBottomNavigation = (key: string) => {
     if (key === 'home') {
@@ -84,16 +82,16 @@ export function DonationPage() {
             <IconButton
               label="뒤로가기"
               icon={<Icons.Back className="text-font-main" />}
-              onClick={handleBack}
+              onClick={goBack}
             />
           }
           title="S 활동"
         />
       }
       nav={<BottomNavigation value="home" onChange={handleBottomNavigation} />}
+      subHeader={<SocialActivityTabs activeTab="donation" />}
+      contentSpacing="comfortable"
     >
-      <SocialActivityTabs activeTab="donation" />
-
       {isLoading ? (
         <div className="flex flex-col gap-6">
           <section className="space-y-6 pt-2">

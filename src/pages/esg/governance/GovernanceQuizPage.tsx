@@ -7,6 +7,7 @@ import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
 import { getS3AssetUrl } from '../../../constants/assetUrls'
 import { ROUTE_PATHS } from '../../../constants/routePaths'
+import useReturnNavigation from '../../../hooks/useReturnNavigation'
 import {
   getTodayGovernanceQuiz,
   submitGovernanceQuiz,
@@ -51,6 +52,7 @@ function QuizChoiceButton({
 
 export function GovernanceQuizPage() {
   const navigate = useNavigate()
+  const { goBack } = useReturnNavigation(ROUTE_PATHS.home)
   const completeImage = getS3AssetUrl('quiz.png')
   const [quiz, setQuiz] = useState<GovernanceQuizToday | null>(null)
   const [completedQuiz, setCompletedQuiz] = useState<GovernanceQuizToday | null>(null)
@@ -180,7 +182,7 @@ export function GovernanceQuizPage() {
                 label="뒤로 가기"
                 icon={<Icons.Back size={20} />}
                 size="sm"
-                onClick={() => navigate(ROUTE_PATHS.home, { replace: true })}
+                onClick={goBack}
               />
             }
             title="오늘의 퀴즈"
@@ -246,7 +248,7 @@ export function GovernanceQuizPage() {
               label="뒤로 가기"
               icon={<Icons.Back size={20} />}
               size="sm"
-              onClick={() => navigate(-1)}
+              onClick={goBack}
             />
           }
           title="오늘의 퀴즈"
@@ -351,5 +353,4 @@ export function GovernanceQuizPage() {
     </MainLayout>
   )
 }
-
 

@@ -9,6 +9,7 @@ import {
   getValueStoreProductDetailPath,
   ROUTE_PATHS,
 } from '../../../constants/routePaths'
+import useReturnNavigation from '../../../hooks/useReturnNavigation'
 import { getValueStoreProducts } from '../../../services/productService'
 import type { ValueStoreProductListResponse } from '../../../types/product'
 import { SocialActivityTabs } from './components/SocialActivityTabs'
@@ -16,6 +17,7 @@ import { ValueStoreProductCard } from './components/ValueStoreProductCard'
 
 export function ValueStorePage() {
   const navigate = useNavigate()
+  const { goBack } = useReturnNavigation(ROUTE_PATHS.home)
   const [productData, setProductData] =
     useState<ValueStoreProductListResponse | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -41,10 +43,6 @@ export function ValueStorePage() {
   useEffect(() => {
     void fetchProducts()
   }, [])
-
-  const handleBack = () => {
-    navigate(ROUTE_PATHS.home)
-  }
 
   const handleBottomNavigation = (key: string) => {
     if (key === 'home') {
@@ -75,16 +73,16 @@ export function ValueStorePage() {
             <IconButton
               label="뒤로가기"
               icon={<Icons.Back className="text-font-main" />}
-              onClick={handleBack}
+              onClick={goBack}
             />
           }
           title="S 활동"
         />
       }
       nav={<BottomNavigation value="home" onChange={handleBottomNavigation} />}
+      subHeader={<SocialActivityTabs activeTab="store" />}
+      contentSpacing="comfortable"
     >
-      <SocialActivityTabs activeTab="store" />
-
       {isLoading ? (
         <div className="flex flex-col gap-6">
           <section className="space-y-4 pt-2">

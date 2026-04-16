@@ -15,24 +15,75 @@ interface Props {
   children: React.ReactNode;
   header?: React.ReactNode; // Header 컴포넌트
   nav?: React.ReactNode;    // BottomNavigation 컴포넌트
+  contentRef?: React.Ref<HTMLElement>;
+  subHeader?: React.ReactNode;
+  subHeaderHeight?: number;
+  contentSpacing?: 'default' | 'comfortable' | 'spacious';
 }
 
-const MainLayout: React.FC<Props> = ({ children, header, nav, className = '' }) => {
-  const contentPaddingTop = header ? 'pt-(--header-h)' : 'pt-0';
-  const contentPaddingBottom = nav ? 'pb-[calc(var(--nav-h)+20px)]' : 'pb-6';
+const MainLayout: React.FC<Props> = ({
+  children,
+  header,
+  nav,
+  className = '',
+  contentRef,
+  subHeader,
+  subHeaderHeight = 48,
+  contentSpacing = 'default',
+}) => {
+  const contentTopGapMap = {
+    default: 0,
+    comfortable: 12,
+    spacious: 20,
+  } as const;
+  const contentTopGap = contentTopGapMap[contentSpacing];
+  const headerInset = header
+    ? 'calc(var(--header-h) + env(safe-area-inset-top))'
+    : '0px';
+  const contentPaddingTop = subHeader
+    ? `calc(${headerInset} + ${subHeaderHeight}px + ${contentTopGap}px)`
+    : header
+      ? `calc(${headerInset} + ${contentTopGap}px)`
+      : '1.5rem';
+  const contentPaddingBottom = nav
+    ? 'calc(var(--nav-h) + env(safe-area-inset-bottom) + 20px)'
+    : '1.5rem';
 
   return (
-    <div className={`min-h-screen w-full max-w-[600px] mx-auto bg-bg-light relative flex flex-col font-pretendard ${className}`}>
+    <div
+      className={`w-full max-w-[600px] mx-auto bg-bg-light relative flex flex-col overflow-hidden font-pretendard ${className}`}
+      style={{ minHeight: '100dvh', height: '100dvh' }}
+    >
       
       {header}
 
+      {subHeader ? (
+        <div
+          className="fixed left-1/2 z-40 w-full max-w-[600px] -translate-x-1/2"
+          style={{
+            top: 'calc(var(--header-h) + env(safe-area-inset-top))',
+            height: `${subHeaderHeight}px`,
+          }}
+        >
+          {subHeader}
+        </div>
+      ) : null}
+
       {/* 2. 콘텐츠 영역 */}
       <main className="
-        flex-1 w-full 
+        flex-1 min-h-0 w-full overflow-y-auto overscroll-y-auto [-webkit-overflow-scrolling:touch]
         px-(--side-padding)
-      ">
+      "
+      ref={contentRef}
+      style={{
+        scrollPaddingTop: contentPaddingTop,
+        scrollPaddingBottom: contentPaddingBottom,
+      }}>
         {/* 페이지 내부 요소들은 여기서부터 gap만 신경 쓰면 됩니다 */}
-        <div className={`flex flex-col gap-4 py-6 ${contentPaddingTop} ${contentPaddingBottom}`}>
+        <div
+          className="flex flex-col gap-4"
+          style={{ paddingTop: contentPaddingTop, paddingBottom: contentPaddingBottom }}
+        >
           {children}
         </div>
       </main>

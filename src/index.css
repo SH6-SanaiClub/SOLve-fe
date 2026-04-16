@@ -15,6 +15,7 @@
   --radius-card: 16px;
 
   --header-h: 56px;           /* 상단바 높이 표준 */
+  --header-v-pad: 12px;       /* 상단바 내부 세로 여백 */
   --nav-h: 66px;              /* 하단바 높이 표준 */
   --side-padding: 1rem;       /* 16px (px-4) 전체 공통 여백 */
 

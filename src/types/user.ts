@@ -1,11 +1,11 @@
-export type UserType = 'GREEN' | 'SOCIAL' | 'FINANCE' | 'ALL-ROUNDER'
+export type UserType = 'GREEN' | 'SOCIAL' | 'FINANCE' | 'ALL_ROUNDER'
 export type UserGrade = 'SEED' | 'SPROUT' | 'TREE' | 'FOREST' | 'EARTH'
 
 export interface UserSummary {
   userId: number
   loginId: string
   name: string
-  userType: UserType
+  userType: UserType | null
   currentGrade: UserGrade
   totalPoints: number
   isLinked: boolean
@@ -17,7 +17,7 @@ export interface UserProfileResponse {
   loginId: string
   name: string
   phoneNumber: string
-  userType: UserType
+  userType: UserType | null
   currentGrade: UserGrade
   message: string
 }

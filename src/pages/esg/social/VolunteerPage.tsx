@@ -147,6 +147,7 @@ export function VolunteerPage() {
                 <VolunteerActivityCard
                   key={volunteer.volunteerId}
                   volunteer={volunteer}
+                  showImage
                   onClick={() =>
                     navigate(getVolunteerDetailPath(volunteer.volunteerId))
                   }

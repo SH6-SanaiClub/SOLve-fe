@@ -373,7 +373,7 @@ export function ValueStorePaymentPage() {
     >
       <section className="mx-[-16px] min-h-[calc(100vh-var(--header-h)-48px)] bg-gray-50 px-[21px] pt-6 pb-[128px]">
         {isLoading ? (
-          <div className="space-y-8">
+          <div className="space-y-4">
             <Card className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
               <div className="flex items-center gap-6">
                 <div className="h-[96px] w-[88px] animate-pulse rounded-control bg-primary-100" />
@@ -400,28 +400,50 @@ export function ValueStorePaymentPage() {
           </div>
         ) : productDetail ? (
           <div className="space-y-8">
-            <Card className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
-              <div className="flex items-center gap-6">
-                <div className="h-[96px] w-[88px] overflow-hidden rounded-[8px] bg-primary-100">
-                  <img
-                    src={resolveImageUrl(productDetail.imageUrl)}
-                    alt={productDetail.name}
-                    className="h-full w-full object-cover"
-                  />
+            <Card className="overflow-hidden rounded-control !p-0 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+              <div className="flex items-center justify-between border-b border-gray-100 px-3 py-[10px]">
+                <p className="text-[16px] leading-[120%] font-bold tracking-[-0.02em] text-gray-600">
+                  {productDetail.storeName}
+                </p>
+                <p className="text-[12px] leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
+                  배송비 무료
+                </p>
+              </div>
+
+              <div className="space-y-3 px-3 py-3">
+                <div className="flex items-start gap-3">
+                  <div className="h-[68px] w-[68px] shrink-0 overflow-hidden rounded-[8px] bg-primary-100">
+                    <img
+                      src={resolveImageUrl(productDetail.imageUrl)}
+                      alt={productDetail.name}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+
+                  <div className="min-w-0 flex-1">
+                    <div className="space-y-[6px]">
+                      <Badge
+                        tone="primary"
+                        className="px-[6px] py-[2px] text-xs font-medium tracking-[-0.02em]"
+                      >
+                        {productDetail.category}
+                      </Badge>
+                      <h2 className="break-keep text-[16px] leading-[140%] font-medium tracking-[-0.02em] text-font-main">
+                        {productDetail.name}
+                      </h2>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="flex min-w-0 flex-1 flex-col gap-4">
-                  <div className="flex flex-col gap-[6px]">
-                    <p className="text-[12px] leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
-                      {productDetail.storeName}
+                <div className="border-t border-gray-100 pt-3">
+                  <div className="flex items-center justify-between gap-4">
+                    <p className="text-[16px] leading-[120%] font-semibold tracking-[-0.02em] text-font-main">
+                      최종 상품 금액
                     </p>
-                    <h2 className="text-[16px] leading-[120%] font-medium tracking-[-0.02em] text-gray-600">
-                      {productDetail.name}
-                    </h2>
+                    <p className="text-[18px] leading-[120%] font-bold tracking-[-0.02em] text-font-main">
+                      {formatPrice(finalAmount)}
+                    </p>
                   </div>
-                  <p className="text-[18px] leading-[120%] font-medium tracking-[-0.02em] text-font-main">
-                    {formatPrice(productDetail.price)}
-                  </p>
                 </div>
               </div>
             </Card>
@@ -430,12 +452,15 @@ export function ValueStorePaymentPage() {
               <h3 className="text-base leading-7 font-semibold text-gray-800">
                 배송지 정보
               </h3>
-              <Card className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+              <Card className="rounded-control !p-4 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
                 <div className="space-y-[10px]">
                   <div className="flex items-center justify-between gap-3">
                     <div className="flex items-center gap-3">
                       <p className="text-[18px] leading-[120%] font-semibold tracking-[-0.02em] text-black">
                         {deliveryName}
+                      </p>
+                      <p className="text-[16px] leading-[160%] font-normal tracking-[-0.02em] text-black">
+                        {deliveryPhoneNumber}
                       </p>
                     </div>
 
@@ -451,10 +476,6 @@ export function ValueStorePaymentPage() {
                       </Button>
                     ) : null}
                   </div>
-
-                  <p className="text-[16px] leading-[160%] font-normal tracking-[-0.02em] text-black">
-                    {deliveryPhoneNumber}
-                  </p>
 
                   {isAddressEditing ? (
                     <div className="space-y-3">
@@ -552,12 +573,15 @@ export function ValueStorePaymentPage() {
             <h3 className="text-base leading-7 font-semibold text-gray-800">
               배송지 정보
             </h3>
-              <Card className="rounded-control !p-5 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
+            <Card className="rounded-control !p-4 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
               <div className="space-y-[10px]">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <p className="text-[18px] leading-[120%] font-semibold tracking-[-0.02em] text-black">
                       {deliveryName}
+                    </p>
+                    <p className="text-[16px] leading-[160%] font-normal tracking-[-0.02em] text-black">
+                      {deliveryPhoneNumber}
                     </p>
                   </div>
 
@@ -573,10 +597,6 @@ export function ValueStorePaymentPage() {
                     </Button>
                   ) : null}
                 </div>
-
-                <p className="text-[16px] leading-[160%] font-normal tracking-[-0.02em] text-black">
-                  {deliveryPhoneNumber}
-                </p>
 
                 {isAddressEditing ? (
                   <div className="space-y-3">

@@ -8,7 +8,7 @@ import {
   BOTTOM_NAVIGATION_ROUTE_BY_KEY,
 } from '../../constants/bottomNavigation'
 import { ROUTE_PATHS } from '../../constants/routePaths'
-import { getFinanceHistory } from '../../services/financeService'
+import { getFinanceHistory, getMyFinanceProducts } from '../../services/financeService'
 import type { FinanceLoanHistoryItem } from '../../types/finance'
 import { ShopHeader } from '../shop/components/ShopHeader'
 import { formatCurrency, formatDate } from '../finance/financeUi'
@@ -16,6 +16,7 @@ import { formatCurrency, formatDate } from '../finance/financeUi'
 export const MyLoanHistoryPage = () => {
   const navigate = useNavigate()
   const [historyItems, setHistoryItems] = useState<FinanceLoanHistoryItem[]>([])
+  const [isCompletedLoan, setIsCompletedLoan] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -27,6 +28,19 @@ export const MyLoanHistoryPage = () => {
 
         const response = await getFinanceHistory()
         setHistoryItems(response.loans)
+
+        try {
+          const myFinanceResponse = await getMyFinanceProducts()
+          const targetLoanId =
+            response.loans.find((item) => item.amount > 0)?.loanId ?? response.loans[0]?.loanId
+          const targetLoan =
+            myFinanceResponse.loans.find((loan) => loan.loanId === targetLoanId) ??
+            myFinanceResponse.loans[0]
+
+          setIsCompletedLoan(targetLoan?.status === 'COMPLETE')
+        } catch {
+          setIsCompletedLoan(false)
+        }
       } catch {
         setErrorMessage('대출 이력을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.')
       } finally {
@@ -52,7 +66,7 @@ export const MyLoanHistoryPage = () => {
       return
     }
 
-    navigate(ROUTE_PATHS.myFinanceLoanManage)
+    navigate(ROUTE_PATHS.myFinance, { state: { initialTab: 'loan' } })
   }
   return (
     <MainLayout
@@ -93,8 +107,14 @@ export const MyLoanHistoryPage = () => {
         {historyItems.length ? (
           <Card className="!gap-0 !rounded-control !border-0 !p-0 shadow-sm">
             {historyItems.map((item, index) => {
-              const isPayout = index === historyItems.length - 1
+              const isPayout = item.amount > 0
+              const isFinalRepayment = !isPayout && isCompletedLoan && index === 0
               const amountText = `${isPayout ? '+' : '-'}${formatCurrency(Math.abs(item.amount))}`
+              const historyLabel = isPayout
+                ? '대출 실행 완료'
+                : isFinalRepayment
+                  ? '원금+이자 납부'
+                  : '이자 납부'
 
               return (
                 <div
@@ -108,7 +128,7 @@ export const MyLoanHistoryPage = () => {
                         <span className="text-xs text-gray-400">{formatDate(item.paymentDate)}</span>
                       </div>
                       <p className="mt-2 truncate text-sm font-medium text-font-main">{item.productName}</p>
-                      <p className="mt-1 text-xs text-gray-500">{isPayout ? '대출 실행 완료' : '상환 완료'}</p>
+                      <p className="mt-1 text-xs text-gray-500">{historyLabel}</p>
                     </div>
                     <span className={`shrink-0 text-sm font-semibold ${isPayout ? 'text-primary-500' : 'text-gray-700'}`}>
                       {amountText}

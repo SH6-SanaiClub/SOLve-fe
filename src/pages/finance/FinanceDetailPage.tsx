@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, InfoRow } from '../../components/common'
 import MainLayout from '../../components/layout/MainLayout'
+import { getS3AssetUrl } from '../../constants/assetUrls'
 import { ROUTE_PATHS, getFinanceApplyPath } from '../../constants/routePaths'
 import {
   applyFinanceSavings,
@@ -14,9 +15,7 @@ import type {
   FinanceLoanPreview,
   FinanceProductType,
 } from '../../types/finance'
-import { PageScaffold } from '../PageScaffold'
 import { ShopHeader } from '../shop/components/ShopHeader'
-import financeMascotImageSrc from '../../assets/finance/finance-mascot.png'
 import {
   FINANCE_NOTICE_LINES,
   LOAN_PREVIEW_REASON_LABEL,
@@ -27,6 +26,8 @@ import {
   formatRate,
   getFinanceUnavailableReasonLabel,
 } from './financeUi'
+
+const financeMascotImageSrc = getS3AssetUrl('sing.webp')
 
 interface FinanceDetailLocationState {
   productType?: FinanceProductType
@@ -177,17 +178,29 @@ export const FinanceDetailPage = () => {
     }
   }
 
+  const renderDetailFeedback = (description: string, tone: 'default' | 'error' = 'default') => (
+    <div className="relative min-h-screen bg-bg-light font-pretendard">
+      <MainLayout
+        header={<ShopHeader title="금융상품" onBack={handleBack} />}
+        className="bg-bg-light"
+      >
+        <div className="-mx-2 flex flex-col gap-4 bg-bg-light px-5 pb-[118px] pt-10">
+          <Card className="!rounded-control !border-0 !px-5 !py-6 shadow-sm">
+            <p className={`text-sm ${tone === 'error' ? 'text-red-500' : 'text-gray-500'}`}>
+              {description}
+            </p>
+          </Card>
+        </div>
+      </MainLayout>
+    </div>
+  )
+
   if (isLoading) {
-    return (
-      <PageScaffold
-        title="금융 상품을 불러오는 중이에요"
-        description="잠시만 기다려 주세요."
-      />
-    )
+    return renderDetailFeedback('금융 상품을 불러오는 중입니다.')
   }
 
   if (errorMessage && !productType) {
-    return <PageScaffold title="금융 상품을 찾을 수 없어요" description={errorMessage} />
+    return renderDetailFeedback(errorMessage, 'error')
   }
 
   if (productType === 'LOAN' && loanPreview) {
@@ -200,7 +213,7 @@ export const FinanceDetailPage = () => {
           header={<ShopHeader title="금융상품" onBack={handleBack} />}
           className="bg-bg-light"
         >
-          <div className="-mx-2 flex flex-col gap-[28px] bg-bg-light px-5 pb-[118px] pt-5">
+          <div className="-mx-2 flex flex-col gap-[28px] bg-bg-light px-5 pb-[118px] pt-10">
             <section className="flex items-start justify-between gap-3 px-[1px]">
               <div className="min-w-0 flex-1">
                 <h2 className="text-[22px] font-semibold leading-[1.2] text-font-main">
@@ -234,7 +247,7 @@ export const FinanceDetailPage = () => {
 
             <Card className="!gap-1 !rounded-control !border-0 !bg-gray-200 !px-[23px] !py-[18px] shadow-sm">
               <h3 className="text-[16px] font-semibold leading-[1.2] text-gray-600">상품 안내</h3>
-                <p className="mt-[6px] text-[12px] leading-[22.75px] text-gray-600">
+              <p className="mt-[6px] text-[12px] leading-[22.75px] text-gray-600">
                 {loanPreview.description}
               </p>
               {!isAvailable ? (
@@ -286,7 +299,7 @@ export const FinanceDetailPage = () => {
           header={<ShopHeader title="금융상품" onBack={handleBack} />}
           className="bg-bg-light"
         >
-          <div className="-mx-2 flex flex-col gap-[27px] bg-bg-light px-5 pb-[118px] pt-4">
+          <div className="-mx-2 flex flex-col gap-[27px] bg-bg-light px-5 pb-[118px] pt-10">
             <section className="flex items-center justify-between gap-2 px-[1px]">
               <div className="min-w-0 flex-1">
                 <h2 className="text-[21px] font-semibold leading-[1.2] text-font-main">
@@ -373,9 +386,6 @@ export const FinanceDetailPage = () => {
   }
 
   return (
-    <PageScaffold
-      title="금융 상품을 찾을 수 없어요"
-      description="존재하지 않거나 아직 준비되지 않은 금융 상품입니다."
-    />
+    renderDetailFeedback('존재하지 않거나 아직 준비되지 않은 금융 상품입니다.', 'error')
   )
 }

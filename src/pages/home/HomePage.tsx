@@ -1,5 +1,6 @@
-import { useLocation, useNavigate } from 'react-router-dom'
-import { Card, IconButton, Icons, InfoRow, ProgressBar, SectionHeader } from '../../components/common'
+﻿import { useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { Badge, Card, IconButton, Icons, InfoRow, ProgressBar, SectionHeader } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import Header from '../../components/layout/Header'
 import MainLayout from '../../components/layout/MainLayout'
@@ -10,8 +11,20 @@ import {
 import { getS3AssetUrl } from '../../constants/assetUrls'
 import { ROUTE_PATHS } from '../../constants/routePaths'
 import { useAuth } from '../../hooks/useAuth'
+import { getDonationDetail } from '../../services/donationService'
+import { getValueStoreProductDetail } from '../../services/productService'
+import { getActivityRecommend } from '../../services/recommendService'
 import type { WeeklyActivityStatus } from '../../types/home'
+import type { RecommendedActivity } from '../../types/recommend'
 import type { UserGrade } from '../../types/user'
+import { ActivityCard } from '../recommend/components/ActivityCard'
+import { PopularActivityGuideModal } from '../recommend/components/PopularActivityGuideModal'
+import {
+  getActivityPath,
+  getPopularActivityGuard,
+  shouldUseEnvBackNavigation,
+  type PopularActivityGuard,
+} from '../recommend/recommendActivityUtils'
 import { DashboardActionTile } from './components/DashboardActionTile'
 import { WeeklyActivityTracker } from './components/WeeklyActivityTracker'
 import { useHomeDashboardSummary } from './hooks/useHomeDashboardSummary'
@@ -65,12 +78,20 @@ export function HomePage() {
   const navigate = useNavigate()
   const { user } = useAuth()
   const { summary } = useHomeDashboardSummary()
+  const chatbotImageRef = useRef<HTMLImageElement | null>(null)
+  const [popularActivity, setPopularActivity] = useState<RecommendedActivity | null>(null)
+  const [popularActivityImageUrl, setPopularActivityImageUrl] = useState<string | null>(null)
+  const [popularActivityGuard, setPopularActivityGuard] = useState<PopularActivityGuard | null>(
+    null,
+  )
+  const [displayedPoints, setDisplayedPoints] = useState(0)
 
   const userName = summary?.name ?? user?.name ?? '000'
   const gradeLabel = getGradeLabel(summary?.currentGrade ?? user?.currentGrade)
   const totalPoints = summary?.totalPoints ?? user?.totalPoints ?? 0
-  const formattedPoints = `${numberFormatter.format(totalPoints)}p`
+  const formattedPoints = `${numberFormatter.format(displayedPoints)}p`
   const headerLogo = getS3AssetUrl('logo.webp')
+  const chatbotButtonImage = getS3AssetUrl('chatbot_home.png')
   const weekRangeLabel = getCurrentWeekRangeLabel()
   const gradeProgress = summary?.gradeProgress ?? {
     current: 0,
@@ -79,12 +100,164 @@ export function HomePage() {
   }
   const weeklyActivities = summary?.weeklyActivities ?? emptyWeeklyActivities
 
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const chatbotImage = chatbotImageRef.current
+
+    if (!chatbotImage) {
+      return
+    }
+
+    if (mediaQuery.matches) {
+      chatbotImage.style.opacity = '1'
+      chatbotImage.style.transform = 'translateY(0) scale(1)'
+      return
+    }
+
+    let entranceAnimation: Animation | null = null
+    const startTimer = window.setTimeout(() => {
+      entranceAnimation = chatbotImage.animate(
+        [
+          { opacity: 0, transform: 'translateY(8px) scale(0.97)' },
+          { opacity: 0.84, transform: 'translateY(1px) scale(1)', offset: 0.64 },
+          { opacity: 1, transform: 'translateY(-4px) scale(1.02)', offset: 0.86 },
+          { opacity: 1, transform: 'translateY(0) scale(1)' },
+        ],
+        {
+          duration: 2100,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          fill: 'forwards',
+        },
+      )
+
+      entranceAnimation.onfinish = () => {
+        chatbotImage.style.opacity = '1'
+        chatbotImage.style.transform = 'translateY(0) scale(1)'
+      }
+    }, 220)
+
+    return () => {
+      window.clearTimeout(startTimer)
+      entranceAnimation?.cancel()
+    }
+  }, [])
+
+  useEffect(() => {
+    let isMounted = true
+
+    const fetchPopularActivity = async () => {
+      try {
+        const result = await getActivityRecommend()
+        const nextPopularActivity = result.popularActivity ?? null
+
+        let nextImageUrl: string | null = null
+        if (nextPopularActivity?.activityType === 'DONATION') {
+          const detail = await getDonationDetail(nextPopularActivity.referenceId)
+          nextImageUrl = detail.imageUrl ?? null
+        } else if (nextPopularActivity?.activityType === 'PURCHASE') {
+          const detail = await getValueStoreProductDetail(nextPopularActivity.referenceId)
+          nextImageUrl = detail.imageUrl ?? null
+        }
+
+        if (!isMounted) {
+          return
+        }
+
+        setPopularActivity(nextPopularActivity)
+        setPopularActivityImageUrl(nextImageUrl)
+      } catch {
+        if (!isMounted) {
+          return
+        }
+
+        setPopularActivity(null)
+        setPopularActivityImageUrl(null)
+      }
+    }
+
+    void fetchPopularActivity()
+
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return
+    }
+
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let animationFrameId = 0
+
+    if (mediaQuery.matches || totalPoints <= 0) {
+      animationFrameId = window.requestAnimationFrame(() => {
+        setDisplayedPoints(totalPoints)
+      })
+      return () => {
+        window.cancelAnimationFrame(animationFrameId)
+      }
+    }
+
+    const duration = 850
+    let startTime: number | null = null
+
+    const animate = (currentTime: number) => {
+      if (startTime === null) {
+        startTime = currentTime
+        setDisplayedPoints(0)
+      }
+
+      const elapsed = currentTime - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      const easedProgress = 1 - Math.pow(1 - progress, 3)
+
+      setDisplayedPoints(Math.round(totalPoints * easedProgress))
+
+      if (progress < 1) {
+        animationFrameId = window.requestAnimationFrame(animate)
+      }
+    }
+
+    animationFrameId = window.requestAnimationFrame(animate)
+
+    return () => {
+      window.cancelAnimationFrame(animationFrameId)
+    }
+  }, [totalPoints])
+
   const handleBottomNavigation = (key: string) => {
     const nextPath =
       BOTTOM_NAVIGATION_ROUTE_BY_KEY[key as keyof typeof BOTTOM_NAVIGATION_ROUTE_BY_KEY]
 
     if (nextPath) {
       navigate(nextPath)
+    }
+  }
+
+  const handlePopularActivityClick = () => {
+    if (!popularActivity) {
+      navigate(ROUTE_PATHS.esgQuiz)
+      return
+    }
+
+    const nextPath = getActivityPath(popularActivity)
+    const guard = getPopularActivityGuard(popularActivity, nextPath)
+
+    if (guard) {
+      setPopularActivityGuard(guard)
+      return
+    }
+
+    if (nextPath) {
+      navigate(
+        nextPath,
+        shouldUseEnvBackNavigation(popularActivity) ? { state: { fromEnv: true } } : undefined,
+      )
     }
   }
 
@@ -98,8 +271,21 @@ export function HomePage() {
             <div className="flex items-center gap-2">
               <IconButton
                 label="AI 챗봇으로 이동"
-                icon={<Icons.Chat size={22} />}
-                size="sm"
+                icon={
+                  <img
+                    ref={chatbotImageRef}
+                    src={chatbotButtonImage}
+                    alt=""
+                    aria-hidden="true"
+                    className="h-[36px] w-[36px] object-contain"
+                    style={{
+                      opacity: 0,
+                      transform: 'translateY(8px) scale(0.97)',
+                      willChange: 'opacity, transform',
+                    }}
+                  />
+                }
+                size="md"
                 onClick={() => navigate(ROUTE_PATHS.chatbot)}
               />
             </div>
@@ -189,17 +375,173 @@ export function HomePage() {
 
           <Card
             onClick={() => navigate(ROUTE_PATHS.recommend)}
-            className="!h-[46px] !p-0"
+            className="hidden !h-[46px] !p-0"
           >
             <div className="flex h-[44px] items-center justify-between gap-3 px-5">
-              <span className="text-base leading-none font-semibold text-gray-700">
+              <span className="text-sm leading-none font-semibold text-gray-700">
                 AI 맞춤 활동 추천
               </span>
               <Icons.ArrowRight className="text-gray-700" size={18} />
             </div>
           </Card>
+
+          <Card
+            onClick={() => navigate(ROUTE_PATHS.esgQuiz)}
+            className="hidden !gap-0 !overflow-hidden !border !border-orange-100 !p-0 shadow-[0_10px_24px_rgba(15,23,42,0.06)]"
+          >
+            <div className="bg-linear-to-r from-orange-50 via-white to-white px-5 pt-4 pb-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <Badge tone="danger" variant="soft" className="!px-[10px] !py-[4px]">
+                      HOT
+                    </Badge>
+                    <span className="text-xs font-medium text-gray-500">
+                      지금 가장 많이 참여 중인 활동
+                    </span>
+                  </div>
+                  <p className="mt-3 text-base font-semibold text-gray-700">오늘의 ESG 퀴즈</p>
+                  <p className="mt-1 text-sm leading-5 text-gray-500">
+                    짧게 참여하고 점수와 포인트를 함께 받을 수 있어요
+                  </p>
+                </div>
+                <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm">
+                  <Icons.ArrowRight size={16} />
+                </div>
+              </div>
+
+              <div className="mt-4 flex items-center justify-between gap-3">
+                <span className="text-sm font-semibold text-gray-300">+10점 · +300P</span>
+                <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-gray-500 shadow-sm">
+                  1분 참여
+                </span>
+              </div>
+            </div>
+          </Card>
+
+          <section className="hidden flex-col gap-3">
+            
+
+            <Card
+              onClick={() => navigate(ROUTE_PATHS.recommend)}
+              className="!gap-0 !overflow-hidden !border !border-gray-100 !p-0 shadow-sm"
+            >
+              <div className="bg-white px-5 py-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <p className="text-base font-semibold text-gray-700">
+                      AI 맞춤 활동 추천
+                    </p>
+                    <p className="mt-1 text-sm leading-5 text-gray-500">
+                      내 활동 기록을 바탕으로 어울리는 활동을 추천해드려요
+                    </p>
+                  </div>
+
+                  <Icons.ArrowRight className="mt-1 shrink-0 text-gray-400" size={18} />
+                </div>
+              </div>
+            </Card>
+
+            <Card
+              onClick={() => navigate(ROUTE_PATHS.esgQuiz)}
+              className="!gap-0 !overflow-hidden !border !border-gray-100 !p-0 shadow-sm"
+            >
+              <div className="bg-white px-5 py-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <Badge tone="danger" variant="soft" className="!px-[10px] !py-[4px]">
+                      인기
+                    </Badge>
+                    <span className="text-xs font-medium text-gray-500">
+                      지금 가장 많이 참여 중인 활동
+                    </span>
+                    <p className="mt-2 text-base font-semibold text-gray-700">오늘의 ESG 퀴즈</p>
+                    <p className="mt-1 text-sm leading-5 text-gray-500">
+                      짧게 참여하고 점수와 포인트를 함께 받을 수 있어요
+                    </p>
+                  </div>
+
+                  <Icons.ArrowRight className="mt-1 shrink-0 text-gray-400" size={18} />
+                </div>
+
+                <div className="mt-4 flex items-center justify-between gap-3 border-t border-gray-100 pt-3">
+                  <span className="text-sm font-semibold text-primary-500">+10점 · +300P</span>
+                  <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-gray-500 shadow-sm">
+                    약 1분
+                  </span>
+                </div>
+              </div>
+            </Card>
+          </section>
+
+          <section className="flex flex-col gap-3">
+            <Card
+              onClick={() => navigate(ROUTE_PATHS.recommend)}
+              className="!gap-0 !overflow-hidden !border !border-gray-100 !p-0 shadow-sm"
+            >
+              <div className="bg-white px-5 py-4">
+                <div className="flex items-center justify-between gap-4">
+                  <div className="min-w-0">
+                    <p className="text-base font-semibold text-gray-700">AI 맞춤 활동 추천</p>
+                    <p className="text-xs leading-5 text-gray-500">
+                      내 활동에 맞는 추천을 확인해보세요
+                    </p>
+                  </div>
+                  <Icons.ArrowRight className="shrink-0 text-gray-500" size={24} />
+                </div>
+              </div>
+            </Card>
+          </section>
+
+          <section>
+            <div className="mb-2 px-1">
+              <p className="text-xs font-medium text-gray-500">지금 인기 있는 활동이에요</p>
+            </div>
+            {popularActivity ? (
+              <ActivityCard
+                activity={popularActivity}
+                imageUrl={popularActivityImageUrl}
+                onClick={handlePopularActivityClick}
+                categoryBadgePlacement="title-right"
+                progressTextClassName="text-primary-400"
+                progressBarClassName="bg-primary-400"
+                rewardTextClassName="text-xs leading-5 text-gray-500"
+              />
+            ) : (
+              <Card
+                onClick={() => navigate(ROUTE_PATHS.esgQuiz)}
+                className="!gap-0 !overflow-hidden !border !border-gray-100 !p-0 shadow-sm"
+              >
+                <div className="bg-white px-4 py-4">
+                  <p className="mt-2 text-sm font-semibold text-gray-700">오늘의 ESG 퀴즈</p>
+                  <p className="mt-3 text-xs font-semibold text-primary-400">+10점 · +300P</p>
+                </div>
+              </Card>
+            )}
+          </section>
         </div>
       </div>
+
+      <PopularActivityGuideModal
+        open={Boolean(popularActivityGuard)}
+        title={popularActivityGuard?.title ?? ''}
+        message={popularActivityGuard?.message ?? ''}
+        confirmLabel={popularActivityGuard?.confirmLabel}
+        onClose={() => setPopularActivityGuard(null)}
+        onConfirm={
+          popularActivityGuard?.nextPath
+            ? () => {
+                navigate(
+                  popularActivityGuard.nextPath,
+                  popularActivity?.activityType === 'PHOTO'
+                    ? { state: { fromEnv: true } }
+                    : undefined,
+                )
+                setPopularActivityGuard(null)
+              }
+            : undefined
+        }
+      />
     </MainLayout>
   )
 }

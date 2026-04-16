@@ -140,7 +140,7 @@ export interface FinanceMyLoan {
   status: FinanceApplicationStatus
   durationMonths: number
   nextRepaymentDate: string
-  createdAt: string
+  joinedAt: string
 }
 
 export interface FinanceMySaving {

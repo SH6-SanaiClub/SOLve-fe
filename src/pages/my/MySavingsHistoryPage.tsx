@@ -55,7 +55,12 @@ export const MySavingsHistoryPage = () => {
 
   return (
     <MainLayout
-      header={<ShopHeader title="내 적금 이력" onBack={() => navigate(ROUTE_PATHS.myFinance)} />}
+      header={
+        <ShopHeader
+          title="내 적금 이력"
+          onBack={() => navigate(ROUTE_PATHS.myFinance, { state: { initialTab: 'savings' } })}
+        />
+      }
       nav={
         <BottomNavigation
           items={BOTTOM_NAVIGATION_ITEMS}

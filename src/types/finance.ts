@@ -33,6 +33,7 @@ export interface FinanceProductCompletion {
   description: string
   fields: FinanceInfoField[]
   primaryActionLabel: string
+  primaryActionPath?: string
   secondaryActionLabel: string
 }
 
@@ -60,7 +61,7 @@ export interface FinanceProduct {
 }
 
 export interface SavingsRecommendItem {
-  productId: string
+  productId: number
   productName: string
   matchScore: number
   expectedMaxRate: string
@@ -73,7 +74,7 @@ export interface SavingsRecommendItem {
 
 export interface SavingsRecommendResponse {
   isNewUser: boolean
-  recommendation: SavingsRecommendItem
+  recommendation: SavingsRecommendItem | null
 }
 
 export interface FinanceListProduct {
@@ -191,5 +192,6 @@ export interface FinanceDoneState {
   description: string
   fields: FinanceInfoField[]
   primaryActionLabel: string
+  primaryActionPath?: string
   secondaryActionLabel: string
 }

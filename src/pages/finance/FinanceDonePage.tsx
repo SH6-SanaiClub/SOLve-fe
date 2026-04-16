@@ -63,7 +63,7 @@ export const FinanceDonePage = () => {
               fullWidth
               size="md"
               className="!h-[56px] !rounded-control"
-              onClick={() => navigate(ROUTE_PATHS.myFinance)}
+              onClick={() => navigate(doneState.primaryActionPath ?? ROUTE_PATHS.myFinance)}
             >
               {doneState.primaryActionLabel}
             </Button>

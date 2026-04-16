@@ -17,6 +17,14 @@ export interface VolunteerListResponse {
   volunteers: VolunteerActivity[]
 }
 
+export interface VolunteerApplicationItem extends VolunteerActivity {
+  volunteerApplicationId: number
+}
+
+export interface VolunteerApplicationListResponse {
+  volunteers: VolunteerApplicationItem[]
+}
+
 export interface ApplyVolunteerRequest {
   volunteerId: number
 }

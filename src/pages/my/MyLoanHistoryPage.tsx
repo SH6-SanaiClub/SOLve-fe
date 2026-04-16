@@ -46,9 +46,17 @@ export const MyLoanHistoryPage = () => {
     }
   }
 
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1)
+      return
+    }
+
+    navigate(ROUTE_PATHS.myFinanceLoanManage)
+  }
   return (
     <MainLayout
-      header={<ShopHeader title="내 대출 이력" onBack={() => navigate(ROUTE_PATHS.myFinance)} />}
+      header={<ShopHeader title="내 대출 이력" onBack={handleBack} />}
       nav={
         <BottomNavigation
           items={BOTTOM_NAVIGATION_ITEMS}
@@ -115,4 +123,3 @@ export const MyLoanHistoryPage = () => {
     </MainLayout>
   )
 }
-

@@ -13,7 +13,20 @@ import type { FinanceListProduct, SavingsRecommendResponse } from '../../types/f
 import { ShopHeader } from '../shop/components/ShopHeader'
 import { FinanceTabs, type FinanceTabValue } from './components/FinanceTabs'
 import { SavingsRecommendCard } from './components/SavingsRecommendCard'
-import { FINANCE_SECTION_LABELS, buildLoanLimitRateLabel, formatRate } from './financeUi'
+import {
+  FINANCE_SECTION_LABELS,
+  formatCurrency,
+  formatRate,
+  getFinanceUnavailableReasonLabel,
+} from './financeUi'
+
+const getProductCardClassName = (product: FinanceListProduct, baseClassName: string) =>
+  [
+    baseClassName,
+    product.available ? '' : '!bg-gray-50 opacity-80',
+  ]
+    .filter(Boolean)
+    .join(' ')
 
 export const FinancePage = () => {
   const navigate = useNavigate()
@@ -149,20 +162,37 @@ export const FinancePage = () => {
                       state: { productType: product.type },
                     })
                   }
-                  className="!gap-0 !rounded-control !border-0 !px-[26px] !py-4 shadow-sm"
+                  className={getProductCardClassName(
+                    product,
+                    '!gap-0 !rounded-control !border-0 !px-[26px] !py-4 shadow-sm',
+                  )}
                 >
                   <div className="flex min-h-[58px] items-center justify-between gap-5">
-                    <div className="min-w-0 max-w-[160px]">
-                      <p className="truncate text-base font-semibold leading-[1.2] text-font-main">
-                        {product.name}
-                      </p>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <p className="break-keep text-base font-semibold leading-[1.2] text-font-main">
+                          {product.name}
+                        </p>
+                        {!product.available ? (
+                          <Badge tone="neutral" variant="soft" className="shrink-0 text-[11px]">
+                            가입 불가
+                          </Badge>
+                        ) : null}
+                      </div>
                       <p className="mt-2 whitespace-pre-line text-xs leading-[1.2] text-gray-600">
-                        {product.subtitle ?? ''}
+                        {product.available
+                          ? product.subtitle ?? ''
+                          : getFinanceUnavailableReasonLabel(product.unavailableReason)}
                       </p>
                     </div>
 
                     <div className="flex shrink-0 items-center">
-                      <span className="text-base font-bold leading-none text-primary-500">
+                      <span
+                        className={[
+                          'text-base font-bold leading-none',
+                          product.available ? 'text-primary-500' : 'text-gray-400',
+                        ].join(' ')}
+                      >
                         {formatRate(product.maxRate)}
                       </span>
                       <Icons.ArrowRight className="text-gray-500" size={24} />
@@ -204,19 +234,20 @@ export const FinancePage = () => {
                     state: { productType: loanProduct.type },
                   })
                 }
-                className="!gap-0 !rounded-control !border-0 !px-5 !py-[26px] shadow-sm"
+                className={getProductCardClassName(
+                  loanProduct,
+                  '!gap-0 !rounded-control !border-0 !px-5 !py-[26px] shadow-sm',
+                )}
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 max-w-[235px]">
-                    {loanProduct.available ? (
-                      <Badge
-                        tone="primary"
-                        variant="soft"
-                        className="mb-3 !rounded-[4px] !px-[6px] !py-[2px] text-xs font-medium text-primary-400"
-                      >
-                        신청 가능
-                      </Badge>
-                    ) : null}
+                    <Badge
+                      tone={loanProduct.available ? 'primary' : 'neutral'}
+                      variant="soft"
+                      className="mb-3 !rounded-[4px] !px-[6px] !py-[2px] text-xs font-medium"
+                    >
+                      {loanProduct.available ? '신청 가능' : '신청 불가'}
+                    </Badge>
                     <p className="text-[20px] font-bold leading-[1.2] text-font-main">
                       {loanProduct.name}
                     </p>
@@ -228,11 +259,30 @@ export const FinancePage = () => {
                   <Icons.ArrowRight className="mt-5 shrink-0 text-gray-500" size={24} />
                 </div>
 
-                <div className="mt-8 rounded-control bg-gray-50 px-9 py-6 shadow-sm">
-                  <p className="text-xs leading-[1.625] text-gray-600">현재 적용 조건</p>
-                  <p className="mt-1 text-base font-bold leading-7 text-font-main">
-                    {buildLoanLimitRateLabel(loanProduct.loanLimit, loanProduct.appliedRate)}
+                <div className="mt-7 border-t border-gray-100 pt-5">
+                  <p className="text-xs font-medium leading-[1.625] text-gray-500">
+                    현재 적용 조건
                   </p>
+                  {loanProduct.available ? (
+                    <div className="mt-3 grid grid-cols-2 gap-3">
+                      <div className="rounded-[14px] bg-primary-50/70 px-4 py-3">
+                        <p className="text-[11px] font-medium text-primary-400">대출 한도</p>
+                        <p className="mt-1 text-base font-bold leading-6 text-font-main">
+                          {formatCurrency(loanProduct.loanLimit)}
+                        </p>
+                      </div>
+                      <div className="rounded-[14px] bg-gray-50 px-4 py-3">
+                        <p className="text-[11px] font-medium text-gray-500">적용 금리</p>
+                        <p className="mt-1 text-base font-bold leading-6 text-primary-500">
+                          {formatRate(loanProduct.appliedRate)}
+                        </p>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="mt-2 break-keep text-base font-semibold leading-6 text-font-main">
+                      {getFinanceUnavailableReasonLabel(loanProduct.unavailableReason)}
+                    </p>
+                  )}
                 </div>
               </Card>
             ) : !isLoading && !errorMessage ? (

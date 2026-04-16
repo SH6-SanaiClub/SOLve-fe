@@ -23,9 +23,21 @@ export const FINANCE_NOTICE_LINES = [
 
 export const LOAN_PREVIEW_REASON_LABEL: Record<FinanceUnavailableReason, string> = {
   AVAILABLE: '\uC2E0\uCCAD \uAC00\uB2A5\uD55C \uC0C1\uD488\uC785\uB2C8\uB2E4.',
+  ALREADY_JOINED: '이미 가입한 상품입니다.',
+  LOW_SCORE_FOR_ESG_MASTER: 'ESG 마스터 적금은 900점 이상부터 가입할 수 있어요.',
   LOW_SCORE: '\uD604\uC7AC ESG \uC810\uC218\uB85C\uB294 \uB300\uCD9C \uC2E0\uCCAD\uC774 \uC5B4\uB824\uC6CC\uC694.',
   HAS_ACTIVE_LOAN: '\uAE30\uC874 \uB300\uCD9C\uC744 \uBCF4\uC720 \uC911\uC774\uB77C \uCD94\uAC00 \uB300\uCD9C\uC774 \uBD88\uAC00\uD569\uB2C8\uB2E4.',
   LOAN_BLOCKED: '\uD328\uB110\uD2F0 \uC0C1\uD0DC\uB85C \uB300\uCD9C \uC2E0\uCCAD\uC774 \uC81C\uD55C\uB418\uC5B4 \uC788\uC5B4\uC694.',
+}
+
+export const getFinanceUnavailableReasonLabel = (
+  reason: FinanceUnavailableReason | null | undefined,
+) => {
+  if (!reason || reason === 'AVAILABLE') {
+    return '가입 가능한 상품입니다.'
+  }
+
+  return LOAN_PREVIEW_REASON_LABEL[reason] ?? '현재 가입이 어려운 상품입니다.'
 }
 
 export const formatCurrency = (value: number | null | undefined) => {

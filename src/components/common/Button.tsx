@@ -35,7 +35,7 @@ const Button: React.FC<ButtonProps> = ({
 
     // 아웃라인 버튼
     outline:
-      '!bg-white !border !border-primary-500 !text-primary-500 disabled:!border-gray-200 disabled:!text-gray-400',
+      '!bg-white !border !border-primary-400 !text-primary-400 disabled:!border-gray-200 disabled:!text-gray-400',
 
     // 회색 버튼
     gray: '!bg-gray-100 !text-font-main disabled:!bg-gray-200 disabled:!text-gray-400',

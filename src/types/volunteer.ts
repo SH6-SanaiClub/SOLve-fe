@@ -2,6 +2,7 @@ export interface VolunteerActivity {
   volunteerId: number
   name: string
   description: string
+  imageUrl: string
   activityDate: string
   location: string
   capacity: number

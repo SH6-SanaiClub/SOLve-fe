@@ -32,6 +32,144 @@ const formatAmountInput = (value: string) =>
 const formatPoint = (point: number) =>
   `${new Intl.NumberFormat('ko-KR').format(point)}P`
 
+function RollingAmountDigit({
+  targetDigit,
+  trigger,
+  visible = true,
+}: {
+  targetDigit: string
+  trigger: number
+  visible?: boolean
+}) {
+  const numericDigit = Number(targetDigit)
+  const [displayIndex, setDisplayIndex] = useState(numericDigit)
+  const [isTransitionEnabled, setIsTransitionEnabled] = useState(false)
+  const digitHeight = 20
+
+  useEffect(() => {
+    setIsTransitionEnabled(true)
+    setDisplayIndex((previousIndex) => {
+      const previousDigit = previousIndex % 10
+      const nextIndex =
+        numericDigit >= previousDigit
+          ? previousIndex + (numericDigit - previousDigit) + 10
+          : previousIndex + (10 - previousDigit + numericDigit) + 10
+
+      return nextIndex
+    })
+
+    const timeout = window.setTimeout(() => {
+      setIsTransitionEnabled(false)
+      setDisplayIndex(numericDigit)
+    }, 320)
+
+    return () => window.clearTimeout(timeout)
+  }, [numericDigit, trigger])
+
+  const reelDigits = Array.from({ length: 30 }, (_, index) =>
+    String(index % 10),
+  )
+
+  return (
+    <span
+      className={`relative inline-block shrink-0 overflow-hidden align-middle leading-none transition-opacity duration-[220ms] ${
+        visible ? 'opacity-100' : 'opacity-0'
+      }`}
+      style={{ height: `${digitHeight}px`, width: '0.68em' }}
+    >
+      <span
+        className={`absolute top-0 left-0 flex flex-col items-center ${
+          isTransitionEnabled ? 'transition-transform duration-[320ms] ease-out' : ''
+        }`}
+        style={{ transform: `translateY(-${displayIndex * digitHeight}px)` }}
+      >
+        {reelDigits.map((value, index) => (
+          <span
+            key={`${value}-${index}`}
+            className="flex items-center justify-center leading-none"
+            style={{ height: `${digitHeight}px`, width: '0.68em' }}
+          >
+            {value}
+          </span>
+        ))}
+      </span>
+    </span>
+  )
+}
+
+function AnimatedPaymentButtonLabel({ amount }: { amount: number }) {
+  const [displayAmount, setDisplayAmount] = useState(amount)
+  const [slotCount, setSlotCount] = useState(String(amount).length)
+  const [animationTrigger, setAnimationTrigger] = useState(0)
+
+  useEffect(() => {
+    if (amount === displayAmount) {
+      return
+    }
+
+    const nextDigits = String(amount).length
+    setSlotCount((previous) => Math.max(previous, nextDigits))
+    setAnimationTrigger((previous) => previous + 1)
+
+    const timeout = window.setTimeout(() => {
+      setDisplayAmount(amount)
+    }, 320)
+
+    return () => window.clearTimeout(timeout)
+  }, [amount, displayAmount])
+
+  const paddedDigits = String(amount).padStart(slotCount, '0').split('')
+  const visibleDigitCount = String(amount).length
+  const firstVisibleIndex = slotCount - visibleDigitCount
+
+  return (
+    <span
+      className="inline-flex max-w-full items-center justify-center gap-[6px] whitespace-nowrap leading-none"
+      style={{
+        fontFamily: 'inherit',
+        fontWeight: 'inherit',
+        lineHeight: 1,
+        fontVariantNumeric: 'tabular-nums',
+      }}
+    >
+      <span className="inline-flex min-w-[124px] shrink-0 items-center justify-end whitespace-nowrap leading-none">
+        {paddedDigits.map((digit, index) => {
+          const shouldShowDigit = index >= firstVisibleIndex
+          const shouldShowComma =
+            index < slotCount - 1 && (slotCount - index - 1) % 3 === 0
+
+          return (
+            <span key={`slot-${index}`} className="inline-flex items-center leading-none">
+              <RollingAmountDigit
+                targetDigit={digit}
+                trigger={animationTrigger}
+                visible={shouldShowDigit}
+              />
+              {shouldShowComma ? (
+                <span
+                  className={`inline-flex shrink-0 items-center justify-center leading-none transition-opacity duration-[220ms] ${
+                    shouldShowDigit ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  style={{ height: '20px', width: '0.34em' }}
+                >
+                  ,
+                </span>
+              ) : null}
+            </span>
+          )
+        })}
+        <span
+          className="ml-[2px] inline-flex shrink-0 items-center leading-none"
+          style={{ height: '20px' }}
+        >
+          원
+        </span>
+      </span>
+      <span className="shrink-0">결제하기</span>
+    </span>
+  )
+}
+
 const resolveImageUrl = (imageUrl: string) => {
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
     return imageUrl
@@ -372,7 +510,7 @@ export function DonationPaymentPage() {
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
         <section className="pointer-events-auto mx-auto w-full max-w-[600px] bg-white px-5 pt-4 pb-[calc(20px+env(safe-area-inset-bottom))]">
           <Button fullWidth disabled={isPaymentDisabled} onClick={() => void handlePayment()}>
-            결제하기
+            <AnimatedPaymentButtonLabel amount={Math.max(finalAmount, 0)} />
           </Button>
         </section>
       </div>

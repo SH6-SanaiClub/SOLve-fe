@@ -42,6 +42,7 @@ export interface VerifyProductPaymentRequest {
   productId: number
   impUid: string
   merchantUid: string
+  deliveryAddress: string
 }
 
 export interface VerifyProductPaymentResponse {

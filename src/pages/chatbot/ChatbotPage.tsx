@@ -33,7 +33,7 @@ const FOLLOW_UP_QUESTION_MAP = {
 
 const CHAT_ERROR_MESSAGE = '일시적인 오류가 발생했어요. 다시 시도해주세요.'
 const CHAT_CONTENT_TOP_GAP = 12
-const CHAT_INPUT_AREA_HEIGHT = 152
+const CHAT_INPUT_AREA_HEIGHT = 104
 const CHAT_CONTENT_MIN_HEIGHT = `calc(100dvh - var(--header-h) - env(safe-area-inset-top) - ${CHAT_CONTENT_TOP_GAP}px)`
 const STREAMING_DOT_DELAY_CLASS_NAMES = [
   '',
@@ -253,7 +253,7 @@ const ChatMessageBubble = ({ message, onActionClick }: ChatMessageBubbleProps) =
   if (isUserMessage) {
     return (
       <div className="flex justify-end">
-        <Card className="!w-auto !max-w-[82%] !gap-0 !rounded-[20px] !rounded-tr-[6px] !border-0 !bg-primary-500 !px-4 !py-3 text-white shadow-sm">
+        <Card className="!w-auto !max-w-[82%] !gap-0 !rounded-tl-[8px] !rounded-tr-none !rounded-br-[8px] !rounded-bl-[8px] !border-0 !bg-primary-400 !px-4 !py-3 text-white shadow-sm">
           <div className="space-y-3 break-words text-sm leading-7">
             {blocks.map((block, index) => (
               <p
@@ -281,7 +281,7 @@ const ChatMessageBubble = ({ message, onActionClick }: ChatMessageBubbleProps) =
             <p className="text-[11px] font-semibold text-font-main">SOLve 사용 도우미</p>
           </div>
 
-          <Card className="!w-auto !max-w-full !gap-0 !rounded-[22px] !rounded-tl-[8px] !border-0 !bg-white/95 !px-4 !py-3 text-font-main shadow-sm">
+          <Card className="!w-auto !max-w-full !gap-0 !rounded-tl-none !rounded-tr-[8px] !rounded-br-[8px] !rounded-bl-[8px] !border-0 !bg-white/95 !px-4 !py-3 text-font-main shadow-sm">
             <div className="space-y-4 break-words text-sm leading-7">
               {blocks.map((block, blockIndex) =>
                 block.type === 'list' ? (
@@ -329,7 +329,7 @@ const ChatMessageBubble = ({ message, onActionClick }: ChatMessageBubbleProps) =
                   size="sm"
                   fullWidth
                   onClick={() => onActionClick(action.path)}
-                  className="!h-auto !justify-start !rounded-[16px] !border-white/70 !bg-white/85 !px-4 !py-3 !text-left !text-sm !text-font-main"
+                  className="!h-auto !justify-start !border-gray-200 !bg-white !px-4 !py-3 !text-left !text-sm !text-font-main shadow-sm"
                 >
                   <span className="flex w-full items-center justify-between gap-3">
                     <span>{action.label}</span>
@@ -349,10 +349,13 @@ export const ChatbotPage = () => {
   const navigate = useNavigate()
   const [messages, setMessages] = useState<ChatMessage[]>([])
   const [input, setInput] = useState('')
+  const [isInputFocused, setIsInputFocused] = useState(false)
   const [isStreaming, setIsStreaming] = useState(false)
   const [isLoadingHistory, setIsLoadingHistory] = useState(true)
   const contentRef = useRef<HTMLElement | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
+  const inputWrapperRef = useRef<HTMLDivElement | null>(null)
+  const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const hasRequestedNotificationPermissionRef = useRef(false)
 
   useEffect(() => {
@@ -393,6 +396,21 @@ export const ChatbotPage = () => {
 
     return () => {
       mounted = false
+    }
+  }, [])
+
+  useEffect(() => {
+    const handlePointerDown = (event: PointerEvent) => {
+      if (!inputWrapperRef.current?.contains(event.target as Node)) {
+        setIsInputFocused(false)
+        inputRef.current?.blur()
+      }
+    }
+
+    document.addEventListener('pointerdown', handlePointerDown)
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown)
     }
   }, [])
 
@@ -525,13 +543,12 @@ export const ChatbotPage = () => {
   const followUpQuestions = getFollowUpQuestions(messages)
 
   return (
-    <div className="relative min-h-screen bg-[linear-gradient(180deg,#F7FAFF_0%,#EDF3FF_100%)] font-pretendard">
+    <div className="relative min-h-screen bg-white font-pretendard">
       <MainLayout
         contentRef={contentRef}
         header={
           <Header
             bgColor="bg-white"
-            className="border-b border-[#E7EDF7] shadow-[0_10px_28px_rgba(15,23,42,0.06)]"
             left={
               <IconButton
                 label="뒤로가기"
@@ -546,7 +563,7 @@ export const ChatbotPage = () => {
                 <button
                   type="button"
                   onClick={() => void handleResetChat()}
-                  className="inline-flex h-9 items-center rounded-full bg-white px-3.5 text-xs font-semibold text-primary-600 transition-colors hover:text-primary-700"
+                  className="inline-flex h-9 items-center rounded-full bg-white px-3.5 text-xs font-semibold text-primary-400 transition-colors hover:text-primary-500"
                 >
                   새로 채팅하기
                 </button>
@@ -554,14 +571,14 @@ export const ChatbotPage = () => {
             }
           />
         }
-        contentSpacing="spacious"
-        className="bg-transparent"
+        contentSpacing="default"
+        className="bg-white"
       >
         <div
-          className="-mx-4 flex flex-col px-(--side-padding)"
+          className="-mx-4 flex min-h-full flex-col bg-gray-50 px-(--side-padding)"
           style={{ minHeight: CHAT_CONTENT_MIN_HEIGHT }}
         >
-          <div className="flex flex-1 flex-col pt-5" style={{ paddingBottom: `${CHAT_INPUT_AREA_HEIGHT}px` }}>
+          <div className="flex flex-1 flex-col" style={{ paddingBottom: `${CHAT_INPUT_AREA_HEIGHT}px` }}>
             {isLoadingHistory ? (
               <div className="flex flex-1 items-center justify-center text-sm text-font-sub">
                 대화 내용을 불러오는 중입니다...
@@ -585,7 +602,7 @@ export const ChatbotPage = () => {
                       type="button"
                       onClick={() => handleQuestionClick(question)}
                       disabled={isStreaming}
-                      className="w-full rounded-[18px] border border-white/70 bg-white/90 px-4 py-3 text-left text-sm text-font-main shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+                      className="w-full rounded-[8px] border border-white/70 bg-white/90 px-4 py-3 text-left text-sm text-font-main shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {question}
                     </button>
@@ -613,15 +630,15 @@ export const ChatbotPage = () => {
       </MainLayout>
 
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
-        <div className="pointer-events-auto mx-auto flex w-full max-w-[600px] flex-col gap-3 bg-transparent px-(--side-padding) pb-[calc(env(safe-area-inset-bottom)+16px)]">
+        <div className="pointer-events-auto mx-auto flex w-full max-w-[600px] flex-col gap-3">
           {messages.length > 0 && !isStreaming ? (
-            <div className="flex gap-2 overflow-x-auto pb-1">
+            <div className="flex gap-2 overflow-x-auto px-(--side-padding) pb-1">
               {followUpQuestions.map((question) => (
                 <button
                   key={question}
                   type="button"
                   onClick={() => handleQuestionClick(question)}
-                  className="shrink-0 rounded-full border border-white/80 bg-white/90 px-4 py-2 text-xs font-medium text-font-main shadow-sm"
+                  className="shrink-0 rounded-[8px] border border-white/80 bg-white/90 px-4 py-2 text-xs font-medium text-font-main shadow-sm"
                 >
                   {question}
                 </button>
@@ -629,25 +646,40 @@ export const ChatbotPage = () => {
             </div>
           ) : null}
 
-          <div className="flex items-end gap-2 rounded-[22px] border border-white/80 bg-white/95 px-3 py-2 shadow-lg shadow-[#AEC5FF]/25 backdrop-blur">
-            <textarea
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              onKeyDown={handleKeyDown}
-              rows={1}
-              placeholder="메시지를 입력하세요..."
-              className="max-h-[120px] min-h-[24px] flex-1 resize-none bg-transparent py-2 text-sm leading-6 text-font-main placeholder:text-font-sub outline-none"
-            />
-
-            <Button
-              type="button"
-              size="sm"
-              onClick={() => void handleSend(input)}
-              disabled={!input.trim() || isStreaming}
-              className="!h-10 !w-10 !rounded-full !p-0"
+          <div className="bg-white pt-3 pb-[calc(env(safe-area-inset-bottom)+16px)]">
+            <div
+              ref={inputWrapperRef}
+              className={`mx-(--side-padding) flex items-end gap-2 rounded-[8px] border px-3 py-2 transition-colors ${
+                isStreaming
+                  ? 'border-gray-200 bg-gray-100'
+                  : isInputFocused
+                    ? 'border-primary-400 bg-white'
+                    : 'border-gray-400 bg-white'
+              }`}
             >
-              <Icons.ArrowRight size={18} />
-            </Button>
+              <textarea
+                ref={inputRef}
+                value={input}
+                onChange={(event) => setInput(event.target.value)}
+                onKeyDown={handleKeyDown}
+                onFocus={() => setIsInputFocused(true)}
+                onBlur={() => setIsInputFocused(false)}
+                rows={1}
+                disabled={isStreaming}
+                placeholder="메시지를 입력하세요..."
+                className="max-h-[120px] min-h-[24px] flex-1 resize-none bg-transparent py-2 text-sm leading-6 text-font-main placeholder:text-font-sub outline-none"
+              />
+
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => void handleSend(input)}
+                disabled={!input.trim() || isStreaming}
+                className="!h-10 !w-10 !rounded-full !p-0"
+              >
+                <Icons.ArrowRight size={18} />
+              </Button>
+            </div>
           </div>
         </div>
       </div>

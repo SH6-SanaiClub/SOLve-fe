@@ -29,6 +29,8 @@ const getProductCardClassName = (product: FinanceListProduct, baseClassName: str
     .join(' ')
 
 export const FinancePage = () => {
+  const MAX_LOAN_LIMIT = 3_000_000
+  const MIN_LOAN_RATE_LABEL = '연 6.0%'
   const navigate = useNavigate()
   const location = useLocation()
   const [activeTab, setActiveTab] = useState<FinanceTabValue>('all')
@@ -234,19 +236,16 @@ export const FinancePage = () => {
                     state: { productType: loanProduct.type },
                   })
                 }
-                className={getProductCardClassName(
-                  loanProduct,
-                  '!gap-0 !rounded-control !border-0 !px-5 !py-[26px] shadow-sm',
-                )}
+                className="!gap-0 !rounded-control !border-0 !px-5 !py-[26px] shadow-sm"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 max-w-[235px]">
                     <Badge
-                      tone={loanProduct.available ? 'primary' : 'neutral'}
+                      tone="primary"
                       variant="soft"
                       className="mb-3 !rounded-[4px] !px-[6px] !py-[2px] text-xs font-medium"
                     >
-                      {loanProduct.available ? '신청 가능' : '신청 불가'}
+                      신청 가능
                     </Badge>
                     <p className="text-[20px] font-bold leading-[1.2] text-font-main">
                       {loanProduct.name}
@@ -261,28 +260,22 @@ export const FinancePage = () => {
 
                 <div className="mt-7 border-t border-gray-100 pt-5">
                   <p className="text-xs font-medium leading-[1.625] text-gray-500">
-                    현재 적용 조건
+                    상품 기본 조건
                   </p>
-                  {loanProduct.available ? (
-                    <div className="mt-3 grid grid-cols-2 gap-3">
-                      <div className="rounded-[14px] bg-primary-50/70 px-4 py-3">
-                        <p className="text-[11px] font-medium text-primary-400">대출 한도</p>
-                        <p className="mt-1 text-base font-bold leading-6 text-font-main">
-                          {formatCurrency(loanProduct.loanLimit)}
-                        </p>
-                      </div>
-                      <div className="rounded-[14px] bg-gray-50 px-4 py-3">
-                        <p className="text-[11px] font-medium text-gray-500">적용 금리</p>
-                        <p className="mt-1 text-base font-bold leading-6 text-primary-500">
-                          {formatRate(loanProduct.appliedRate)}
-                        </p>
-                      </div>
+                  <div className="mt-3 grid grid-cols-2 gap-3">
+                    <div className="rounded-[14px] bg-primary-50/70 px-4 py-3">
+                      <p className="text-[11px] font-medium text-primary-400">대출 한도</p>
+                      <p className="mt-1 text-base font-bold leading-6 text-font-main">
+                        {formatCurrency(MAX_LOAN_LIMIT)}
+                      </p>
                     </div>
-                  ) : (
-                    <p className="mt-2 break-keep text-base font-semibold leading-6 text-font-main">
-                      {getFinanceUnavailableReasonLabel(loanProduct.unavailableReason)}
-                    </p>
-                  )}
+                    <div className="rounded-[14px] bg-gray-50 px-4 py-3">
+                      <p className="text-[11px] font-medium text-gray-500">적용 금리</p>
+                      <p className="mt-1 text-base font-bold leading-6 text-primary-500">
+                        {MIN_LOAN_RATE_LABEL}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </Card>
             ) : !isLoading && !errorMessage ? (

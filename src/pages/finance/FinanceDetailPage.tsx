@@ -6,28 +6,28 @@ import { getS3AssetUrl } from '../../constants/assetUrls'
 import { ROUTE_PATHS, getFinanceApplyPath } from '../../constants/routePaths'
 import {
   applyFinanceSavings,
-  getFinanceLoanPreview,
   getFinanceProducts,
 } from '../../services/financeService'
 import type {
   FinanceDoneState,
   FinanceListProduct,
-  FinanceLoanPreview,
   FinanceProductType,
 } from '../../types/finance'
 import { ShopHeader } from '../shop/components/ShopHeader'
 import {
   FINANCE_NOTICE_LINES,
-  LOAN_PREVIEW_REASON_LABEL,
-  buildLoanDetailFields,
+  LOAN_NOTICE_LINES,
   buildSavingsDetailFields,
   buildSavingsDoneState,
   buildSavingsRateSummary,
+  formatCurrency,
   formatRate,
   getFinanceUnavailableReasonLabel,
 } from './financeUi'
 
 const financeMascotImageSrc = getS3AssetUrl('sing.webp')
+const MAX_LOAN_LIMIT = 3_000_000
+const LOAN_RATE_RANGE_LABEL = '연 최저 6.0% ~ 최고 8.5%'
 
 interface FinanceDetailLocationState {
   productType?: FinanceProductType
@@ -59,7 +59,7 @@ export const FinanceDetailPage = () => {
   const returnTo = (location.state as { returnTo?: string } | null)?.returnTo
   const routeState = location.state as FinanceDetailLocationState | undefined
   const [productType, setProductType] = useState<FinanceProductType | null>(routeState?.productType ?? null)
-  const [loanPreview, setLoanPreview] = useState<FinanceLoanPreview | null>(null)
+  const [loanProduct, setLoanProduct] = useState<FinanceListProduct | null>(null)
   const [savingsProduct, setSavingsProduct] = useState<FinanceListProduct | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -83,8 +83,14 @@ export const FinanceDetailPage = () => {
             throw new Error('NOT_FOUND')
           }
 
-          const preview = await getFinanceLoanPreview(id)
-          setLoanPreview(preview)
+          const loans = await getFinanceProducts('loan')
+          const selectedLoan = loans.find((product) => String(product.id) === id)
+
+          if (!selectedLoan) {
+            throw new Error('NOT_FOUND')
+          }
+
+          setLoanProduct(selectedLoan)
           setSavingsProduct(null)
           setProductType('LOAN')
           return
@@ -109,7 +115,7 @@ export const FinanceDetailPage = () => {
           }
 
           setSavingsProduct(selectedSaving)
-          setLoanPreview(null)
+          setLoanProduct(null)
           setProductType('SAVINGS')
           return
         }
@@ -118,8 +124,14 @@ export const FinanceDetailPage = () => {
           throw new Error('NOT_FOUND')
         }
 
-        const preview = await getFinanceLoanPreview(id)
-        setLoanPreview(preview)
+        const loans = await getFinanceProducts('loan')
+        const selectedLoan = loans.find((product) => String(product.id) === id)
+
+        if (!selectedLoan) {
+          throw new Error('NOT_FOUND')
+        }
+
+        setLoanProduct(selectedLoan)
         setSavingsProduct(null)
         setProductType('LOAN')
       } catch {
@@ -203,9 +215,13 @@ export const FinanceDetailPage = () => {
     return renderDetailFeedback(errorMessage, 'error')
   }
 
-  if (productType === 'LOAN' && loanPreview) {
-    const detailFields = buildLoanDetailFields(loanPreview)
-    const isAvailable = loanPreview.available
+  if (productType === 'LOAN' && loanProduct) {
+    const detailFields = [
+      { label: '가입 대상', value: '기본 심사 통과 고객' },
+      { label: '계약 기간', value: `${loanProduct.durationMonths}개월` },
+      { label: '최대 한도', value: formatCurrency(MAX_LOAN_LIMIT) },
+      { label: '대출 금리', value: LOAN_RATE_RANGE_LABEL },
+    ]
 
     return (
       <div className="relative min-h-screen bg-bg-light font-pretendard">
@@ -217,16 +233,16 @@ export const FinanceDetailPage = () => {
             <section className="flex items-start justify-between gap-3 px-[1px]">
               <div className="min-w-0 flex-1">
                 <h2 className="text-[22px] font-semibold leading-[1.2] text-font-main">
-                  {loanPreview.name}
+                  {loanProduct.name}
                 </h2>
                 <p className="mt-[10px] break-keep text-[15px] leading-[1.25] text-font-sub">
-                  {loanPreview.subtitle}
+                  {loanProduct.subtitle ?? ''}
                 </p>
               </div>
 
               <img
                 src={financeMascotImageSrc}
-                alt={loanPreview.name}
+                alt={loanProduct.name}
                 className="h-[77px] w-[73px] shrink-0 object-contain"
               />
             </section>
@@ -246,18 +262,13 @@ export const FinanceDetailPage = () => {
             </div>
 
             <Card className="!gap-1 !rounded-control !border-0 !bg-gray-200 !px-[23px] !py-[18px] shadow-sm">
-              <h3 className="text-[16px] font-semibold leading-[1.2] text-gray-600">상품 안내</h3>
+              <h3 className="text-[16px] font-semibold leading-[1.2] text-gray-600">우대 조건</h3>
               <p className="mt-[6px] text-[12px] leading-[22.75px] text-gray-600">
-                {loanPreview.description}
+                ESG 점수가 오를 때마다 우대 혜택이 적용돼요.
               </p>
-              {!isAvailable ? (
-                <p className="mt-2 text-[12px] leading-[22.75px] text-primary-500">
-                  {LOAN_PREVIEW_REASON_LABEL[loanPreview.reason]}
-                </p>
-              ) : null}
             </Card>
 
-            {renderNoticeBlock(FINANCE_NOTICE_LINES)}
+            {renderNoticeBlock(LOAN_NOTICE_LINES)}
 
             {errorMessage ? (
               <Card className="!rounded-control !border-0 !px-5 !py-4 shadow-sm">
@@ -273,11 +284,10 @@ export const FinanceDetailPage = () => {
               type="button"
               fullWidth
               size="md"
-              onClick={() => navigate(getFinanceApplyPath(loanPreview.productId))}
+              onClick={() => navigate(getFinanceApplyPath(loanProduct.id))}
               className="!h-[56px]"
-              disabled={!isAvailable}
             >
-              {isAvailable ? '대출 신청' : LOAN_PREVIEW_REASON_LABEL[loanPreview.reason]}
+              나의 한도 알아보기
             </Button>
           </div>
         </div>

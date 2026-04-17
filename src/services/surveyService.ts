@@ -3,7 +3,13 @@ import type { UserType } from '../types/user'
 
 export interface SurveyStatusResponse {
   surveyCompleted: boolean
-  userType: string
+  userType: UserType | null
+}
+
+export interface SurveySubmitPayload {
+  environmentWeight: number
+  socialWeight: number
+  financeWeight: number
 }
 
 export const getSurveyStatus = async (): Promise<SurveyStatusResponse> => {
@@ -11,6 +17,9 @@ export const getSurveyStatus = async (): Promise<SurveyStatusResponse> => {
   return res.data
 }
 
-export const submitSurvey = async (userType: UserType): Promise<void> => {
-  await apiClient.post('/v1/survey/submit', { userType })
+export const submitSurvey = async (
+  payload: SurveySubmitPayload,
+): Promise<SurveyStatusResponse> => {
+  await apiClient.post('/v1/survey/submit', payload)
+  return getSurveyStatus()
 }

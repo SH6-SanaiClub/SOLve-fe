@@ -23,7 +23,7 @@ export const SocialActivityTabs = ({ activeTab }: SocialActivityTabsProps) => {
   const navigate = useNavigate()
 
   return (
-    <div className="sticky top-(--header-h) z-40 mx-[-16px] flex border-b border-gray-200 bg-white">
+    <div className="flex w-full overflow-hidden border-b border-gray-200 bg-white">
       {tabItems.map((item) => {
         const isActive = item.value === activeTab
 
@@ -38,11 +38,11 @@ export const SocialActivityTabs = ({ activeTab }: SocialActivityTabsProps) => {
                 navigate(item.path)
               }
             }}
-            className={`relative flex h-12 w-1/3 items-center justify-center transition-colors ${
+            className={`relative flex h-12 min-w-0 flex-1 items-center justify-center transition-colors ${
               isActive ? 'text-font-main' : 'text-gray-400'
             }`}
           >
-            <span className="text-base font-semibold tracking-[-0.02em]">
+            <span className="truncate px-2 text-base font-semibold tracking-[-0.02em]">
               {item.label}
             </span>
             <span

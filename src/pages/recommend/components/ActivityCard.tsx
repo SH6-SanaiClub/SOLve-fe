@@ -128,7 +128,8 @@ export const ActivityCard = ({
   const PlaceholderIcon = activityPlaceholderIcon[activityType]
   const showTopCategoryBadge = categoryBadgePlacement === 'top'
   const showTitleCategoryBadge = categoryBadgePlacement === 'title-right'
-  const showMetaRow = showTopCategoryBadge || (isDeadlineNear && deadlineDays !== null)
+  const showTopMetaRow = showTopCategoryBadge
+  const showTitleDeadlineBadge = !showTopCategoryBadge && isDeadlineNear && deadlineDays !== null
   const rewardLabel = `+${scoreValue}점 · ${pointLabel ?? '포인트 없음'}`
 
   return (
@@ -138,7 +139,7 @@ export const ActivityCard = ({
     >
       <div className="px-4 pt-4 pb-4 sm:px-5">
         <div className="flex flex-col gap-3">
-          {showMetaRow ? (
+          {showTopMetaRow ? (
             <div
               className={`flex min-w-0 items-center gap-2 ${
                 showTopCategoryBadge ? 'justify-between' : 'justify-end'
@@ -195,21 +196,29 @@ export const ActivityCard = ({
                   </p>
                 </div>
 
-                {showTitleCategoryBadge || activityType !== 'DONATION' ? (
+                {showTitleCategoryBadge || showTitleDeadlineBadge ? (
                   <div className="mt-0.5 flex shrink-0 items-center gap-2">
-                    {showTitleCategoryBadge ? (
-                      <Badge
-                        tone={cat.tone}
-                        variant="soft"
-                        className="shrink-0 whitespace-nowrap px-2.5 py-1 text-xs font-semibold"
-                      >
-                        {cat.label}
-                      </Badge>
-                    ) : null}
+                    {showTitleCategoryBadge || showTitleDeadlineBadge ? (
+                      <div className="flex shrink-0 items-center gap-1.5">
+                        {showTitleCategoryBadge ? (
+                          <Badge
+                            tone={cat.tone}
+                            variant="soft"
+                            className="shrink-0 whitespace-nowrap px-2.5 py-1 text-xs font-semibold"
+                          >
+                            {cat.label}
+                          </Badge>
+                        ) : null}
 
-                    {activityType !== 'DONATION' ? (
-                      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gray-50 text-gray-400">
-                        <Icons.ArrowRight size={16} />
+                        {showTitleDeadlineBadge && deadlineDays !== null ? (
+                          <Badge
+                            tone="danger"
+                            variant="soft"
+                            className="shrink-0 whitespace-nowrap px-2.5 py-1 text-xs font-semibold"
+                          >
+                            마감 {deadlineDays}일
+                          </Badge>
+                        ) : null}
                       </div>
                     ) : null}
                   </div>

@@ -15,6 +15,7 @@
   --radius-card: 16px;
 
   --header-h: 56px;           /* 상단바 높이 표준 */
+  --header-v-pad: 12px;       /* 상단바 내부 세로 여백 */
   --nav-h: 66px;              /* 하단바 높이 표준 */
   --side-padding: 1rem;       /* 16px (px-4) 전체 공통 여백 */
 
@@ -88,10 +89,46 @@
 
 @layer base {
   html {
-    overflow-y: scroll;
+    overflow-y: auto;
   }
 
   body {
     @apply bg-bg-light text-font-main font-pretendard;
+  }
+}
+
+@media (pointer: fine) {
+  .app-scroll-area {
+    scrollbar-width: none;
+    scrollbar-color: rgba(148, 163, 184, 0.55) transparent;
+  }
+
+  .app-scroll-area::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  .app-scroll-area[data-scrollbar-visible='true'] {
+    scrollbar-width: thin;
+  }
+
+  .app-scroll-area[data-scrollbar-visible='true']::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .app-scroll-area::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .app-scroll-area::-webkit-scrollbar-thumb {
+    background: transparent;
+    border-radius: 9999px;
+  }
+
+  .app-scroll-area[data-scrollbar-visible='true']::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.55);
+    border: 2px solid transparent;
+    background-clip: padding-box;
   }
 }

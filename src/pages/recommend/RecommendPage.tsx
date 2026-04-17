@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { IconButton, Icons } from '../../components/common'
+import mainMascotImage from '../../assets/home/main-mascot.png'
+import { Badge, IconButton, Icons } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import Header from '../../components/layout/Header'
 import MainLayout from '../../components/layout/MainLayout'
@@ -16,12 +17,57 @@ import type { ActivityRecommendResponse, RecommendedActivity } from '../../types
 import { useHomeDashboardSummary } from '../home/hooks/useHomeDashboardSummary'
 import { ActivityCard } from './components/ActivityCard'
 import { AiSummaryCard } from './components/AiSummaryCard'
-import { getActivityPath, shouldUseEnvBackNavigation } from './recommendActivityUtils'
+import { PopularActivityGuideModal } from './components/PopularActivityGuideModal'
+import {
+  getActivityPath,
+  getPopularActivityGuard,
+  shouldUseEnvBackNavigation,
+  type PopularActivityGuard,
+} from './recommendActivityUtils'
 
 type ActivityImageMap = Record<string, string>
 
 const getActivityKey = (activity: RecommendedActivity) =>
   `${activity.activityType}-${activity.referenceId}`
+
+const RecommendLoadingModal = () => (
+  <div
+    className="fixed left-1/2 z-40 flex w-full max-w-[600px] -translate-x-1/2 items-center justify-center px-6"
+    style={{
+      top: 'var(--header-h)',
+      bottom: 'calc(var(--nav-h) + env(safe-area-inset-bottom))',
+    }}
+  >
+    <div className="absolute inset-0 bg-[rgba(241,245,249,0.72)] backdrop-blur-[2px]" />
+
+    <div className="relative w-full max-w-[280px] rounded-[28px] border border-white/80 bg-white/96 px-6 py-7 text-center shadow-[0_18px_40px_rgba(15,23,42,0.10)]">
+      <div className="mx-auto flex h-[110px] w-[110px] items-center justify-center rounded-full bg-[radial-gradient(circle_at_top,_rgba(0,70,255,0.16),_rgba(255,255,255,0.95)_68%)]">
+        <img
+          src={mainMascotImage}
+          alt="SOLve 마스코트"
+          className="h-[84px] w-[84px] object-contain animate-bounce"
+        />
+      </div>
+
+      <p className="mt-5 text-[18px] font-semibold tracking-[-0.02em] text-font-main">
+        맞춤 추천중...
+      </p>
+      <p className="mt-2 text-sm leading-6 text-font-sub break-keep">
+        잠시만 기다리면 딱 맞는 활동을 보여드릴게요.
+      </p>
+
+      <div className="mt-4 flex items-center justify-center gap-2">
+        {[1, 2, 3].map((index) => (
+          <span
+            key={index}
+            className="h-2.5 w-2.5 rounded-full bg-primary-400 animate-pulse"
+            style={{ animationDelay: `${index * 0.18}s` }}
+          />
+        ))}
+      </div>
+    </div>
+  </div>
+)
 
 export const RecommendPage = () => {
   const navigate = useNavigate()
@@ -31,6 +77,9 @@ export const RecommendPage = () => {
   const [activityImageMap, setActivityImageMap] = useState<ActivityImageMap>({})
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [popularActivityGuard, setPopularActivityGuard] = useState<PopularActivityGuard | null>(
+    null,
+  )
 
   useEffect(() => {
     const fetchRecommend = async () => {
@@ -54,12 +103,14 @@ export const RecommendPage = () => {
     }
 
     let isMounted = true
-    const uniqueActivities = data.activities.filter(
-      (activity, index, activities) =>
+    const uniqueActivities = [data.popularActivity, ...data.activities]
+      .filter((activity): activity is RecommendedActivity => Boolean(activity))
+      .filter(
+        (activity, index, activities) =>
         activities.findIndex(
           (candidate) => getActivityKey(candidate) === getActivityKey(activity),
         ) === index,
-    )
+      )
 
     const fetchActivityImages = async () => {
       const results = await Promise.allSettled(
@@ -107,6 +158,7 @@ export const RecommendPage = () => {
   }, [data])
 
   const userName = summary?.name?.trim() || user?.name?.trim() || user?.loginId?.trim() || ''
+  const popularActivity = data?.popularActivity ?? null
 
   const handleBottomNavigation = (key: string) => {
     const nextPath =
@@ -124,6 +176,27 @@ export const RecommendPage = () => {
       navigate(
         nextPath,
         shouldUseEnvBackNavigation(activity) ? { state: { fromEnv: true } } : undefined,
+      )
+    }
+  }
+
+  const handlePopularActivityClick = () => {
+    if (!popularActivity) {
+      return
+    }
+
+    const nextPath = getActivityPath(popularActivity)
+    const guard = getPopularActivityGuard(popularActivity, nextPath)
+
+    if (guard) {
+      setPopularActivityGuard(guard)
+      return
+    }
+
+    if (nextPath) {
+      navigate(
+        nextPath,
+        shouldUseEnvBackNavigation(popularActivity) ? { state: { fromEnv: true } } : undefined,
       )
     }
   }
@@ -151,13 +224,7 @@ export const RecommendPage = () => {
         />
       }
     >
-      {isLoading ? (
-        <div className="mt-2 flex flex-col gap-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-40 w-full animate-pulse rounded-control bg-gray-100" />
-          ))}
-        </div>
-      ) : error ? (
+      {error ? (
         <div className="flex items-center justify-center py-20">
           <p className="text-sm text-font-sub">{error}</p>
         </div>
@@ -171,10 +238,56 @@ export const RecommendPage = () => {
               activity={activity}
               imageUrl={activityImageMap[getActivityKey(activity)]}
               onClick={() => handleActivityClick(activity)}
+              categoryBadgePlacement="title-right"
             />
           ))}
+
+          {popularActivity ? (
+            <section className="mt-1 flex flex-col gap-3">
+              <div className="flex items-start gap-3 px-1">
+                <Badge tone="primary" variant="solid" className="shrink-0 !px-[10px] !py-[4px]">
+                  인기
+                </Badge>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold text-font-main">지금 가장 많이 참여하는 활동</p>
+                </div>
+              </div>
+
+              <ActivityCard
+                activity={popularActivity}
+                imageUrl={activityImageMap[getActivityKey(popularActivity)]}
+                onClick={handlePopularActivityClick}
+                categoryBadgePlacement="title-right"
+                progressTextClassName="text-primary-400"
+                progressBarClassName="bg-primary-400"
+              />
+            </section>
+          ) : null}
         </div>
       ) : null}
+
+      {isLoading ? <RecommendLoadingModal /> : null}
+
+      <PopularActivityGuideModal
+        open={Boolean(popularActivityGuard)}
+        title={popularActivityGuard?.title ?? ''}
+        message={popularActivityGuard?.message ?? ''}
+        confirmLabel={popularActivityGuard?.confirmLabel}
+        onClose={() => setPopularActivityGuard(null)}
+        onConfirm={
+          popularActivityGuard?.nextPath
+            ? () => {
+                navigate(
+                  popularActivityGuard.nextPath,
+                  popularActivity?.activityType === 'PHOTO'
+                    ? { state: { fromEnv: true } }
+                    : undefined,
+                )
+                setPopularActivityGuard(null)
+              }
+            : undefined
+        }
+      />
     </MainLayout>
   )
 }

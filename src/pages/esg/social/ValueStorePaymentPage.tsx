@@ -18,9 +18,7 @@ import {
 } from '../../../constants/routePaths'
 import { useAuth } from '../../../hooks/useAuth'
 import { getValueStoreProductDetail } from '../../../services/productService'
-import {
-  prepareProductPayment,
-} from '../../../services/paymentService'
+import { prepareProductPayment } from '../../../services/paymentService'
 import { getMyProfile } from '../../../services/userService'
 import {
   PortOnePaymentError,
@@ -133,7 +131,8 @@ export function ValueStorePaymentPage() {
         })
         existingScript.addEventListener(
           'error',
-          () => reject(new Error('카카오 우편번호 서비스를 불러오지 못했어요.')),
+          () =>
+            reject(new Error('카카오 우편번호 서비스를 불러오지 못했어요.')),
           { once: true },
         )
         return
@@ -227,9 +226,7 @@ export function ValueStorePaymentPage() {
       new window.daum.Postcode({
         oncomplete: (data) => {
           const selectedAddress =
-            data.userSelectedType === 'R'
-              ? data.roadAddress
-              : data.jibunAddress
+            data.userSelectedType === 'R' ? data.roadAddress : data.jibunAddress
 
           let extraAddress = ''
 
@@ -254,7 +251,9 @@ export function ValueStorePaymentPage() {
       }).open()
     } catch (error) {
       console.error(error)
-      setAddressError('주소 검색을 불러오지 못했어요. 잠시 후 다시 시도해주세요.')
+      setAddressError(
+        '주소 검색을 불러오지 못했어요. 잠시 후 다시 시도해주세요.',
+      )
     }
   }
 
@@ -296,7 +295,10 @@ export function ValueStorePaymentPage() {
         `${PRODUCT_PAYMENT_ADDRESS_KEY_PREFIX}${preparedPayment.merchantUid}`,
         savedDeliveryAddress,
       )
-      localStorage.setItem(PRODUCT_PAYMENT_LATEST_ADDRESS_KEY, savedDeliveryAddress)
+      localStorage.setItem(
+        PRODUCT_PAYMENT_LATEST_ADDRESS_KEY,
+        savedDeliveryAddress,
+      )
 
       const paymentResponse = await requestProductPortOnePayment({
         merchantUid: preparedPayment.merchantUid,
@@ -620,9 +622,7 @@ export function ValueStorePaymentPage() {
 
                     <Input
                       value={detailAddress}
-                      onChange={(event) =>
-                        setDetailAddress(event.target.value)
-                      }
+                      onChange={(event) => setDetailAddress(event.target.value)}
                       placeholder="상세주소를 입력해주세요. (예 : 6층, 601호)"
                     />
 
@@ -718,16 +718,10 @@ export function ValueStorePaymentPage() {
           <div className="px-5 pt-[15px] pb-[calc(20px+env(safe-area-inset-bottom))]">
             <Button
               fullWidth
-              disabled={
-                isLoading ||
-                !productDetail ||
-                isSubmittingPayment
-              }
+              disabled={isLoading || !productDetail || isSubmittingPayment}
               onClick={() => void handlePayment()}
             >
-              {isSubmittingPayment
-                ? '결제 준비 중...'
-                : '구매하기'}
+              {isSubmittingPayment ? '결제 준비 중...' : '결제하기'}
             </Button>
           </div>
         </section>

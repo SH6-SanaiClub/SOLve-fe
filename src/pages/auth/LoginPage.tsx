@@ -40,8 +40,8 @@ export function LoginPage() {
   }
 
   return (
-    <div className="app-shell !pb-6">
-      <section className="page-card flex min-h-[calc(100vh-72px)] flex-col px-4 pt-8 pb-6">
+    <div className="min-h-screen bg-white">
+      <section className="mx-auto flex min-h-screen w-full max-w-[600px] flex-col px-5 pt-8 pb-6">
         <div className="flex flex-1 flex-col">
           <div className="flex flex-col items-center pt-10 text-center">
             <img src={logoImage} alt="SOLve" className="mt-4 h-[76px] w-auto object-contain" />
@@ -95,4 +95,3 @@ export function LoginPage() {
     </div>
   )
 }
-

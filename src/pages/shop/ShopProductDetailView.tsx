@@ -102,9 +102,9 @@ export const ShopProductDetailView = () => {
 
   if (isLoading) {
     return (
-      <div className="relative mx-auto flex min-h-screen w-full max-w-[600px] flex-col bg-bg-light font-pretendard shadow-[var(--shadow-card)]">
+      <div className="relative mx-auto flex min-h-screen w-full max-w-[600px] flex-col bg-gray-50 font-pretendard shadow-[var(--shadow-card)]">
         <ShopHeader title="포인트샵" onBack={handleBack} />
-        <main className="flex-1 bg-bg-light pt-(--header-h)">
+        <main className="flex-1 bg-gray-50 pt-(--header-h)">
           <div className="flex min-h-full items-center justify-center px-(--side-padding) pb-[calc(104px+env(safe-area-inset-bottom))]">
             <p className="text-sm font-medium text-font-sub">상품 정보를 불러오는 중입니다.</p>
           </div>
@@ -187,11 +187,11 @@ export const ShopProductDetailView = () => {
 
   return (
     <>
-      <div className="relative mx-auto flex min-h-screen w-full max-w-[600px] flex-col bg-bg-light font-pretendard shadow-[var(--shadow-card)]">
+      <div className="relative mx-auto flex min-h-screen w-full max-w-[600px] flex-col bg-gray-50 font-pretendard shadow-[var(--shadow-card)]">
         <ShopHeader title="포인트샵" onBack={handleBack} />
 
-        <main className="flex-1 bg-bg-light pt-(--header-h)">
-          <div className="flex min-h-full flex-col bg-bg-light pb-[calc(104px+env(safe-area-inset-bottom))]">
+        <main className="flex-1 bg-gray-50 pt-(--header-h)">
+          <div className="flex min-h-full flex-col bg-gray-50 pb-[calc(104px+env(safe-area-inset-bottom))]">
             <section className="flex h-[340px] items-center justify-center bg-primary-100">
               {resolveImageUrl(shopProduct.imageUrl) ? (
                 <img
@@ -211,7 +211,7 @@ export const ShopProductDetailView = () => {
               )}
             </section>
 
-            <section className="bg-bg-light px-(--side-padding) pt-6 pb-8">
+            <section className="bg-gray-50 px-(--side-padding) pt-6 pb-8">
               <h2 className="text-[18px] font-bold text-gray-600">{shopProduct.name}</h2>
               <p className="mt-2 text-[14px] leading-6 text-font-sub">{shopProduct.description}</p>
               <div className="pt-3">
@@ -222,9 +222,9 @@ export const ShopProductDetailView = () => {
 
               <div className="my-4 h-px bg-gray-200" />
 
-              <div className="space-y-4">
-                <h3 className="text-[16px] font-bold text-font-main">이용안내</h3>
-                <div className="mt-4 space-y-1 text-[14px] leading-7 text-font-sub">
+              <div className="space-y-2">
+                <h3 className="text-[16px] font-bold text-gray-500">이용안내</h3>
+                <div className="space-y-1 text-[14px] leading-7 text-font-sub">
                   {usageGuideItems.map((item) => (
                     <p key={item}>{item}</p>
                   ))}

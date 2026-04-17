@@ -11,6 +11,7 @@ import {
   EnvironmentResultModal,
   type EnvironmentResultVariant,
 } from './components/EnvironmentResultModal'
+import { EnvironmentLoadingOverlay } from './components/EnvironmentLoadingOverlay'
 import { EnvironmentVerifyScreen } from './components/EnvironmentVerifyScreen'
 
 interface EnvLocationState {
@@ -45,6 +46,10 @@ export function EnvironmentVerifyPage() {
   const activity = getEnvActivity(activityTypeParam)
 
   const handleBack = () => {
+    if (isSubmitting) {
+      return
+    }
+
     if (routeState?.fromEnv) {
       navigate(-1)
       return
@@ -136,6 +141,8 @@ export function EnvironmentVerifyPage() {
           </section>
         </div>
       </MainLayout>
+
+      <EnvironmentLoadingOverlay open={isSubmitting} />
 
       {verificationResult && resultVariant ? (
         <EnvironmentResultModal

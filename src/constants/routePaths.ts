@@ -20,6 +20,7 @@ export const ROUTE_PATHS = {
   activitySocial: '/activities/social',
   activitySocialDonation: '/esg/social/donation',
   activitySocialStore: '/esg/social/store',
+  activitySocialStorePurchases: '/esg/social/store/purchases',
   activitySocialVolunteer: '/esg/social/volunteer',
   activitySocialVolunteerApplications: '/esg/social/volunteers/applications',
   activitySocialVolunteerAttendance: '/esg/social/volunteers/attendance',

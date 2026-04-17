@@ -15,3 +15,19 @@ export interface ValueStoreProductListResponse {
 }
 
 export type ValueStoreProductDetail = ValueStoreProduct
+
+export interface ValueStorePurchaseHistoryItem {
+  purchaseId: number
+  productId: number
+  name: string
+  storeName: string
+  category: string
+  amount: number
+  imageUrl: string
+  deliveryAddress: string
+  orderedAt: string
+}
+
+export interface ValueStorePurchaseHistoryResponse {
+  purchases: ValueStorePurchaseHistoryItem[]
+}

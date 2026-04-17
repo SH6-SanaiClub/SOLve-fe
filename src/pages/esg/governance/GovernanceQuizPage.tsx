@@ -1,5 +1,5 @@
 ﻿import { useEffect, useLayoutEffect, useState } from 'react'
-import { AlertCircle, CheckCircle2, LoaderCircle } from 'lucide-react'
+import { AlertCircle, LoaderCircle } from 'lucide-react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import { Button, IconButton, Icons } from '../../../components/common'
@@ -193,19 +193,20 @@ export function GovernanceQuizPage() {
       >
         <section className="mb-[-24px] flex min-h-[calc(100dvh-56px-48px)] items-center justify-center px-4 pt-6 pb-0">
           <article className="w-full max-w-[360px] rounded-[10px] bg-white px-6 py-8 text-center shadow-[0_24px_48px_rgba(15,23,42,0.12)]">
-            <div className="mx-auto flex h-[76px] w-[76px] items-center justify-center rounded-full bg-[#EAF2FF]">
-              <div className="flex h-[44px] w-[44px] items-center justify-center rounded-full bg-[#D8E7FF] text-[#1F5FFF]">
-                <CheckCircle2 size={24} strokeWidth={2.6} />
-              </div>
-            </div>
+            <img
+              src={completeImage}
+              alt=""
+              aria-hidden="true"
+              className="mx-auto h-[96px] w-auto object-contain"
+            />
 
-            <h2 className="mt-6 text-[26px] leading-none font-bold tracking-[-0.03em] text-[#1E293B]">
-              오늘 퀴즈를 이미 완료했어요
+            <h2 className="mt-6 text-[24px] leading-none font-bold tracking-[-0.03em] text-[#1E293B]">
+              오늘 퀴즈를 이미 완료했어요!
             </h2>
             <p className="mt-4 text-[14px] leading-[1.7] text-[#6C7B91]">
               금융 퀴즈는 하루에 한 번만 참여할 수 있어요.
               <br />
-              내일 다시 새로운 문제로 만나요.
+              내일 다시 새로운 문제로 만나요!
             </p>
 
             {completedQuiz.rewardPoint > 0 ? (
@@ -213,13 +214,6 @@ export function GovernanceQuizPage() {
                 오늘 적립 포인트 +{completedQuiz.rewardPoint}P
               </p>
             ) : null}
-
-            <div className="mt-6 rounded-[10px] border border-[#D8E4FF] bg-[#F8FBFF] px-4 py-4 text-left">
-              <p className="text-[13px] font-semibold text-[#475569]">안내</p>
-              <p className="mt-2 text-[13px] leading-[1.7] text-[#64748B]">
-                {completedQuiz.message ?? '이미 오늘 퀴즈를 완료한 상태입니다.'}
-              </p>
-            </div>
 
             <Button
               type="button"
@@ -257,7 +251,7 @@ export function GovernanceQuizPage() {
         />
       }
     >
-      <section className="flex h-[calc(100dvh-56px)] flex-col overflow-hidden px-1 pt-4 pb-[118px]">
+      <section className="flex h-[calc(100dvh-56px)] flex-col overflow-y-auto px-1 pt-4 pb-[150px]">
         <p className="text-[15px] font-bold tracking-[-0.02em] text-[#64748B]">
           <span className="mr-[4px]">오늘의 금융</span>
           <span className="text-[16px] text-primary-500">Quiz</span>

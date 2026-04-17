@@ -21,7 +21,7 @@ export const ENV_ACTIVITY_CONFIG: Record<EnvActivityType, EnvActivityConfig> = {
   tumbler: {
     type: 'tumbler',
     title: '텀블러 인증하기',
-    subtitle: '당일 이용 내역이 확인되는 전체 화면을 제출해 주세요.',
+    subtitle: '당일 이용 내역이 확인되는 전체 화면을 제출해 주세요. 스타벅스 전자영수증만 인증 가능해요.',
     uploadCaption: '최대 10MB 이하의 선명한 이미지 파일',
     notice:
       '부적절한 방법으로 인증을 시도할 경우, 포인트 회수 및 서비스 이용에 제한이 있을 수 있습니다. 모든 인증은 관리자의 검수를 거칩니다.',
@@ -40,6 +40,7 @@ export const ENV_ACTIVITY_CONFIG: Record<EnvActivityType, EnvActivityConfig> = {
         title: '이 경우 반려될 수 있어요',
         items: [
           '할인 문구, 날짜, 시간, 결제 정보 중 하나라도 빠지면 반려될 수 있습니다.',
+          '스타벅스 외 다른 브랜드 전자영수증은 인증되지 않습니다.',
           '잘린 화면, 흐린 이미지, 과거 내역, 중복 제출 이미지는 인정되지 않습니다.',
         ],
       },
@@ -48,7 +49,7 @@ export const ENV_ACTIVITY_CONFIG: Record<EnvActivityType, EnvActivityConfig> = {
   'shared-bike': {
     type: 'shared-bike',
     title: '공유 자전거 인증하기',
-    subtitle: '대여 완료 또는 이용 내역이 보이는 전체 화면을 제출해 주세요.',
+    subtitle: '대여 완료 또는 이용 내역이 보이는 전체 화면을 제출해 주세요. 카카오 T 바이크, 에브리바이크, 따릉이만 인증 가능해요.',
     uploadCaption: '최대 10MB 이하의 선명한 이미지 파일',
     notice:
       '부적절한 방법으로 인증을 시도할 경우, 포인트 회수 및 서비스 이용에 제한이 있을 수 있습니다. 모든 인증은 관리자의 검수를 거칩니다.',
@@ -67,6 +68,7 @@ export const ENV_ACTIVITY_CONFIG: Record<EnvActivityType, EnvActivityConfig> = {
         title: '이 경우 반려될 수 있어요',
         items: [
           '이용 시간, 결제 또는 대여 정보가 빠진 화면은 반려될 수 있습니다.',
+          '카카오 T 바이크, 에브리바이크, 따릉이 외 다른 서비스 화면은 인증되지 않습니다.',
           '홈 화면, 지도 화면, 흐린 이미지, 과거 내역, 중복 제출 이미지는 인정되지 않습니다.',
         ],
       },
@@ -75,7 +77,7 @@ export const ENV_ACTIVITY_CONFIG: Record<EnvActivityType, EnvActivityConfig> = {
   'ev-rental': {
     type: 'ev-rental',
     title: '전기차 대여 인증하기',
-    subtitle: '전기차 대여 또는 이용 완료 내역이 보이는 전체 화면을 제출해 주세요.',
+    subtitle: '전기차 대여 또는 이용 완료 내역이 보이는 전체 화면을 제출해 주세요. 그린카 이용내역만 인증 가능해요.',
     uploadCaption: '최대 10MB 이하의 선명한 이미지 파일',
     notice:
       '부적절한 방법으로 인증을 시도할 경우, 포인트 회수 및 서비스 이용에 제한이 있을 수 있습니다. 모든 인증은 관리자의 검수를 거칩니다.',
@@ -94,6 +96,7 @@ export const ENV_ACTIVITY_CONFIG: Record<EnvActivityType, EnvActivityConfig> = {
         title: '이 경우 반려될 수 있어요',
         items: [
           '전기차 표시, 차량 정보, 이용 시간, 결제 정보 중 하나라도 빠지면 반려될 수 있습니다.',
+          '그린카 외 다른 차량 대여 서비스 화면은 인증되지 않습니다.',
           '일반 차량 화면, 잘린 캡처, 흐린 이미지, 과거 내역, 중복 제출 이미지는 인정되지 않습니다.',
         ],
       },

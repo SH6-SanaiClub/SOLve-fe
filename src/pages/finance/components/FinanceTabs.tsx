@@ -13,7 +13,7 @@ const tabItems = [
 
 export const FinanceTabs = ({ activeTab, onChange }: FinanceTabsProps) => {
   return (
-    <div className="mx-[-16px] flex border-b border-gray-200 bg-white">
+    <div className="grid grid-cols-3 border-b border-gray-200 bg-white">
       {tabItems.map((item) => {
         const isActive = item.value === activeTab
 
@@ -28,11 +28,11 @@ export const FinanceTabs = ({ activeTab, onChange }: FinanceTabsProps) => {
                 onChange(item.value)
               }
             }}
-            className={`relative flex h-12 w-1/3 items-center justify-center transition-colors ${
+            className={`relative flex h-12 min-w-0 items-center justify-center transition-colors ${
               isActive ? 'text-font-main' : 'text-gray-400'
             }`}
           >
-            <span className="text-base font-semibold tracking-[-0.02em]">
+            <span className="block w-full text-center text-base font-semibold tracking-[-0.02em]">
               {item.label}
             </span>
             <span

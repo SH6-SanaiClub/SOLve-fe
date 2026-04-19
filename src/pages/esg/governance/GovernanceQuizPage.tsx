@@ -347,4 +347,3 @@ export function GovernanceQuizPage() {
     </MainLayout>
   )
 }
-

@@ -7,7 +7,8 @@ import {
   ProgressBar,
 } from '../../../components/common'
 import { Icons } from '../../../components/common'
-import { getDonationPaymentPath } from '../../../constants/routePaths'
+import { ROUTE_PATHS, getDonationPaymentPath } from '../../../constants/routePaths'
+import useReturnNavigation from '../../../hooks/useReturnNavigation'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
 import { getDonationDetail } from '../../../services/donationService'
@@ -43,6 +44,7 @@ const resolveImageUrl = (imageUrl: string) => {
 
 export function DonationDetailPage() {
   const navigate = useNavigate()
+  const { goBack } = useReturnNavigation(ROUTE_PATHS.activitySocialDonation)
   const { donationId } = useParams()
   const parsedDonationId = Number(donationId)
   const [donationDetail, setDonationDetail] = useState<DonationDetail | null>(
@@ -85,7 +87,7 @@ export function DonationDetailPage() {
             <IconButton
               label="뒤로가기"
               icon={<Icons.Back className="text-font-main" />}
-              onClick={() => navigate(-1)}
+              onClick={goBack}
             />
           }
           title="기부"

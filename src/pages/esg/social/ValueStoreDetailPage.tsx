@@ -8,6 +8,7 @@ import {
   ROUTE_PATHS,
   getValueStoreProductPaymentPath,
 } from '../../../constants/routePaths'
+import useReturnNavigation from '../../../hooks/useReturnNavigation'
 import { getValueStoreProductDetail } from '../../../services/productService'
 import type { ValueStoreProductDetail } from '../../../types/product'
 
@@ -39,6 +40,7 @@ const resolveImageUrl = (imageUrl: string) => {
 
 export function ValueStoreDetailPage() {
   const navigate = useNavigate()
+  const { goBack } = useReturnNavigation(ROUTE_PATHS.activitySocialStore)
   const { productId } = useParams()
   const parsedProductId = Number(productId)
   const [productDetail, setProductDetail] =
@@ -72,15 +74,6 @@ export function ValueStoreDetailPage() {
     void fetchProductDetail()
   }, [fetchProductDetail])
 
-  const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1)
-      return
-    }
-
-    navigate(ROUTE_PATHS.activitySocialStore)
-  }
-
   const isSoldOut = Boolean(productDetail?.soldOut)
 
   return (
@@ -91,7 +84,7 @@ export function ValueStoreDetailPage() {
             <IconButton
               label="뒤로가기"
               icon={<Icons.Back className="text-font-main" />}
-              onClick={handleBack}
+              onClick={goBack}
             />
           }
           title="가치가게"

@@ -72,8 +72,10 @@ export const getActivityPath = (activity: RecommendedActivity) => {
   }
 }
 
-export const shouldUseEnvBackNavigation = (activity: RecommendedActivity) =>
-  activity.activityType === 'PHOTO'
+export const getActivityNavigationState = (activity: RecommendedActivity) => ({
+  fromEnv: activity.activityType === 'PHOTO' || undefined,
+  returnTo: ROUTE_PATHS.recommend,
+})
 
 export const getPopularActivityGuard = (
   activity: RecommendedActivity,

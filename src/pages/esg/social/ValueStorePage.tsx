@@ -129,7 +129,7 @@ export function ValueStorePage() {
 
       {!isLoading && !error && productData ? (
         <div className="flex flex-col gap-6">
-          <section className="space-y-4">
+          <section className="space-y-4 pt-3">
             <div className="flex items-center justify-between">
               <h2 className="text-lg leading-[120%] font-semibold text-gray-700">
                 판매중인 상품

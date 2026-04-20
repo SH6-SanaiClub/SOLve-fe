@@ -127,7 +127,7 @@ export function VolunteerPage() {
       ) : null}
 
       {!isLoading && !error && volunteerData ? (
-        <section className="mx-[-16px] min-h-[calc(100vh-var(--header-h)-var(--nav-h)-96px)] bg-gray-100 px-4">
+        <section className="mx-[-16px] min-h-[calc(100vh-var(--header-h)-var(--nav-h)-96px)] bg-gray-100 px-4 pt-3">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-[18px] leading-[120%] font-semibold tracking-[-0.02em] text-font-main">

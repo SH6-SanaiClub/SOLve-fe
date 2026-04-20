@@ -26,6 +26,30 @@ export interface VolunteerApplicationListResponse {
   volunteers: VolunteerApplicationItem[]
 }
 
+export type VolunteerHistoryStatus =
+  | 'NOSHOW'
+  | 'APPLIED'
+  | 'ATTENDED'
+  | 'COMPLETED'
+  | 'INCOMPLETE'
+
+export interface VolunteerHistoryItem {
+  volunteerApplicationId: number
+  volunteerId: number
+  organization: string
+  name: string
+  activityDate: string
+  status: VolunteerHistoryStatus
+  checkInAt: string | null
+  checkOutAt: string | null
+  recognizedVolunteerHour: number
+  scheduledVolunteerHour: number
+}
+
+export interface VolunteerHistoryListResponse {
+  volunteers: VolunteerHistoryItem[]
+}
+
 export interface ApplyVolunteerRequest {
   volunteerId: number
 }

@@ -10,6 +10,7 @@ import type {
   VolunteerCheckOutRequest,
   VolunteerCheckOutResponse,
   VolunteerDetail,
+  VolunteerHistoryListResponse,
   VolunteerListResponse,
 } from '../types/volunteer'
 
@@ -21,6 +22,13 @@ export const getVolunteerActivities = async (): Promise<VolunteerListResponse> =
 export const getVolunteerApplications = async (): Promise<VolunteerApplicationListResponse> => {
   const response = await apiClient.get<VolunteerApplicationListResponse>(
     '/v1/esg/s/volunteers/applications',
+  )
+  return response.data
+}
+
+export const getVolunteerHistories = async (): Promise<VolunteerHistoryListResponse> => {
+  const response = await apiClient.get<VolunteerHistoryListResponse>(
+    '/v1/esg/s/volunteers/history',
   )
   return response.data
 }

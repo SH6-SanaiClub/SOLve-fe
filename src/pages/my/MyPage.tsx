@@ -1,4 +1,12 @@
-﻿import { Coins, FileChartColumn, Landmark, ShieldCheck, UserRound } from 'lucide-react'
+﻿import {
+  Coins,
+  FileChartColumn,
+  Landmark,
+  ShieldCheck,
+  UserRound,
+  Briefcase,
+  HandHeart,
+} from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Card, Icons } from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
@@ -35,7 +43,7 @@ const menuItems = [
   {
     key: 'donationHistory',
     label: '기부 후원 내역',
-    icon: <Store size={18} />,
+    icon: <HandHeart size={18} />,
     path: ROUTE_PATHS.activitySocialDonationHistory,
   },
   {
@@ -47,7 +55,7 @@ const menuItems = [
   {
     key: 'volunteerManage',
     label: '봉사 활동 관리',
-    icon: <ShieldCheck size={18} />,
+    icon: <Briefcase size={18} />,
     path: ROUTE_PATHS.activitySocialVolunteerApplications,
   },
   {
@@ -66,7 +74,14 @@ const menuItems = [
 
 const accountMenuItems = menuItems.filter((item) => item.key === 'profile')
 const activityMenuItems = menuItems.filter((item) =>
-  ['grade', 'donationHistory', 'storePurchase', 'volunteerManage', 'report', 'point'].includes(item.key),
+  [
+    'grade',
+    'donationHistory',
+    'storePurchase',
+    'volunteerManage',
+    'report',
+    'point',
+  ].includes(item.key),
 )
 const financeMenuItems = menuItems.filter((item) =>
   ['finance'].includes(item.key),
@@ -77,7 +92,9 @@ export const MyPage = () => {
 
   const handleBottomNavigation = (key: string) => {
     const nextPath =
-      BOTTOM_NAVIGATION_ROUTE_BY_KEY[key as keyof typeof BOTTOM_NAVIGATION_ROUTE_BY_KEY]
+      BOTTOM_NAVIGATION_ROUTE_BY_KEY[
+        key as keyof typeof BOTTOM_NAVIGATION_ROUTE_BY_KEY
+      ]
 
     if (nextPath) {
       navigate(nextPath)
@@ -101,7 +118,10 @@ export const MyPage = () => {
     navigate(ROUTE_PATHS.login)
   }
 
-  const renderMenuItems = (items: typeof menuItems, showBottomBorder = false) => (
+  const renderMenuItems = (
+    items: typeof menuItems,
+    showBottomBorder = false,
+  ) => (
     <>
       {items.map((item, index) => {
         const hasDivider = index < items.length - 1 || showBottomBorder
@@ -119,7 +139,9 @@ export const MyPage = () => {
               <div className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-100 bg-gray-50 text-gray-500">
                 {item.icon}
               </div>
-              <span className="text-[15px] font-medium text-font-main">{item.label}</span>
+              <span className="text-[15px] font-medium text-font-main">
+                {item.label}
+              </span>
             </div>
 
             <Icons.ArrowRight className="text-gray-300" size={20} />
@@ -132,14 +154,18 @@ export const MyPage = () => {
   const renderActivityFinanceMenuCard = () => (
     <Card className="!gap-0 !p-0 mt-3">
       <div className="px-5 pb-2 pt-5">
-        <p className="text-xs font-semibold tracking-[0.18em] text-gray-400">활동</p>
+        <p className="text-xs font-semibold tracking-[0.18em] text-gray-400">
+          활동
+        </p>
       </div>
       {renderMenuItems(activityMenuItems, financeMenuItems.length > 0)}
 
       {financeMenuItems.length > 0 ? (
         <>
           <div className="px-5 pb-2 pt-5">
-            <p className="text-xs font-semibold tracking-[0.18em] text-gray-400">금융</p>
+            <p className="text-xs font-semibold tracking-[0.18em] text-gray-400">
+              금융
+            </p>
           </div>
           {renderMenuItems(financeMenuItems)}
         </>
@@ -149,7 +175,12 @@ export const MyPage = () => {
 
   return (
     <MainLayout
-      header={<ShopHeader title="마이페이지" onBack={() => navigate(ROUTE_PATHS.home)} />}
+      header={
+        <ShopHeader
+          title="마이페이지"
+          onBack={() => navigate(ROUTE_PATHS.home)}
+        />
+      }
       nav={
         <BottomNavigation
           items={BOTTOM_NAVIGATION_ITEMS}
@@ -164,11 +195,12 @@ export const MyPage = () => {
           {renderActivityFinanceMenuCard()}
         </section>
 
-
         <section className="flex flex-col gap-3">
           <Card className="!gap-0 !p-0">
             <div className="px-5 pb-2 pt-5">
-              <p className="text-xs font-semibold tracking-[0.18em] text-gray-400">계정</p>
+              <p className="text-xs font-semibold tracking-[0.18em] text-gray-400">
+                계정
+              </p>
             </div>
             {accountMenuItems.map((item) => (
               <button
@@ -181,7 +213,9 @@ export const MyPage = () => {
                   <div className="flex h-9 w-9 items-center justify-center rounded-full border border-gray-100 bg-gray-50 text-gray-500">
                     {item.icon}
                   </div>
-                  <span className="text-[15px] font-medium text-font-main">{item.label}</span>
+                  <span className="text-[15px] font-medium text-font-main">
+                    {item.label}
+                  </span>
                 </div>
 
                 <Icons.ArrowRight className="text-gray-300" size={20} />
@@ -200,7 +234,6 @@ export const MyPage = () => {
             </button>
           </Card>
         </section>
-
       </section>
     </MainLayout>
   )

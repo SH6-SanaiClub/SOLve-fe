@@ -38,9 +38,9 @@ export function VolunteerAttendanceCompletePage() {
 
   return (
     <MainLayout className="bg-gray-50">
-      <section className="mx-[-16px] my-[-24px] bg-gray-50 px-[31px] pt-[88px] pb-6">
+      <section className="-mx-(--side-padding) my-[-24px] flex min-h-[calc(100dvh-var(--header-h)-env(safe-area-inset-top)-96px)] flex-col justify-center bg-gray-50 px-[20px] pt-[40px] pb-[120px]">
         {result ? (
-          <div className="mx-auto flex max-w-[340px] flex-col items-center text-center">
+          <div className="mx-auto flex w-full flex-col items-center text-center">
             <div className="flex flex-col items-center text-center">
               <img
                 src={completeCharacterImage}
@@ -62,7 +62,7 @@ export function VolunteerAttendanceCompletePage() {
             </div>
 
             <div className="mt-[23px] flex w-full flex-col">
-              <div className="rounded-card bg-white px-[15px] pt-[19px] pb-[18px] text-left shadow-card">
+              <div className="w-full rounded-[8px] bg-white px-[15px] pt-[19px] pb-[18px] text-left shadow-card">
                 <div className="text-left text-[12px] leading-6 font-bold tracking-[-0.02em] text-font-sub">
                   봉사내역 상세
                 </div>
@@ -72,7 +72,7 @@ export function VolunteerAttendanceCompletePage() {
                     <span className="text-[12px] leading-6 font-medium tracking-[-0.02em] text-font-sub">
                       봉사명
                     </span>
-                    <span className="text-right text-[16px] leading-6 font-semibold tracking-[-0.02em] text-font-sub">
+                    <span className="text-right text-[14px] leading-6 font-semibold tracking-[-0.02em] text-gray-500">
                       {result.name}
                     </span>
                   </div>
@@ -81,7 +81,7 @@ export function VolunteerAttendanceCompletePage() {
                     <span className="text-[12px] leading-6 font-medium tracking-[-0.02em] text-font-sub">
                       출석 시각
                     </span>
-                    <span className="text-right text-[16px] leading-6 font-semibold tracking-[-0.02em] text-font-sub">
+                    <span className="text-right text-[14px] leading-6 font-semibold tracking-[-0.02em] text-gray-500">
                       {formatDateTime(result.checkInAt)}
                     </span>
                   </div>
@@ -90,7 +90,7 @@ export function VolunteerAttendanceCompletePage() {
                     <span className="text-[12px] leading-6 font-medium tracking-[-0.02em] text-font-sub">
                       퇴실 시각
                     </span>
-                    <span className="text-right text-[16px] leading-6 font-semibold tracking-[-0.02em] text-font-sub">
+                    <span className="text-right text-[14px] leading-6 font-semibold tracking-[-0.02em] text-gray-500">
                       {formatDateTime(result.checkOutAt)}
                     </span>
                   </div>
@@ -122,20 +122,11 @@ export function VolunteerAttendanceCompletePage() {
                 </div>
               </div>
 
-              <div className="mt-5 w-full">
-                <Button
-                  fullWidth
-                  size="md"
-                  onClick={() => navigate(ROUTE_PATHS.home, { replace: true })}
-                >
-                  메인으로 가기
-                </Button>
-              </div>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center text-center">
-            <div className="w-full rounded-card bg-white p-6 shadow-card">
+          <div className="mx-auto flex w-full flex-col items-center justify-center text-center">
+            <div className="w-full rounded-[8px] bg-white p-6 shadow-card">
               <h2 className="text-[20px] leading-[30px] font-bold tracking-[-0.02em] text-font-main">
                 봉사 완료 정보를 찾을 수 없어요
               </h2>
@@ -151,18 +142,28 @@ export function VolunteerAttendanceCompletePage() {
                 </Button>
               </div>
             </div>
-            <div className="mt-6 w-full">
-              <Button
-                fullWidth
-                variant="primary"
-                onClick={() => navigate(ROUTE_PATHS.home, { replace: true })}
-              >
-                메인으로 가기
-              </Button>
-            </div>
           </div>
         )}
       </section>
+      <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
+        <div className="pointer-events-auto mx-auto grid w-full max-w-[600px] grid-cols-2 gap-3 px-(--side-padding) pt-4 pb-[calc(16px+env(safe-area-inset-bottom))]">
+          <Button
+            fullWidth
+            size="md"
+            variant="sub"
+            onClick={() => navigate(ROUTE_PATHS.activitySocialVolunteer)}
+          >
+            봉사 목록으로 가기
+          </Button>
+          <Button
+            fullWidth
+            size="md"
+            onClick={() => navigate(ROUTE_PATHS.home, { replace: true })}
+          >
+            메인으로 가기
+          </Button>
+        </div>
+      </div>
     </MainLayout>
   )
 }

@@ -279,7 +279,7 @@ export const FinanceDetailPage = () => {
         </MainLayout>
 
         <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
-          <div className="pointer-events-auto mx-auto w-full max-w-[600px] bg-white px-(--side-padding) pb-[calc(16px+env(safe-area-inset-bottom))] pt-4">
+          <div className="pointer-events-auto mx-auto w-full max-w-[600px] -translate-y-px bg-white px-(--side-padding) pb-[calc(16px+env(safe-area-inset-bottom))] pt-4">
             <Button
               type="button"
               fullWidth
@@ -373,7 +373,7 @@ export const FinanceDetailPage = () => {
         </MainLayout>
 
         <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
-          <div className="pointer-events-auto mx-auto w-full max-w-[600px] bg-white px-(--side-padding) pb-[calc(16px+env(safe-area-inset-bottom))] pt-2">
+          <div className="pointer-events-auto mx-auto w-full max-w-[600px] -translate-y-px bg-white px-(--side-padding) pb-[calc(16px+env(safe-area-inset-bottom))] pt-4">
             <Button
               type="button"
               fullWidth

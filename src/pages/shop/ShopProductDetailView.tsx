@@ -235,7 +235,7 @@ export const ShopProductDetailView = () => {
         </main>
 
         <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
-          <section className="pointer-events-auto mx-auto w-full max-w-[600px] border-t border-gray-200 bg-surface px-(--side-padding) pt-4 pb-[calc(16px+env(safe-area-inset-bottom))] shadow-[var(--shadow-card)]">
+          <section className="pointer-events-auto mx-auto w-full max-w-[600px] -translate-y-px bg-surface px-(--side-padding) pt-4 pb-[calc(16px+env(safe-area-inset-bottom))]">
             <Button
               type="button"
               variant="primary"

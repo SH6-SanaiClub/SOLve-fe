@@ -172,7 +172,15 @@ export const streamChatMessage = async (
 }
 
 export const getChatHistory = async () => {
-  const response = await apiClient.get<ChatHistoryResponse>('/v1/chat/messages')
+  const response = await apiClient.get<ChatHistoryResponse>('/v1/chat/messages', {
+    params: {
+      _ts: Date.now(),
+    },
+    headers: {
+      'Cache-Control': 'no-cache',
+      Pragma: 'no-cache',
+    },
+  })
   return response.data.messages
 }
 

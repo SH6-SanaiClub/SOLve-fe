@@ -407,6 +407,7 @@ export const ChatbotPage = () => {
   const [input, setInput] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
   const [isLoadingHistory, setIsLoadingHistory] = useState(true)
+  const [isResettingHistory, setIsResettingHistory] = useState(false)
   const [bottomOverlayHeight, setBottomOverlayHeight] = useState(CHAT_BOTTOM_OVERLAY_FALLBACK_HEIGHT)
   const contentRef = useRef<HTMLElement | null>(null)
   const bottomRef = useRef<HTMLDivElement>(null)
@@ -419,6 +420,7 @@ export const ChatbotPage = () => {
   const pendingReplaceRef = useRef<string | null>(null)
   const streamDoneRef = useRef(false)
   const hasStartedStreamingRenderRef = useRef(false)
+  const historyLoadRequestIdRef = useRef(0)
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: isStreaming ? 'auto' : 'smooth', block: 'end' })
@@ -475,12 +477,13 @@ export const ChatbotPage = () => {
     let mounted = true
 
     const loadHistory = async () => {
+      const requestId = ++historyLoadRequestIdRef.current
       try {
         const history = await getChatHistory()
-        if (!mounted) {
+        if (!mounted || requestId !== historyLoadRequestIdRef.current) {
           return
         }
-      setMessages(history.map(toChatMessage))
+        setMessages(history.map(toChatMessage))
       } catch {
         if (!mounted) {
           return
@@ -507,7 +510,7 @@ export const ChatbotPage = () => {
   const handleSend = async (text: string) => {
     const trimmedText = text.trim()
 
-    if (!trimmedText || isStreaming) {
+    if (!trimmedText || isStreaming || isLoadingHistory || isResettingHistory) {
       return
     }
 
@@ -717,6 +720,9 @@ export const ChatbotPage = () => {
   }
 
   const handleQuestionClick = (question: string) => {
+    if (isLoadingHistory || isResettingHistory) {
+      return
+    }
     void handleSend(question)
   }
 
@@ -729,19 +735,25 @@ export const ChatbotPage = () => {
   }
 
   const handleResetChat = async () => {
-    if (isStreaming) {
+    if (isStreaming || isLoadingHistory || isResettingHistory) {
       return
     }
+
+    setIsResettingHistory(true)
+    historyLoadRequestIdRef.current += 1
 
     try {
       await clearChatHistory()
       setMessages([])
     } catch {
       // keep current history on failure
+    } finally {
+      setIsResettingHistory(false)
     }
   }
 
   const followUpQuestions = getFollowUpQuestions(messages)
+  const isBusy = isStreaming || isLoadingHistory || isResettingHistory
 
   return (
     <div className="relative min-h-screen bg-[linear-gradient(180deg,#F7FAFF_0%,#EDF3FF_100%)] font-pretendard">
@@ -841,7 +853,7 @@ export const ChatbotPage = () => {
                       key={question}
                       type="button"
                       onClick={() => handleQuestionClick(question)}
-                      disabled={isStreaming}
+                      disabled={isBusy}
                       className="w-full rounded-[18px] border border-white/70 bg-white/90 px-4 py-3 text-left text-sm text-font-main shadow-sm transition-all duration-300 hover:-translate-y-[1px] hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
                       style={buildEntranceStyle(index * 55, 420)}
                     >
@@ -884,6 +896,7 @@ export const ChatbotPage = () => {
                   key={question}
                   type="button"
                   onClick={() => handleQuestionClick(question)}
+                  disabled={isBusy}
                   className="shrink-0 rounded-full border border-white/80 bg-white/90 px-4 py-2 text-xs font-medium text-font-main shadow-sm transition-all duration-300 hover:-translate-y-[1px] hover:bg-white"
                   style={{
                     animation: `chatChipRise 360ms cubic-bezier(0.22, 1, 0.36, 1) both`,
@@ -904,7 +917,14 @@ export const ChatbotPage = () => {
               onCompositionEnd={handleCompositionEnd}
               onKeyDown={handleKeyDown}
               rows={1}
-              placeholder="메시지를 입력하세요..."
+              placeholder={
+                isLoadingHistory
+                  ? '대화 내역을 불러오는 중...'
+                  : isResettingHistory
+                    ? '새 대화를 준비하는 중...'
+                    : '메시지를 입력하세요...'
+              }
+              disabled={isLoadingHistory || isResettingHistory}
               className="max-h-[120px] min-h-[24px] flex-1 resize-none bg-transparent py-2 text-sm leading-6 text-font-main placeholder:text-font-sub outline-none"
             />
 
@@ -912,7 +932,7 @@ export const ChatbotPage = () => {
               type="button"
               size="sm"
               onClick={() => void handleSend(input)}
-              disabled={!input.trim() || isStreaming}
+              disabled={!input.trim() || isBusy}
               className="!h-10 !w-10 !rounded-full !p-0 !transition-transform !duration-300 enabled:hover:!scale-[1.04] enabled:hover:!shadow-[0_10px_22px_rgba(37,99,235,0.24)]"
             >
               <Icons.ArrowRight size={18} />

@@ -45,6 +45,12 @@ const menuItems = [
     path: ROUTE_PATHS.activitySocialStorePurchases,
   },
   {
+    key: 'volunteerManage',
+    label: '봉사 활동 관리',
+    icon: <ShieldCheck size={18} />,
+    path: ROUTE_PATHS.activitySocialVolunteerApplications,
+  },
+  {
     key: 'finance',
     label: '금융상품 관리',
     icon: <Landmark size={18} />,
@@ -60,7 +66,7 @@ const menuItems = [
 
 const accountMenuItems = menuItems.filter((item) => item.key === 'profile')
 const activityMenuItems = menuItems.filter((item) =>
-  ['grade', 'donationHistory', 'storePurchase', 'report', 'point'].includes(item.key),
+  ['grade', 'donationHistory', 'storePurchase', 'volunteerManage', 'report', 'point'].includes(item.key),
 )
 const financeMenuItems = menuItems.filter((item) =>
   ['finance'].includes(item.key),

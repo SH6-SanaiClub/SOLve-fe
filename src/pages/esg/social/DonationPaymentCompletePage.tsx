@@ -112,9 +112,9 @@ export function DonationPaymentCompletePage() {
             fullWidth
             size="md"
             variant="sub"
-            onClick={() => navigate(ROUTE_PATHS.activitySocialDonation)}
+            onClick={() => navigate(ROUTE_PATHS.activitySocialDonationHistory)}
           >
-            기부 목록으로 가기
+            후원 내역보기
           </Button>
           <Button
             fullWidth

@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import {
   Badge,
   Button,
@@ -117,8 +117,13 @@ const getVolunteerStatusBadge = (status: VolunteerHistoryItem['status']) => {
 
 export function VolunteerApplicationsPage() {
   const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState<VolunteerManageTab>('applications')
-  const [historyFilter, setHistoryFilter] = useState<VolunteerHistoryFilter>('all')
+  const location = useLocation()
+  const initialTab =
+    (location.state as { initialTab?: VolunteerManageTab } | null)?.initialTab ??
+    'applications'
+  const [activeTab, setActiveTab] = useState<VolunteerManageTab>(initialTab)
+  const [historyFilter, setHistoryFilter] =
+    useState<VolunteerHistoryFilter>('all')
   const [volunteerData, setVolunteerData] =
     useState<VolunteerApplicationListResponse | null>(null)
   const [volunteerHistoryData, setVolunteerHistoryData] =
@@ -131,6 +136,12 @@ export function VolunteerApplicationsPage() {
   const [selectedApplication, setSelectedApplication] =
     useState<VolunteerApplicationItem | null>(null)
   const [isCancelling, setIsCancelling] = useState(false)
+
+  useEffect(() => {
+    if (initialTab === 'applications' || initialTab === 'completed') {
+      setActiveTab(initialTab)
+    }
+  }, [initialTab])
 
   useEffect(() => {
     let isMounted = true
@@ -307,7 +318,9 @@ export function VolunteerApplicationsPage() {
     setCancelError('')
 
     try {
-      await cancelVolunteerApplication(selectedApplication.volunteerApplicationId)
+      await cancelVolunteerApplication(
+        selectedApplication.volunteerApplicationId,
+      )
 
       setVolunteerData((prev) => {
         if (!prev) {
@@ -343,7 +356,7 @@ export function VolunteerApplicationsPage() {
               onClick={() => navigate(ROUTE_PATHS.activitySocialVolunteer)}
             />
           }
-          title="봉사 관리"
+          title="봉사 활동 관리"
         />
       }
       nav={<BottomNavigation value="home" onChange={handleBottomNavigation} />}
@@ -502,7 +515,10 @@ export function VolunteerApplicationsPage() {
             {groupedVolunteerHistories.length > 0 ? (
               <div className="space-y-4">
                 {groupedVolunteerHistories.map((group) => (
-                  <section key={group.dateLabel} className="space-y-3 border-b border-gray-200 pb-4 last:border-b-0 last:pb-0">
+                  <section
+                    key={group.dateLabel}
+                    className="space-y-3 border-b border-gray-200 pb-4 last:border-b-0 last:pb-0"
+                  >
                     <div className="px-1">
                       <h3 className="text-[15px] font-semibold text-font-main">
                         {group.dateLabel}
@@ -511,15 +527,14 @@ export function VolunteerApplicationsPage() {
 
                     <div className="space-y-3">
                       {group.items.map((history) => {
-                        const statusBadge = getVolunteerStatusBadge(history.status)
+                        const statusBadge = getVolunteerStatusBadge(
+                          history.status,
+                        )
 
                         return (
                           <Card
                             key={history.volunteerApplicationId}
-                            className="!gap-0 !overflow-hidden !rounded-control !p-0 cursor-pointer"
-                            onClick={() =>
-                              navigate(getVolunteerDetailPath(history.volunteerId))
-                            }
+                            className="!gap-0 !overflow-hidden !rounded-control !p-0"
                           >
                             <div className="space-y-4 px-4 py-4">
                               <div className="flex items-center justify-between gap-4">
@@ -540,7 +555,8 @@ export function VolunteerApplicationsPage() {
                                       onClick={(event) => {
                                         event.stopPropagation()
                                         setOpenStatusInfoId((prev) =>
-                                          prev === history.volunteerApplicationId
+                                          prev ===
+                                          history.volunteerApplicationId
                                             ? null
                                             : history.volunteerApplicationId,
                                         )

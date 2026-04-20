@@ -114,7 +114,7 @@ export const FinancePage = () => {
       contentSpacing="comfortable"
       className="bg-bg-light"
     >
-      <div className="-mx-4 flex flex-col gap-4 bg-bg-light px-(--side-padding) pb-2">
+      <div className="-mx-4 flex flex-col gap-4 bg-bg-light px-(--side-padding) pt-3 pb-2">
         {visibleRecommendation && recommendedItem ? (
           <SavingsRecommendCard
             item={recommendedItem}

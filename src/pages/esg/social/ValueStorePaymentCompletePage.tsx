@@ -119,7 +119,7 @@ export function ValueStorePaymentCompletePage() {
             variant="sub"
             onClick={() => navigate(ROUTE_PATHS.activitySocialStorePurchases)}
           >
-            구매내역 확인하기
+            구매 내역보기
           </Button>
           <Button
             fullWidth

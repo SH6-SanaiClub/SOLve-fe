@@ -31,8 +31,9 @@ const formatPoint = (amount: number) =>
 export function VolunteerAttendanceCompletePage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const state =
-    location.state as VolunteerAttendanceCompleteLocationState | undefined
+  const state = location.state as
+    | VolunteerAttendanceCompleteLocationState
+    | undefined
   const result = state?.result
   const isIncomplete = result?.status === 'INCOMPLETE'
 
@@ -121,7 +122,6 @@ export function VolunteerAttendanceCompletePage() {
                   </div>
                 </div>
               </div>
-
             </div>
           </div>
         ) : (
@@ -151,9 +151,13 @@ export function VolunteerAttendanceCompletePage() {
             fullWidth
             size="md"
             variant="sub"
-            onClick={() => navigate(ROUTE_PATHS.activitySocialVolunteer)}
+            onClick={() =>
+              navigate(ROUTE_PATHS.activitySocialVolunteerApplications, {
+                state: { initialTab: 'completed' },
+              })
+            }
           >
-            봉사 목록으로 가기
+            봉사 활동 내역보기
           </Button>
           <Button
             fullWidth

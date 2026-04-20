@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef } from 'react';
 
 
 // 공통 메인 레이아웃 (MainLayout) 컴포넌트
@@ -31,10 +31,7 @@ const MainLayout: React.FC<Props> = ({
   subHeaderHeight = 48,
   contentSpacing = 'default',
 }) => {
-  const [scrollbarVisible, setScrollbarVisible] = useState(false);
   const scrollElementRef = useRef<HTMLElement | null>(null);
-  const hideScrollbarTimerRef = useRef<number | null>(null);
-  const isMouseDraggingRef = useRef(false);
   const contentTopGapMap = {
     default: 0,
     comfortable: 12,
@@ -53,26 +50,6 @@ const MainLayout: React.FC<Props> = ({
     ? 'calc(var(--nav-h) + env(safe-area-inset-bottom) + 20px)'
     : '1.5rem';
 
-  const clearHideScrollbarTimer = useCallback(() => {
-    if (hideScrollbarTimerRef.current !== null) {
-      window.clearTimeout(hideScrollbarTimerRef.current);
-      hideScrollbarTimerRef.current = null;
-    }
-  }, []);
-
-  const showScrollbarTemporarily = useCallback(() => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    setScrollbarVisible(true);
-    clearHideScrollbarTimer();
-    hideScrollbarTimerRef.current = window.setTimeout(() => {
-      setScrollbarVisible(false);
-      hideScrollbarTimerRef.current = null;
-    }, 560);
-  }, [clearHideScrollbarTimer]);
-
   const setContentNode = useCallback((node: HTMLElement | null) => {
     scrollElementRef.current = node;
 
@@ -87,46 +64,6 @@ const MainLayout: React.FC<Props> = ({
 
     contentRef.current = node;
   }, [contentRef]);
-
-  useEffect(() => {
-    const scrollElement = scrollElementRef.current;
-
-    if (!scrollElement || typeof window === 'undefined') {
-      return;
-    }
-
-    const handlePointerDown = (event: PointerEvent) => {
-      if (event.pointerType === 'mouse') {
-        isMouseDraggingRef.current = true;
-      }
-    };
-
-    const handlePointerUp = () => {
-      isMouseDraggingRef.current = false;
-    };
-
-    const handleScroll = () => {
-      if (isMouseDraggingRef.current) {
-        showScrollbarTemporarily();
-      }
-    };
-
-    scrollElement.addEventListener('pointerdown', handlePointerDown, {
-      passive: true,
-    });
-    scrollElement.addEventListener('scroll', handleScroll, { passive: true });
-    window.addEventListener('pointerup', handlePointerUp, { passive: true });
-    window.addEventListener('pointercancel', handlePointerUp, { passive: true });
-
-    return () => {
-      isMouseDraggingRef.current = false;
-      clearHideScrollbarTimer();
-      scrollElement.removeEventListener('pointerdown', handlePointerDown);
-      scrollElement.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('pointerup', handlePointerUp);
-      window.removeEventListener('pointercancel', handlePointerUp);
-    };
-  }, [clearHideScrollbarTimer, showScrollbarTemporarily]);
 
   return (
     <div
@@ -154,7 +91,6 @@ const MainLayout: React.FC<Props> = ({
           app-scroll-area flex-1 min-h-0 w-full overflow-y-auto overscroll-y-auto
           [-webkit-overflow-scrolling:touch] px-(--side-padding)
         "
-        data-scrollbar-visible={scrollbarVisible ? 'true' : 'false'}
         ref={setContentNode}
         style={{
           scrollPaddingTop: contentPaddingTop,

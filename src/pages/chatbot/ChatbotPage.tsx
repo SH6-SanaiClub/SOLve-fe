@@ -288,7 +288,7 @@ const ChatMessageBubble = ({ message, onActionClick, sequence }: ChatMessageBubb
   if (isUserMessage) {
     return (
       <div className="flex justify-end" style={buildEntranceStyle(messageDelay, 360)}>
-        <Card className="!w-auto !max-w-[82%] !gap-0 !rounded-[20px] !rounded-tr-[6px] !border-0 !bg-primary-500 !px-4 !py-3 text-white shadow-[0_14px_28px_rgba(37,99,235,0.18)] transition-transform duration-300">
+        <Card className="!w-auto !max-w-[82%] !gap-0 !rounded-control !border-0 !bg-primary-400 !px-4 !py-3 text-white shadow-sm transition-transform duration-300">
           <div className="space-y-3 break-words text-sm leading-7">
             {blocks.map((block, index) => (
               <p
@@ -319,7 +319,7 @@ const ChatMessageBubble = ({ message, onActionClick, sequence }: ChatMessageBubb
             <p className="text-[11px] font-semibold text-font-main">SOLve 사용 도우미</p>
           </div>
 
-          <Card className="!w-auto !max-w-full !gap-0 !rounded-[22px] !rounded-tl-[8px] !border-0 !bg-white/95 !px-4 !py-3 text-font-main shadow-[0_16px_32px_rgba(148,163,184,0.18)] transition-[transform,box-shadow] duration-300">
+          <Card className="!w-auto !max-w-full !gap-0 !rounded-control !border !border-gray-100 !bg-white !px-4 !py-3 text-font-main shadow-sm transition-[transform,box-shadow] duration-300">
             <div className="space-y-4 break-words text-sm leading-7">
               {message.isStreaming && !message.content.trim() ? (
                 <div className="flex items-center py-1.5">
@@ -384,7 +384,7 @@ const ChatMessageBubble = ({ message, onActionClick, sequence }: ChatMessageBubb
                   size="sm"
                   fullWidth
                   onClick={() => onActionClick(action.path)}
-                  className="!h-auto !justify-start !rounded-[16px] !border-white/70 !bg-white/85 !px-4 !py-3 !text-left !text-sm !text-font-main !transition-all !duration-300 hover:!translate-x-[2px] hover:!bg-white"
+                  className="!h-auto !justify-start !rounded-control !border-gray-200 !bg-white !px-4 !py-3 !text-left !text-sm !text-font-main shadow-sm"
                   style={buildEntranceStyle(messageDelay + 90 + actionIndex * 50, 340)}
                 >
                   <span className="flex w-full items-center justify-between gap-3">
@@ -812,7 +812,7 @@ export const ChatbotPage = () => {
                 <button
                   type="button"
                   onClick={() => void handleResetChat()}
-                  className="inline-flex h-9 items-center rounded-full bg-white px-3.5 text-xs font-semibold text-primary-600 transition-colors hover:text-primary-700"
+                  className="inline-flex items-center text-xs font-semibold text-primary-600 transition-colors hover:text-primary-700"
                 >
                   새로 채팅하기
                 </button>
@@ -854,7 +854,7 @@ export const ChatbotPage = () => {
                       type="button"
                       onClick={() => handleQuestionClick(question)}
                       disabled={isBusy}
-                      className="w-full rounded-[18px] border border-white/70 bg-white/90 px-4 py-3 text-left text-sm text-font-main shadow-sm transition-all duration-300 hover:-translate-y-[1px] hover:bg-white disabled:cursor-not-allowed disabled:opacity-50"
+                      className="w-full rounded-control border border-gray-100 bg-white px-4 py-3 text-left text-sm text-font-main shadow-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50"
                       style={buildEntranceStyle(index * 55, 420)}
                     >
                       {question}
@@ -886,7 +886,7 @@ export const ChatbotPage = () => {
       <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
         <div
           ref={bottomOverlayRef}
-          className="pointer-events-auto mx-auto flex w-full max-w-[600px] flex-col gap-2 bg-transparent px-(--side-padding) pb-[calc(env(safe-area-inset-bottom)+16px)]"
+          className="pointer-events-auto mx-auto flex w-full max-w-[600px] flex-col gap-2 px-(--side-padding) pt-3"
           style={buildEntranceStyle(40, 520)}
         >
           {messages.length > 0 && !isStreaming ? (
@@ -897,7 +897,7 @@ export const ChatbotPage = () => {
                   type="button"
                   onClick={() => handleQuestionClick(question)}
                   disabled={isBusy}
-                  className="shrink-0 rounded-full border border-white/80 bg-white/90 px-4 py-2 text-xs font-medium text-font-main shadow-sm transition-all duration-300 hover:-translate-y-[1px] hover:bg-white"
+                  className="shrink-0 rounded-control border border-gray-200 bg-white px-4 py-2 text-xs font-medium text-font-main shadow-sm transition-colors"
                   style={{
                     animation: `chatChipRise 360ms cubic-bezier(0.22, 1, 0.36, 1) both`,
                     animationDelay: `${index * CHIP_STAGGER_MS}ms`,
@@ -909,34 +909,36 @@ export const ChatbotPage = () => {
             </div>
           ) : null}
 
-          <div className="flex items-end gap-2 rounded-[22px] border border-white/80 bg-white/95 px-3 py-2 shadow-lg shadow-[#AEC5FF]/25 backdrop-blur transition-all duration-300 focus-within:-translate-y-[1px] focus-within:border-white focus-within:shadow-[0_18px_40px_rgba(174,197,255,0.34)]">
-            <textarea
-              value={input}
-              onChange={handleInputChange}
-              onCompositionStart={handleCompositionStart}
-              onCompositionEnd={handleCompositionEnd}
-              onKeyDown={handleKeyDown}
-              rows={1}
-              placeholder={
-                isLoadingHistory
-                  ? '대화 내역을 불러오는 중...'
-                  : isResettingHistory
-                    ? '새 대화를 준비하는 중...'
-                    : '메시지를 입력하세요...'
-              }
-              disabled={isLoadingHistory || isResettingHistory}
-              className="max-h-[120px] min-h-[24px] flex-1 resize-none bg-transparent py-2 text-sm leading-6 text-font-main placeholder:text-font-sub outline-none"
-            />
+          <div className="-mx-(--side-padding) bg-[#EDF3FF] px-(--side-padding) pt-2 pb-[calc(env(safe-area-inset-bottom)+16px)]">
+            <div className="flex items-end gap-2 rounded-control border border-gray-200 bg-white px-3 py-2 shadow-sm transition-colors focus-within:border-primary-400">
+              <textarea
+                value={input}
+                onChange={handleInputChange}
+                onCompositionStart={handleCompositionStart}
+                onCompositionEnd={handleCompositionEnd}
+                onKeyDown={handleKeyDown}
+                rows={1}
+                placeholder={
+                  isLoadingHistory
+                    ? '대화 내역을 불러오는 중...'
+                    : isResettingHistory
+                      ? '새 대화를 준비하는 중...'
+                      : '메시지를 입력하세요...'
+                }
+                disabled={isLoadingHistory || isResettingHistory}
+                className="max-h-[120px] min-h-[24px] flex-1 resize-none bg-transparent py-2 text-sm leading-6 text-font-main placeholder:text-font-sub outline-none"
+              />
 
-            <Button
-              type="button"
-              size="sm"
-              onClick={() => void handleSend(input)}
-              disabled={!input.trim() || isBusy}
-              className="!h-10 !w-10 !rounded-full !p-0 !transition-transform !duration-300 enabled:hover:!scale-[1.04] enabled:hover:!shadow-[0_10px_22px_rgba(37,99,235,0.24)]"
-            >
-              <Icons.ArrowRight size={18} />
-            </Button>
+              <Button
+                type="button"
+                size="sm"
+                onClick={() => void handleSend(input)}
+                disabled={!input.trim() || isBusy}
+                className="!h-10 !w-10 !rounded-control !p-0 shadow-sm"
+              >
+                <Icons.ArrowRight size={18} />
+              </Button>
+            </div>
           </div>
         </div>
       </div>

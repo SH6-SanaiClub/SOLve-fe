@@ -100,21 +100,11 @@
 @media (pointer: fine) {
   .app-scroll-area {
     scrollbar-width: none;
-    scrollbar-color: rgba(148, 163, 184, 0.55) transparent;
   }
 
   .app-scroll-area::-webkit-scrollbar {
     width: 0;
     height: 0;
-  }
-
-  .app-scroll-area[data-scrollbar-visible='true'] {
-    scrollbar-width: thin;
-  }
-
-  .app-scroll-area[data-scrollbar-visible='true']::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
   }
 
   .app-scroll-area::-webkit-scrollbar-track {
@@ -124,11 +114,5 @@
   .app-scroll-area::-webkit-scrollbar-thumb {
     background: transparent;
     border-radius: 9999px;
-  }
-
-  .app-scroll-area[data-scrollbar-visible='true']::-webkit-scrollbar-thumb {
-    background: rgba(148, 163, 184, 0.55);
-    border: 2px solid transparent;
-    background-clip: padding-box;
   }
 }

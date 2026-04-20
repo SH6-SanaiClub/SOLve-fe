@@ -11,6 +11,7 @@ import { GovernanceQuizPage } from '../pages/esg/governance/GovernanceQuizPage'
 import { GovernanceQuizResultPage } from '../pages/esg/governance/GovernanceQuizResultPage'
 
 import { DonationDetailPage } from '../pages/esg/social/DonationDetailPage'
+import { DonationHistoryPage } from '../pages/esg/social/DonationHistoryPage'
 import { DonationPaymentPage } from '../pages/esg/social/DonationPaymentPage'
 import { DonationPaymentRedirectPage } from '../pages/esg/social/DonationPaymentRedirectPage'
 import { DonationPaymentCompletePage } from '../pages/esg/social/DonationPaymentCompletePage'
@@ -133,6 +134,10 @@ function AppRoutes() {
             <Route
               path={ROUTE_PATHS.activitySocialDonation}
               element={<DonationPage />}
+            />
+            <Route
+              path={ROUTE_PATHS.activitySocialDonationHistory}
+              element={<DonationHistoryPage />}
             />
             <Route
               path={ROUTE_PATHS.activitySocialStore}
@@ -330,4 +335,3 @@ export function AppRouter() {
     </BrowserRouter>
   )
 }
-

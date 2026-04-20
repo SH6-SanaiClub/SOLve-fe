@@ -18,6 +18,16 @@ const formatCurrency = (amount: number) =>
 const formatNumber = (value: number) =>
   new Intl.NumberFormat('ko-KR').format(value)
 
+const isDonationEnded = (endDate: string) => {
+  const end = new Date(endDate)
+
+  if (Number.isNaN(end.getTime())) {
+    return false
+  }
+
+  return end.getTime() < Date.now()
+}
+
 const resolveImageUrl = (imageUrl: string) => {
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
     return imageUrl
@@ -76,6 +86,8 @@ export function DonationDetailPage() {
   useEffect(() => {
     void requestDonationDetail()
   }, [requestDonationDetail])
+
+  const hasEnded = donationDetail ? isDonationEnded(donationDetail.endDate) : false
 
   return (
     <MainLayout
@@ -228,9 +240,11 @@ export function DonationDetailPage() {
                 '참여 정보 없음'
               )
             }
-            buttonLabel="후원하기"
+            buttonLabel={hasEnded ? '종료된 캠페인입니다' : '후원하기'}
+            buttonVariant={hasEnded ? 'gray' : 'primary'}
+            buttonDisabled={hasEnded}
             onButtonClick={
-              donationDetail
+              donationDetail && !hasEnded
                 ? () =>
                     navigate(getDonationPaymentPath(donationDetail.donationId))
                 : undefined

@@ -33,6 +33,12 @@ const menuItems = [
     path: ROUTE_PATHS.myReport,
   },
   {
+    key: 'donationHistory',
+    label: '기부 후원 내역',
+    icon: <Store size={18} />,
+    path: ROUTE_PATHS.activitySocialDonationHistory,
+  },
+  {
     key: 'storePurchase',
     label: '가치가게 구매 내역',
     icon: <Store size={18} />,
@@ -54,7 +60,7 @@ const menuItems = [
 
 const accountMenuItems = menuItems.filter((item) => item.key === 'profile')
 const activityMenuItems = menuItems.filter((item) =>
-  ['grade', 'storePurchase', 'report', 'point'].includes(item.key),
+  ['grade', 'donationHistory', 'storePurchase', 'report', 'point'].includes(item.key),
 )
 const financeMenuItems = menuItems.filter((item) =>
   ['finance'].includes(item.key),

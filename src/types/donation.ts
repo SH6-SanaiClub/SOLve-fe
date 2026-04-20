@@ -23,6 +23,20 @@ export interface DonationListResponse {
   donations: DonationCampaign[]
 }
 
+export interface DonationHistoryItem {
+  donationLogId: number
+  donationId: number
+  organization: string
+  name: string
+  imageUrl: string
+  donatedAt: string
+  amount: number
+}
+
+export interface DonationHistoryResponse {
+  donations: DonationHistoryItem[]
+}
+
 export interface DonationDetail {
   donationId: number
   name: string

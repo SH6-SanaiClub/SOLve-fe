@@ -13,6 +13,7 @@ import type { GovernanceQuizResult } from '../../../types/governanceQuiz'
 
 interface ResultLocationState {
   result?: GovernanceQuizResult
+  returnTo?: string
 }
 
 function AnswerRow({
@@ -53,6 +54,7 @@ export function GovernanceQuizResultPage() {
   const routeState = location.state as ResultLocationState | undefined
   const [result, setResult] = useState<GovernanceQuizResult | null>(routeState?.result ?? null)
   const [isLoading, setIsLoading] = useState(!routeState?.result)
+  const backTarget = routeState?.returnTo ?? ROUTE_PATHS.home
 
   useEffect(() => {
     if (routeState?.result) {
@@ -72,7 +74,7 @@ export function GovernanceQuizResultPage() {
         }
 
         if (todayQuiz.status !== 'completed') {
-          navigate(ROUTE_PATHS.home, { replace: true })
+          navigate(backTarget, { replace: true })
           return
         }
 
@@ -82,7 +84,7 @@ export function GovernanceQuizResultPage() {
           return
         }
 
-        navigate(ROUTE_PATHS.home, { replace: true })
+        navigate(backTarget, { replace: true })
       } finally {
         if (mounted) {
           setIsLoading(false)
@@ -95,7 +97,7 @@ export function GovernanceQuizResultPage() {
     return () => {
       mounted = false
     }
-  }, [navigate, routeState?.result])
+  }, [backTarget, navigate, routeState?.result])
 
   if (isLoading) {
     return (
@@ -109,7 +111,7 @@ export function GovernanceQuizResultPage() {
                 label="뒤로 가기"
                 icon={<Icons.Back size={20} />}
                 size="sm"
-                onClick={() => navigate(ROUTE_PATHS.home, { replace: true })}
+                onClick={() => navigate(backTarget, { replace: true })}
               />
             }
             title="오늘의 퀴즈"
@@ -148,11 +150,11 @@ export function GovernanceQuizResultPage() {
           bgColor="bg-white"
           left={
             <IconButton
-              label="뒤로 가기"
-              icon={<Icons.Back size={20} />}
-              size="sm"
-              onClick={() => navigate(ROUTE_PATHS.home, { replace: true })}
-            />
+                label="뒤로 가기"
+                icon={<Icons.Back size={20} />}
+                size="sm"
+                onClick={() => navigate(backTarget, { replace: true })}
+              />
           }
           title="오늘의 퀴즈"
           right={<div className="w-8" aria-hidden="true" />}

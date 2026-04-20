@@ -1,7 +1,7 @@
 ﻿import { useEffect, useLayoutEffect, useState } from 'react'
 import { AlertCircle, LoaderCircle } from 'lucide-react'
 import axios from 'axios'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, IconButton, Icons } from '../../../components/common'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
@@ -52,7 +52,9 @@ function QuizChoiceButton({
 
 export function GovernanceQuizPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { goBack } = useReturnNavigation(ROUTE_PATHS.home)
+  const routeState = location.state as { returnTo?: string } | undefined
   const completeImage = getS3AssetUrl('quiz.png')
   const [quiz, setQuiz] = useState<GovernanceQuizToday | null>(null)
   const [completedQuiz, setCompletedQuiz] = useState<GovernanceQuizToday | null>(null)
@@ -161,7 +163,10 @@ export function GovernanceQuizPage() {
       )
 
       navigate(ROUTE_PATHS.esgQuizResult, {
-        state: { result },
+        state: {
+          result,
+          returnTo: routeState?.returnTo,
+        },
       })
     } catch {
       setError('답안 제출에 실패했어요. 다시 한번 시도해 주세요.')

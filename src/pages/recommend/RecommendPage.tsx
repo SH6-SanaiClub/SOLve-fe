@@ -229,7 +229,7 @@ export const RecommendPage = () => {
           <p className="text-sm text-font-sub">{error}</p>
         </div>
       ) : data ? (
-        <div className="mt-2 flex flex-col gap-5">
+        <div className="flex flex-col gap-5 py-5">
           <AiSummaryCard userName={userName} llmSummary={data.llmSummary} />
 
           {data.activities.map((activity) => (

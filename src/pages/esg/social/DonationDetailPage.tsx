@@ -19,6 +19,16 @@ const formatCurrency = (amount: number) =>
 const formatNumber = (value: number) =>
   new Intl.NumberFormat('ko-KR').format(value)
 
+const isDonationEnded = (endDate: string) => {
+  const end = new Date(endDate)
+
+  if (Number.isNaN(end.getTime())) {
+    return false
+  }
+
+  return end.getTime() < Date.now()
+}
+
 const resolveImageUrl = (imageUrl: string) => {
   if (imageUrl.startsWith('http://') || imageUrl.startsWith('https://')) {
     return imageUrl
@@ -78,6 +88,8 @@ export function DonationDetailPage() {
   useEffect(() => {
     void requestDonationDetail()
   }, [requestDonationDetail])
+
+  const hasEnded = donationDetail ? isDonationEnded(donationDetail.endDate) : false
 
   return (
     <MainLayout
@@ -203,11 +215,11 @@ export function DonationDetailPage() {
 
                 <section className="px-[24px] pt-6">
                   <div className="flex flex-col gap-[11px]">
-                    <h3 className="text-base leading-7 font-semibold text-gray-800">
-                      함께 나무를 심어주세요
-                    </h3>
                     <p className="whitespace-pre-line text-base leading-[26px] font-normal text-gray-500">
                       {donationDetail.description}
+                    </p>
+                    <p className="text-base leading-[26px] font-normal text-gray-400">
+                      해당 캠페인은 {donationDetail.organization}과 함께합니다.
                     </p>
                   </div>
                 </section>
@@ -217,15 +229,24 @@ export function DonationDetailPage() {
 
           <BottomActionBar
             leftText={
-              isLoading
-                ? '불러오는 중...'
-                : donationDetail
-                  ? `${formatNumber(donationDetail.participantCount)}명 참여`
-                  : '참여 정보 없음'
+              isLoading ? (
+                '불러오는 중...'
+              ) : donationDetail ? (
+                <>
+                  <span className=" text-primary-400">
+                    {formatNumber(donationDetail.participantCount)}
+                  </span>
+                  <span>명 참여</span>
+                </>
+              ) : (
+                '참여 정보 없음'
+              )
             }
-            buttonLabel="후원하기"
+            buttonLabel={hasEnded ? '종료된 캠페인입니다' : '후원하기'}
+            buttonVariant={hasEnded ? 'gray' : 'primary'}
+            buttonDisabled={hasEnded}
             onButtonClick={
-              donationDetail
+              donationDetail && !hasEnded
                 ? () =>
                     navigate(getDonationPaymentPath(donationDetail.donationId))
                 : undefined

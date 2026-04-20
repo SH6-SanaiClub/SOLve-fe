@@ -191,12 +191,12 @@ export const FinanceDetailPage = () => {
   }
 
   const renderDetailFeedback = (description: string, tone: 'default' | 'error' = 'default') => (
-    <div className="relative min-h-screen bg-bg-light font-pretendard">
+    <div className="relative min-h-screen font-pretendard">
       <MainLayout
         header={<ShopHeader title="금융상품" onBack={handleBack} />}
-        className="bg-bg-light"
+        className="bg-white"
       >
-        <div className="-mx-2 flex flex-col gap-4 bg-bg-light px-5 pb-[118px] pt-10">
+        <div className="-mx-(--side-padding) flex min-h-[calc(100dvh-var(--header-h)-env(safe-area-inset-top))] flex-col gap-4 bg-gray-50 px-5 pb-[88px] pt-6">
           <Card className="!rounded-control !border-0 !px-5 !py-6 shadow-sm">
             <p className={`text-sm ${tone === 'error' ? 'text-red-500' : 'text-gray-500'}`}>
               {description}
@@ -224,12 +224,12 @@ export const FinanceDetailPage = () => {
     ]
 
     return (
-      <div className="relative min-h-screen bg-bg-light font-pretendard">
+      <div className="relative min-h-screen font-pretendard">
         <MainLayout
           header={<ShopHeader title="금융상품" onBack={handleBack} />}
-          className="bg-bg-light"
+          className="bg-white"
         >
-          <div className="-mx-2 flex flex-col gap-[28px] bg-bg-light px-5 pb-[118px] pt-10">
+          <div className="-mx-(--side-padding) flex min-h-[calc(100dvh-var(--header-h)-env(safe-area-inset-top))] flex-col gap-[28px] bg-gray-50 px-5 pb-[88px] pt-6">
             <section className="flex items-start justify-between gap-3 px-[1px]">
               <div className="min-w-0 flex-1">
                 <h2 className="text-[22px] font-semibold leading-[1.2] text-font-main">
@@ -261,7 +261,7 @@ export const FinanceDetailPage = () => {
               ))}
             </div>
 
-            <Card className="!gap-1 !rounded-control !border-0 !bg-gray-200 !px-[23px] !py-[18px] shadow-sm">
+            <Card className="!gap-1 !rounded-control !border-0 !bg-gray-100 !px-[23px] !py-[18px] shadow-sm">
               <h3 className="text-[16px] font-semibold leading-[1.2] text-gray-600">우대 조건</h3>
               <p className="mt-[6px] text-[12px] leading-[22.75px] text-gray-600">
                 ESG 점수가 오를 때마다 우대 혜택이 적용돼요.
@@ -279,7 +279,7 @@ export const FinanceDetailPage = () => {
         </MainLayout>
 
         <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
-          <div className="pointer-events-auto mx-auto w-full max-w-[600px] border-t border-gray-200 bg-white px-(--side-padding) pb-[calc(16px+env(safe-area-inset-bottom))] pt-4 shadow-[var(--shadow-card)]">
+          <div className="pointer-events-auto mx-auto w-full max-w-[600px] -translate-y-px bg-white px-(--side-padding) pb-[calc(16px+env(safe-area-inset-bottom))] pt-4">
             <Button
               type="button"
               fullWidth
@@ -304,12 +304,12 @@ export const FinanceDetailPage = () => {
     )
 
     return (
-      <div className="relative min-h-screen bg-bg-light font-pretendard">
+      <div className="relative min-h-screen font-pretendard">
         <MainLayout
           header={<ShopHeader title="금융상품" onBack={handleBack} />}
-          className="bg-bg-light"
+          className="bg-white"
         >
-          <div className="-mx-2 flex flex-col gap-[27px] bg-bg-light px-5 pb-[118px] pt-10">
+          <div className="-mx-(--side-padding) flex min-h-[calc(100dvh-var(--header-h)-env(safe-area-inset-top))] flex-col gap-[27px] bg-gray-50 px-5 pb-[88px] pt-6">
             <section className="flex items-center justify-between gap-2 px-[1px]">
               <div className="min-w-0 flex-1">
                 <h2 className="text-[21px] font-semibold leading-[1.2] text-font-main">
@@ -354,16 +354,11 @@ export const FinanceDetailPage = () => {
             </div>
 
             <div className="flex flex-col gap-[27px]">
-              <Card className="!gap-1 !rounded-control !border-0 !bg-gray-200 !px-[23px] !py-[18px] shadow-sm">
+              <Card className="!gap-1 !rounded-control !border-0 !bg-gray-100 !px-[23px] !py-[18px] shadow-sm">
                 <h3 className="text-[16px] font-semibold leading-[1.2] text-gray-600">상품 안내</h3>
                 <p className="mt-[6px] text-[12px] leading-[22.75px] text-gray-600">
                   {savingsProduct.description ?? ''}
                 </p>
-                {!isSavingsAvailable ? (
-                  <p className="mt-2 text-[12px] leading-[22.75px] text-primary-500">
-                    {savingsUnavailableLabel}
-                  </p>
-                ) : null}
               </Card>
 
               {renderNoticeBlock(FINANCE_NOTICE_LINES)}
@@ -378,7 +373,7 @@ export const FinanceDetailPage = () => {
         </MainLayout>
 
         <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
-          <div className="pointer-events-auto mx-auto w-full max-w-[600px] border-t border-gray-200 bg-white px-(--side-padding) pb-[calc(16px+env(safe-area-inset-bottom))] pt-4 shadow-[var(--shadow-card)]">
+          <div className="pointer-events-auto mx-auto w-full max-w-[600px] -translate-y-px bg-white px-(--side-padding) pb-[calc(16px+env(safe-area-inset-bottom))] pt-4">
             <Button
               type="button"
               fullWidth

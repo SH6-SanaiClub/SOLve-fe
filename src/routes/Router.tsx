@@ -11,6 +11,7 @@ import { GovernanceQuizPage } from '../pages/esg/governance/GovernanceQuizPage'
 import { GovernanceQuizResultPage } from '../pages/esg/governance/GovernanceQuizResultPage'
 
 import { DonationDetailPage } from '../pages/esg/social/DonationDetailPage'
+import { DonationHistoryPage } from '../pages/esg/social/DonationHistoryPage'
 import { DonationPaymentPage } from '../pages/esg/social/DonationPaymentPage'
 import { DonationPaymentRedirectPage } from '../pages/esg/social/DonationPaymentRedirectPage'
 import { DonationPaymentCompletePage } from '../pages/esg/social/DonationPaymentCompletePage'
@@ -22,6 +23,7 @@ import { ValueStorePaymentCompletePage } from '../pages/esg/social/ValueStorePay
 import { ValueStorePaymentPage } from '../pages/esg/social/ValueStorePaymentPage'
 import { ValueStorePaymentRedirectPage } from '../pages/esg/social/ValueStorePaymentRedirectPage'
 import { ValueStorePage } from '../pages/esg/social/ValueStorePage'
+import { ValueStorePurchaseHistoryPage } from '../pages/esg/social/ValueStorePurchaseHistoryPage'
 import { VolunteerAttendanceCompletePage } from '../pages/esg/social/VolunteerAttendanceCompletePage'
 import { VolunteerAttendancePage } from '../pages/esg/social/VolunteerAttendancePage'
 import { VolunteerCompletePage } from '../pages/esg/social/VolunteerCompletePage'
@@ -134,8 +136,16 @@ function AppRoutes() {
               element={<DonationPage />}
             />
             <Route
+              path={ROUTE_PATHS.activitySocialDonationHistory}
+              element={<DonationHistoryPage />}
+            />
+            <Route
               path={ROUTE_PATHS.activitySocialStore}
               element={<ValueStorePage />}
+            />
+            <Route
+              path={ROUTE_PATHS.activitySocialStorePurchases}
+              element={<ValueStorePurchaseHistoryPage />}
             />
             <Route
               path={ROUTE_PATHS.activitySocialVolunteer}
@@ -325,5 +335,3 @@ export function AppRouter() {
     </BrowserRouter>
   )
 }
-
-

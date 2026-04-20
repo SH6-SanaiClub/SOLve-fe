@@ -1,6 +1,14 @@
 ﻿import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Badge, Card, IconButton, Icons, InfoRow, ProgressBar, SectionHeader } from '../../components/common'
+import {
+  Badge,
+  Card,
+  IconButton,
+  Icons,
+  InfoRow,
+  ProgressBar,
+  SectionHeader,
+} from '../../components/common'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import Header from '../../components/layout/Header'
 import MainLayout from '../../components/layout/MainLayout'
@@ -76,10 +84,11 @@ export function HomePage() {
     await refreshSummary()
   }, [refreshSummary])
 
-  const { isPulling, isRefreshing, pullDistance, pullProgress } = usePullToRefresh({
-    containerRef: contentRef,
-    onRefresh: handleRefresh,
-  })
+  const { isPulling, isRefreshing, pullDistance, pullProgress } =
+    usePullToRefresh({
+      containerRef: contentRef,
+      onRefresh: handleRefresh,
+    })
 
   const userName = summary?.name ?? user?.name ?? '000'
   const gradeLabel = getGradeLabel(summary?.currentGrade ?? user?.currentGrade)
@@ -118,8 +127,16 @@ export function HomePage() {
       entranceAnimation = chatbotImage.animate(
         [
           { opacity: 0, transform: 'translateY(8px) scale(0.97)' },
-          { opacity: 0.84, transform: 'translateY(1px) scale(1)', offset: 0.64 },
-          { opacity: 1, transform: 'translateY(-4px) scale(1.02)', offset: 0.86 },
+          {
+            opacity: 0.84,
+            transform: 'translateY(1px) scale(1)',
+            offset: 0.64,
+          },
+          {
+            opacity: 1,
+            transform: 'translateY(-4px) scale(1.02)',
+            offset: 0.86,
+          },
           { opacity: 1, transform: 'translateY(0) scale(1)' },
         ],
         {
@@ -187,7 +204,9 @@ export function HomePage() {
 
   const handleBottomNavigation = (key: string) => {
     const nextPath =
-      BOTTOM_NAVIGATION_ROUTE_BY_KEY[key as keyof typeof BOTTOM_NAVIGATION_ROUTE_BY_KEY]
+      BOTTOM_NAVIGATION_ROUTE_BY_KEY[
+        key as keyof typeof BOTTOM_NAVIGATION_ROUTE_BY_KEY
+      ]
 
     if (nextPath) {
       navigate(nextPath)
@@ -200,7 +219,13 @@ export function HomePage() {
       header={
         <Header
           bgColor="bg-bg-light"
-          left={<img src={headerLogo} alt="SOLve" className="h-[36px] w-auto object-contain" />}
+          left={
+            <img
+              src={headerLogo}
+              alt="SOLve"
+              className="h-[36px] w-auto object-contain"
+            />
+          }
           right={
             <div className="flex items-center gap-2">
               <IconButton
@@ -240,7 +265,9 @@ export function HomePage() {
           style={{
             opacity: pullDistance > 0 || isRefreshing ? 1 : 0,
             transform: `translateY(${Math.max(pullDistance * 0.72 - 6, 0)}px)`,
-            transition: isPulling ? 'none' : 'opacity 180ms ease, transform 180ms ease',
+            transition: isPulling
+              ? 'none'
+              : 'opacity 180ms ease, transform 180ms ease',
           }}
         >
           <PullRefreshSpinner
@@ -258,7 +285,7 @@ export function HomePage() {
         >
           <div className="mt-5 flex flex-col gap-3">
             <section className="pl-3">
-              <div className="flex min-w-0 flex-col justify-center py-2">
+              <div className="flex min-w-0 flex-col justify-center gap-[4px] py-2">
                 <p className="text-xl leading-[1.1] tracking-tight font-semibold">
                   <span className="text-primary-500">{userName}</span>
                   <span className="text-gray-700">님,</span>
@@ -275,7 +302,8 @@ export function HomePage() {
                   <SectionHeader
                     title={
                       <span className="text-lg font-semibold text-gray-700">
-                        나의 등급 <span className="text-primary-500">{gradeLabel}</span>
+                        나의 등급{' '}
+                        <span className="text-primary-500">{gradeLabel}</span>
                       </span>
                     }
                     right={
@@ -287,8 +315,16 @@ export function HomePage() {
                   <ProgressBar value={gradeProgress.visualValue} max={100} />
                   <div className="h-px w-full bg-gray-100" />
                   <InfoRow
-                    label={<span className="text-base font-medium text-gray-500">보유 포인트</span>}
-                    value={<span className="text-base font-medium text-gray-500">{formattedPoints}</span>}
+                    label={
+                      <span className="text-base font-medium text-gray-500">
+                        보유 포인트
+                      </span>
+                    }
+                    value={
+                      <span className="text-base font-medium text-gray-500">
+                        {formattedPoints}
+                      </span>
+                    }
                     className="items-center"
                   />
                 </div>
@@ -308,7 +344,9 @@ export function HomePage() {
                     title="친환경 활동"
                     variant="outline"
                     onClick={() =>
-                      navigate(ROUTE_PATHS.esgEnv, { state: { backgroundLocation: location } })
+                      navigate(ROUTE_PATHS.esgEnv, {
+                        state: { backgroundLocation: location },
+                      })
                     }
                   />
                   <DashboardActionTile
@@ -322,8 +360,16 @@ export function HomePage() {
               <Card className="!h-[141px]">
                 <div className="space-y-4">
                   <SectionHeader
-                    title={<span className="text-base font-semibold text-gray-700">이번주 나의 활동</span>}
-                    right={<span className="text-xs font-medium text-gray-400">{weekRangeLabel}</span>}
+                    title={
+                      <span className="text-base font-semibold text-gray-700">
+                        이번주 나의 활동
+                      </span>
+                    }
+                    right={
+                      <span className="text-xs font-medium text-gray-400">
+                        {weekRangeLabel}
+                      </span>
+                    }
                   />
                   <WeeklyActivityTracker items={weeklyActivities} />
                 </div>
@@ -349,14 +395,20 @@ export function HomePage() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
-                        <Badge tone="danger" variant="soft" className="!px-[10px] !py-[4px]">
+                        <Badge
+                          tone="danger"
+                          variant="soft"
+                          className="!px-[10px] !py-[4px]"
+                        >
                           HOT
                         </Badge>
                         <span className="text-xs font-medium text-gray-500">
                           지금 가장 많이 참여 중인 활동
                         </span>
                       </div>
-                      <p className="mt-3 text-base font-semibold text-gray-700">오늘의 ESG 퀴즈</p>
+                      <p className="mt-3 text-base font-semibold text-gray-700">
+                        오늘의 ESG 퀴즈
+                      </p>
                       <p className="mt-1 text-sm leading-5 text-gray-500">
                         짧게 참여하고 점수와 포인트를 함께 받을 수 있어요
                       </p>
@@ -367,7 +419,9 @@ export function HomePage() {
                   </div>
 
                   <div className="mt-4 flex items-center justify-between gap-3">
-                    <span className="text-sm font-semibold text-gray-300">+10점 · +300P</span>
+                    <span className="text-sm font-semibold text-gray-300">
+                      +10점 · +300P
+                    </span>
                     <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-gray-500 shadow-sm">
                       1분 참여
                     </span>
@@ -391,7 +445,10 @@ export function HomePage() {
                         </p>
                       </div>
 
-                      <Icons.ArrowRight className="mt-1 shrink-0 text-gray-400" size={18} />
+                      <Icons.ArrowRight
+                        className="mt-1 shrink-0 text-gray-400"
+                        size={18}
+                      />
                     </div>
                   </div>
                 </Card>
@@ -403,23 +460,34 @@ export function HomePage() {
                   <div className="bg-white px-5 py-4">
                     <div className="flex items-start justify-between gap-4">
                       <div className="min-w-0">
-                        <Badge tone="danger" variant="soft" className="!px-[10px] !py-[4px]">
+                        <Badge
+                          tone="danger"
+                          variant="soft"
+                          className="!px-[10px] !py-[4px]"
+                        >
                           인기
                         </Badge>
                         <span className="text-xs font-medium text-gray-500">
                           지금 가장 많이 참여 중인 활동
                         </span>
-                        <p className="mt-2 text-base font-semibold text-gray-700">오늘의 ESG 퀴즈</p>
+                        <p className="mt-2 text-base font-semibold text-gray-700">
+                          오늘의 ESG 퀴즈
+                        </p>
                         <p className="mt-1 text-sm leading-5 text-gray-500">
                           짧게 참여하고 점수와 포인트를 함께 받을 수 있어요
                         </p>
                       </div>
 
-                      <Icons.ArrowRight className="mt-1 shrink-0 text-gray-400" size={18} />
+                      <Icons.ArrowRight
+                        className="mt-1 shrink-0 text-gray-400"
+                        size={18}
+                      />
                     </div>
 
                     <div className="mt-4 flex items-center justify-between gap-3 border-t border-gray-100 pt-3">
-                      <span className="text-sm font-semibold text-primary-500">+10점 · +300P</span>
+                      <span className="text-sm font-semibold text-primary-500">
+                        +10점 · +300P
+                      </span>
                       <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-gray-500 shadow-sm">
                         약 1분
                       </span>
@@ -436,12 +504,17 @@ export function HomePage() {
                   <div className="bg-white px-5 py-4">
                     <div className="flex items-center justify-between gap-4">
                       <div className="min-w-0">
-                        <p className="text-base font-semibold text-gray-700">AI 맞춤 활동 추천</p>
+                        <p className="text-base font-semibold text-gray-700">
+                          AI 맞춤 활동 추천
+                        </p>
                         <p className="text-xs leading-5 text-gray-500">
                           내 활동에 맞는 추천을 확인해보세요
                         </p>
                       </div>
-                      <Icons.ArrowRight className="shrink-0 text-gray-500" size={24} />
+                      <Icons.ArrowRight
+                        className="shrink-0 text-gray-500"
+                        size={24}
+                      />
                     </div>
                   </div>
                 </Card>

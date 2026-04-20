@@ -100,7 +100,7 @@ export const FinanceApplyPage = () => {
 
   if (isLoading) {
     return (
-      <div className="relative min-h-screen bg-bg-light font-pretendard">
+      <div className="relative min-h-screen bg-white font-pretendard">
         <div className="fixed inset-y-0 left-1/2 z-[110] flex w-full max-w-[600px] -translate-x-1/2 items-center justify-center px-6 py-8">
           <section className="flex w-full max-w-[320px] flex-col items-center rounded-[12px] bg-white px-6 py-7 text-center shadow-[0_20px_48px_rgba(15,23,42,0.14)]">
             <LoaderCircle className="animate-spin text-primary-500" size={28} />
@@ -122,7 +122,7 @@ export const FinanceApplyPage = () => {
 
   if (!preview.available) {
     return (
-      <div className="relative min-h-screen bg-bg-light font-pretendard">
+      <div className="relative min-h-screen bg-white font-pretendard">
         <div className="fixed inset-y-0 left-1/2 z-[110] flex w-full max-w-[600px] -translate-x-1/2 items-center justify-center px-6 py-8">
           <button
             type="button"
@@ -171,12 +171,12 @@ export const FinanceApplyPage = () => {
     : []
 
   return (
-    <div className="relative min-h-screen bg-bg-light font-pretendard">
+    <div className="relative min-h-screen bg-white font-pretendard">
       <MainLayout
         header={<ShopHeader title="대출 신청" onBack={handleBack} />}
-        className="bg-bg-light"
+        className="bg-white"
       >
-        <div className="-mx-2 flex flex-col gap-8 bg-bg-light px-5 pb-[118px] pt-5">
+        <div className="-mx-(--side-padding) flex min-h-[calc(100dvh-var(--header-h)-env(safe-area-inset-top))] flex-col gap-8 bg-gray-50 px-5 pb-[118px] pt-5">
           <section className="px-[1px] pt-1 text-center">
             <h2 className="text-[22px] font-semibold leading-[1.25] text-font-main">
               {preview.available ? `${preview.name} 신청` : `${preview.name} 한도 조회`}
@@ -210,15 +210,6 @@ export const FinanceApplyPage = () => {
             </Card>
           )}
 
-          <div className="px-[3px]">
-            <h3 className="text-[12px] font-semibold leading-[1.2] text-gray-500">알아두세요</h3>
-            <div className="mt-[8px] flex flex-col gap-0 text-[12px] leading-[22.75px] text-gray-500">
-              {LOAN_NOTICE_LINES.map((line) => (
-                <p key={line}>{line}</p>
-              ))}
-            </div>
-          </div>
-
           {preview.available ? (
             <Card className="!gap-2 !rounded-control !border-0 !bg-gray-100 !px-[23px] !py-[18px] shadow-sm">
               <h3 className="text-[16px] font-semibold leading-[1.2] text-gray-600">신청 전 확인</h3>
@@ -227,6 +218,15 @@ export const FinanceApplyPage = () => {
               </p>
             </Card>
           ) : null}
+
+          <div className="px-[3px]">
+            <h3 className="text-[12px] font-semibold leading-[1.2] text-gray-500">알아두세요</h3>
+            <div className="mt-[8px] flex flex-col gap-0 text-[12px] leading-[22.75px] text-gray-500">
+              {LOAN_NOTICE_LINES.map((line) => (
+                <p key={line}>{line}</p>
+              ))}
+            </div>
+          </div>
 
           {errorMessage ? (
             <Card className="!rounded-control !border-0 !px-5 !py-4 shadow-sm">
@@ -238,7 +238,7 @@ export const FinanceApplyPage = () => {
 
       {preview.available ? (
         <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50">
-          <div className="pointer-events-auto mx-auto w-full max-w-[600px] border-t border-gray-200 bg-white px-(--side-padding) pb-[calc(16px+env(safe-area-inset-bottom))] pt-4 shadow-[var(--shadow-card)]">
+          <div className="pointer-events-auto mx-auto w-full max-w-[600px] bg-white px-(--side-padding) pb-[calc(16px+env(safe-area-inset-bottom))] pt-4">
             <Button
               type="button"
               fullWidth

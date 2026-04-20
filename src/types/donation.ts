@@ -11,6 +11,7 @@ export interface DonationCampaign {
   targetAmount: number
   currentAmount: number
   imageUrl: string
+  organization: string
   participantCount: number
   progressPercentage: number
   startDate: string
@@ -22,11 +23,26 @@ export interface DonationListResponse {
   donations: DonationCampaign[]
 }
 
+export interface DonationHistoryItem {
+  donationLogId: number
+  donationId: number
+  organization: string
+  name: string
+  imageUrl: string
+  donatedAt: string
+  amount: number
+}
+
+export interface DonationHistoryResponse {
+  donations: DonationHistoryItem[]
+}
+
 export interface DonationDetail {
   donationId: number
   name: string
   summary: string
   description: string
+  organization: string
   targetAmount: number
   currentAmount: number
   imageUrl: string

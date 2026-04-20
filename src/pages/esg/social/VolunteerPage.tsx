@@ -127,21 +127,15 @@ export function VolunteerPage() {
       ) : null}
 
       {!isLoading && !error && volunteerData ? (
-        <section className="mx-[-16px] min-h-[calc(100vh-var(--header-h)-var(--nav-h)-96px)] bg-gray-100 px-4">
+        <section className="mx-[-16px] min-h-[calc(100vh-var(--header-h)-var(--nav-h)-96px)] bg-gray-100 px-4 pt-3">
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-[18px] leading-[120%] font-semibold tracking-[-0.02em] text-font-main">
                 모집중인 봉사활동
               </h2>
-              <button
-                type="button"
-                className="text-sm leading-[120%] font-medium tracking-[-0.02em] text-primary-400"
-                onClick={() =>
-                  navigate(ROUTE_PATHS.activitySocialVolunteerApplications)
-                }
-              >
-                신청한 봉사
-              </button>
+              <span className="text-sm leading-[120%] font-medium tracking-[-0.02em] text-primary-400">
+                {volunteerData.volunteers.length}건
+              </span>
             </div>
 
             <div className="space-y-4">

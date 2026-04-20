@@ -137,29 +137,30 @@ export function ValueStoreDetailPage() {
                   />
                 </section>
 
-                <section className="px-[24px] pt-6">
-                  <div className="space-y-[22px]">
-                    <div className="space-y-[12px]">
-                      <Badge
-                        tone="primary"
-                        className="px-[6px] py-[2px] text-xs font-medium tracking-[-0.02em]"
-                      >
-                        {productDetail.category}
-                      </Badge>
+                <section className="px-[20px] pt-3">
+                  <div className="space-y-[18px]">
+                    <div className="space-y-[10px]">
+                      <p className="text-[13px] leading-[120%] font-semibold tracking-[-0.02em] text-gray-500">
+                        {productDetail.storeName}
+                      </p>
+                      <div className="mx-[-20px] h-px bg-gray-200/70" />
 
                       <div className="space-y-4">
                         <div className="space-y-[6px]">
-                          <p className="text-[12px] leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
-                            {productDetail.storeName}
-                          </p>
-                          <h2 className="w-[248px] text-[20px] leading-[120%] font-bold text-gray-500">
+                          <Badge
+                            tone="primary"
+                            className="px-[6px] py-[2px] text-xs font-medium tracking-[-0.02em]"
+                          >
+                            {productDetail.category}
+                          </Badge>
+                          <h2 className="w-[248px] text-[16px] leading-[120%] font-semibold text-gray-600">
                             {productDetail.name}
                           </h2>
                         </div>
 
                         <div className="flex items-center gap-2">
                           <p
-                            className={`text-[24px] leading-[120%] font-bold ${
+                            className={`text-[20px] leading-[120%] font-bold ${
                               isSoldOut
                                 ? 'text-gray-400 line-through'
                                 : 'text-font-main'
@@ -176,12 +177,9 @@ export function ValueStoreDetailPage() {
                       </div>
                     </div>
 
-                    <div className="h-px w-full bg-gray-300" />
+                    <div className="mx-[-20px] h-px bg-gray-200/70" />
 
                     <div className="space-y-[11px]">
-                      <h3 className="text-base leading-7 font-medium text-gray-800">
-                        함께 나무를 심어주세요
-                      </h3>
                       <p className="whitespace-pre-line text-base leading-[26px] font-normal text-gray-500">
                         {productDetail.description}
                       </p>

@@ -117,7 +117,7 @@ export const ShopListPage = () => {
       contentSpacing="comfortable"
     >
       <div className="-mx-4 flex flex-col gap-[var(--space-4)]">
-        <div className="flex flex-col gap-[var(--space-4)] bg-bg-light px-(--side-padding) pb-[var(--space-4)]">
+        <div className="flex flex-col gap-[var(--space-4)] bg-bg-light px-(--side-padding) pt-2 pb-[var(--space-4)]">
           <SectionHeader
             title={<span className="text-lg font-semibold text-gray-700">상품 목록</span>}
             right={

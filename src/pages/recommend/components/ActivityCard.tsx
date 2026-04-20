@@ -2,6 +2,7 @@ import { useState } from 'react'
 import {
   Camera,
   HeartHandshake,
+  Lightbulb,
   ShoppingBag,
   Sparkles,
   UserRoundPlus,
@@ -21,7 +22,7 @@ interface ActivityCardProps {
 
 const categoryBadge: Record<
   ScoreCategory,
-  { label: string; tone: 'primary' | 'success' | 'neutral'; accentText: string }
+  { label: string; tone: 'primary' | 'success' | 'violet'; accentText: string }
 > = {
   S: {
     label: 'S 활동',
@@ -35,8 +36,8 @@ const categoryBadge: Record<
   },
   G: {
     label: 'G 활동',
-    tone: 'neutral',
-    accentText: '#6B7280',
+    tone: 'violet',
+    accentText: '#7C3AED',
   },
 }
 
@@ -82,6 +83,25 @@ const activityPlaceholderIcon = {
   QUIZ: Sparkles,
   PURCHASE: ShoppingBag,
 } as const
+
+const QuizPlaceholderArtwork = () => (
+  <div className="relative flex h-[88px] w-[88px] items-center justify-center overflow-hidden rounded-[12px] bg-linear-to-br from-[#F5F3FF] via-[#EDE9FE] to-[#DDD6FE]">
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,255,255,0.8),_transparent_42%)]" />
+    <div className="absolute inset-0 bg-[linear-gradient(135deg,_rgba(255,255,255,0.3)_0%,_transparent_55%)]" />
+    <Sparkles
+      aria-hidden="true"
+      size={11}
+      strokeWidth={2.2}
+      className="absolute top-3 right-3 text-[#A78BFA]"
+    />
+    <Lightbulb
+      aria-hidden="true"
+      size={32}
+      strokeWidth={1.8}
+      className="relative text-[#7C3AED] drop-shadow-[0_6px_12px_rgba(124,58,237,0.08)]"
+    />
+  </div>
+)
 
 export const ActivityCard = ({
   activity,
@@ -131,6 +151,18 @@ export const ActivityCard = ({
   const showTopMetaRow = showTopCategoryBadge
   const showTitleDeadlineBadge = !showTopCategoryBadge && isDeadlineNear && deadlineDays !== null
   const rewardLabel = `+${scoreValue}점 · ${pointLabel ?? '포인트 없음'}`
+  const placeholderWrapperClassName =
+    scoreCategory === 'S'
+      ? 'bg-primary-50'
+      : scoreCategory === 'E'
+        ? 'bg-[#ECFDF5]'
+        : 'bg-[#F3E8FF]'
+  const placeholderIconClassName =
+    scoreCategory === 'S'
+      ? 'text-primary-500'
+      : scoreCategory === 'E'
+        ? 'text-[#059669]'
+        : 'text-[#7C3AED]'
 
   return (
     <Card
@@ -178,12 +210,13 @@ export const ActivityCard = ({
                   className="h-full w-full object-cover"
                   onError={() => setHasImageError(true)}
                 />
+              ) : scoreCategory === 'G' ? (
+                <QuizPlaceholderArtwork />
               ) : (
-                <div className="flex h-[88px] w-[88px] items-center justify-center rounded-[12px] bg-primary-50">
-                  <PlaceholderIcon
-                    size={28}
-                    className={scoreCategory === 'S' ? 'text-primary-500' : 'text-gray-500'}
-                  />
+                <div
+                  className={`flex h-[88px] w-[88px] items-center justify-center rounded-[12px] ${placeholderWrapperClassName}`}
+                >
+                  <PlaceholderIcon size={28} className={placeholderIconClassName} />
                 </div>
               )}
             </div>

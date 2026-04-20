@@ -7,6 +7,7 @@ export interface ChatHistoryMessage {
   role: 'user' | 'assistant'
   content: string
   actions?: ChatAction[] | null
+  suggestions?: string[] | null
 }
 
 export interface ChatHistoryResponse {
@@ -18,5 +19,6 @@ export interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
   actions?: ChatAction[]
+  suggestions?: string[]
   isStreaming?: boolean
 }

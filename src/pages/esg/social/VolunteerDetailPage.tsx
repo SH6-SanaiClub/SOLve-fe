@@ -4,7 +4,11 @@ import { BottomActionBar, Button, IconButton } from '../../../components/common'
 import { Icons } from '../../../components/common'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
-import { getVolunteerCompletePath } from '../../../constants/routePaths'
+import {
+  ROUTE_PATHS,
+  getVolunteerCompletePath,
+} from '../../../constants/routePaths'
+import useReturnNavigation from '../../../hooks/useReturnNavigation'
 import {
   applyVolunteer,
   getVolunteerDetail,
@@ -78,6 +82,7 @@ const resolveImageUrl = (imageUrl?: string | null) => {
 
 export function VolunteerDetailPage() {
   const navigate = useNavigate()
+  const { goBack } = useReturnNavigation(ROUTE_PATHS.activitySocialVolunteer)
   const { volunteerId } = useParams()
   const parsedVolunteerId = Number(volunteerId)
   const [volunteerDetail, setVolunteerDetail] =
@@ -165,7 +170,7 @@ export function VolunteerDetailPage() {
             <IconButton
               label="뒤로가기"
               icon={<Icons.Back className="text-font-main" />}
-              onClick={() => navigate(-1)}
+              onClick={goBack}
             />
           }
           title="봉사"

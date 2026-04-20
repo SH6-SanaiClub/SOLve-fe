@@ -204,6 +204,9 @@ export function DonationDetailPage() {
                     <p className="whitespace-pre-line text-base leading-[26px] font-normal text-gray-500">
                       {donationDetail.description}
                     </p>
+                    <p className="text-base leading-[26px] font-normal text-gray-400">
+                      해당 캠페인은 {donationDetail.organization}과 함께합니다.
+                    </p>
                   </div>
                 </section>
               </>

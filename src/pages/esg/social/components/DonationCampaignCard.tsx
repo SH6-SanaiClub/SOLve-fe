@@ -10,9 +10,6 @@ interface DonationCampaignCardProps {
 const formatCurrency = (amount: number) =>
   `${new Intl.NumberFormat('ko-KR').format(amount)}원`
 
-const formatNumber = (value: number) =>
-  new Intl.NumberFormat('ko-KR').format(value)
-
 export const DonationCampaignCard = ({
   donation,
   onClick,
@@ -43,7 +40,7 @@ export const DonationCampaignCard = ({
         <div className="flex h-full min-w-0 flex-1 flex-col justify-center gap-5 max-[380px]:justify-between max-[380px]:gap-3">
           <div className="flex flex-col gap-1">
             <p className="text-xs leading-[120%] font-semibold text-primary-400">
-              {formatNumber(donation.participantCount)}명 참여
+              {donation.organization}
             </p>
 
             <div className="flex h-[38px] flex-col justify-center gap-[2px] max-[380px]:h-auto max-[380px]:min-h-[38px]">

@@ -9,6 +9,7 @@ export const streamChatMessage = async (
   onChunk: (text: string) => void,
   onReplace: (text: string) => void,
   onActions: (actions: ChatAction[]) => void,
+  onSuggestions: (suggestions: string[]) => void,
   onDone: () => void,
   onError: (message: string) => void,
 ): Promise<void> => {
@@ -73,6 +74,16 @@ export const streamChatMessage = async (
         onActions(actions)
       } catch {
         // Ignore malformed action payloads without breaking the stream.
+      }
+      return
+    }
+
+    if (eventType === 'suggestions') {
+      try {
+        const suggestions = JSON.parse(data) as string[]
+        onSuggestions(suggestions)
+      } catch {
+        // Ignore malformed suggestion payloads without breaking the stream.
       }
       return
     }
@@ -161,7 +172,15 @@ export const streamChatMessage = async (
 }
 
 export const getChatHistory = async () => {
-  const response = await apiClient.get<ChatHistoryResponse>('/v1/chat/messages')
+  const response = await apiClient.get<ChatHistoryResponse>('/v1/chat/messages', {
+    params: {
+      _ts: Date.now(),
+    },
+    headers: {
+      'Cache-Control': 'no-cache',
+      Pragma: 'no-cache',
+    },
+  })
   return response.data.messages
 }
 

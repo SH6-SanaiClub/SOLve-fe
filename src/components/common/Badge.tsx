@@ -8,7 +8,7 @@ import React from 'react'
  */
 interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
   children: React.ReactNode
-  tone?: 'primary' | 'neutral' | 'success' | 'danger'
+  tone?: 'primary' | 'neutral' | 'success' | 'danger' | 'violet'
   variant?: 'soft' | 'outline' | 'solid'
 }
 
@@ -34,6 +34,11 @@ const Badge: React.FC<BadgeProps> = ({
       soft: 'bg-[#ECFDF5] text-[#059669]',
       outline: 'border border-[#A7F3D0] bg-white text-[#059669]',
       solid: 'bg-[#059669] text-white',
+    },
+    violet: {
+      soft: 'bg-[#F3E8FF] text-[#7C3AED]',
+      outline: 'border border-[#DDD6FE] bg-white text-[#7C3AED]',
+      solid: 'bg-[#7C3AED] text-white',
     },
     danger: {
       soft: 'bg-[#FEF2F2] text-error',

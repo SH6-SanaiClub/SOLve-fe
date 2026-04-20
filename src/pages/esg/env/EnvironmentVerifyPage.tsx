@@ -61,6 +61,11 @@ export function EnvironmentVerifyPage() {
   const handleResultClose = () => {
     setVerificationResult(null)
 
+    if (routeState?.returnTo) {
+      navigate(routeState.returnTo, { replace: true })
+      return
+    }
+
     if (routeState?.fromEnv) {
       navigate(-1)
       return

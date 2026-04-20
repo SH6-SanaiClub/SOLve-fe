@@ -20,8 +20,8 @@ import { AiSummaryCard } from './components/AiSummaryCard'
 import { PopularActivityGuideModal } from './components/PopularActivityGuideModal'
 import {
   getActivityPath,
+  getActivityNavigationState,
   getPopularActivityGuard,
-  shouldUseEnvBackNavigation,
   type PopularActivityGuard,
 } from './recommendActivityUtils'
 
@@ -173,10 +173,9 @@ export const RecommendPage = () => {
     const nextPath = getActivityPath(activity)
 
     if (nextPath) {
-      navigate(
-        nextPath,
-        shouldUseEnvBackNavigation(activity) ? { state: { fromEnv: true } } : undefined,
-      )
+      navigate(nextPath, {
+        state: getActivityNavigationState(activity),
+      })
     }
   }
 
@@ -194,10 +193,9 @@ export const RecommendPage = () => {
     }
 
     if (nextPath) {
-      navigate(
-        nextPath,
-        shouldUseEnvBackNavigation(popularActivity) ? { state: { fromEnv: true } } : undefined,
-      )
+      navigate(nextPath, {
+        state: getActivityNavigationState(popularActivity),
+      })
     }
   }
 
@@ -272,20 +270,21 @@ export const RecommendPage = () => {
         open={Boolean(popularActivityGuard)}
         title={popularActivityGuard?.title ?? ''}
         message={popularActivityGuard?.message ?? ''}
-        confirmLabel={popularActivityGuard?.confirmLabel}
-        onClose={() => setPopularActivityGuard(null)}
-        onConfirm={
-          popularActivityGuard?.nextPath
-            ? () => {
-                navigate(
-                  popularActivityGuard.nextPath,
-                  popularActivity?.activityType === 'PHOTO'
-                    ? { state: { fromEnv: true } }
-                    : undefined,
-                )
-                setPopularActivityGuard(null)
-              }
-            : undefined
+              confirmLabel={popularActivityGuard?.confirmLabel}
+              onClose={() => setPopularActivityGuard(null)}
+              onConfirm={
+                popularActivityGuard?.nextPath
+                  ? () => {
+                      if (!popularActivity) {
+                        return
+                      }
+
+                      navigate(popularActivityGuard.nextPath, {
+                        state: getActivityNavigationState(popularActivity),
+                      })
+                      setPopularActivityGuard(null)
+                    }
+                  : undefined
         }
       />
     </MainLayout>

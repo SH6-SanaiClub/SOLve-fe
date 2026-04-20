@@ -23,7 +23,6 @@ export const SavingsRecommendCard = ({
           <Badge
             tone="primary"
             variant="soft"
-            className="!rounded-[999px] !px-2 !py-1 text-xs font-semibold text-primary-400"
           >
             {isNewUser ? '시작 추천' : '맞춤 추천'}
           </Badge>

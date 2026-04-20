@@ -51,7 +51,7 @@ export const FinanceDonePage = () => {
                 </div>
 
                 <div className="mt-4 flex flex-col gap-[14px]">
-                  {doneState.fields.map((field, index) => (
+                  {doneState.fields.map((field) => (
                     <div key={field.label}>
                       <div className="flex items-center justify-between gap-4">
                         <span className="text-left text-[12px] leading-6 font-medium tracking-[-0.02em] text-font-sub">

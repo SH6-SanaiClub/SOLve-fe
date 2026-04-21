@@ -607,7 +607,7 @@ export const ChatbotPage = () => {
       ) {
         new Notification('SOLve 챗봇', {
           body: '답변이 도착했어요.',
-          icon: '/pwa-icon.svg',
+          icon: '/solve-icon.png',
         })
       }
     }

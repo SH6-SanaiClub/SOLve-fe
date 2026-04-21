@@ -1,13 +1,11 @@
-const STATIC_CACHE = 'solve-static-v3'
+const STATIC_CACHE = 'solve-static-v4'
 const CHAT_HISTORY_CACHE = 'chat-history-v1'
 const APP_SHELL = [
   '/',
   '/index.html',
   '/manifest.webmanifest',
-  '/logo.png',
+  '/solve-icon.png',
   '/icons.svg',
-  '/pwa-icon.svg',
-  '/pwa-maskable.svg',
 ]
 
 self.addEventListener('install', (event) => {
@@ -101,7 +99,7 @@ self.addEventListener('fetch', (event) => {
         return await fetch(event.request)
       } catch (error) {
         if (event.request.destination === 'image') {
-          return (await caches.match('/logo.png')) || Response.error()
+          return (await caches.match('/solve-icon.png')) || Response.error()
         }
 
         return Response.error()

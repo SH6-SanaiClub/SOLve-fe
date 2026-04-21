@@ -8,7 +8,30 @@ interface EnvBottomSheetProps {
 }
 
 export function EnvBottomSheet({ open, onClose, children }: EnvBottomSheetProps) {
+  const [shouldRender, setShouldRender] = useState(open)
   const [isVisible, setIsVisible] = useState(false)
+
+  useEffect(() => {
+    if (open) {
+      setShouldRender(true)
+      const frameId = window.requestAnimationFrame(() => {
+        setIsVisible(true)
+      })
+
+      return () => {
+        window.cancelAnimationFrame(frameId)
+      }
+    }
+
+    setIsVisible(false)
+    const timeoutId = window.setTimeout(() => {
+      setShouldRender(false)
+    }, 320)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+    }
+  }, [open])
 
   useEffect(() => {
     if (!open) {
@@ -26,16 +49,16 @@ export function EnvBottomSheet({ open, onClose, children }: EnvBottomSheetProps)
 
     document.body.style.overflow = 'hidden'
     window.addEventListener('keydown', handleEscape)
-    const frameId = window.requestAnimationFrame(() => {
-      setIsVisible(true)
-    })
 
     return () => {
-      window.cancelAnimationFrame(frameId)
       document.body.style.overflow = previousOverflow
       window.removeEventListener('keydown', handleEscape)
     }
   }, [open, onClose])
+
+  if (!shouldRender) {
+    return null
+  }
 
   return (
     <div
@@ -57,8 +80,8 @@ export function EnvBottomSheet({ open, onClose, children }: EnvBottomSheetProps)
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center">
         <section
-          className={`pointer-events-auto w-full min-h-[440px] rounded-t-[24px] bg-white px-5 pt-8 pb-[calc(24px+env(safe-area-inset-bottom))] shadow-[0_-20px_48px_rgba(15,23,42,0.16)] transition-[transform,opacity] duration-300 will-change-transform ${
-            open && isVisible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
+          className={`pointer-events-auto w-full min-h-[440px] rounded-t-[24px] bg-white px-5 pt-8 pb-[calc(24px+env(safe-area-inset-bottom))] shadow-[0_-20px_48px_rgba(15,23,42,0.16)] transition-transform duration-[320ms] will-change-transform ${
+            open && isVisible ? 'translate-y-0' : 'translate-y-full'
           }`}
           style={{
             transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',

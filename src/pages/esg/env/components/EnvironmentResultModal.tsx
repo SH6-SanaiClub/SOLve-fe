@@ -27,7 +27,7 @@ const RESULT_CONTENT: Record<
 > = {
   success: {
     title: '인증에 성공했어요',
-    description: ['여러분의 성실함이 신용이 되는 소중한 한 걸음입니다.'],
+    description: ['여러분의 성실함이 신용이 되는 소중한 한걸음입니다.'],
   },
   failure: {
     title: '인증에 실패했어요',

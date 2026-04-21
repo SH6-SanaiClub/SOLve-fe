@@ -203,7 +203,7 @@ export function GovernanceQuizPage() {
         }
       >
         <PageMotionStyles />
-        <section className="mb-[-24px] flex min-h-full items-center justify-center px-4 pt-6 pb-0">
+        <section className="flex min-h-[calc(100dvh-var(--header-h)-env(safe-area-inset-top)-env(safe-area-inset-bottom)-16px)] items-center justify-center px-4 py-6 pb-[calc(24px+env(safe-area-inset-bottom))]">
           <article
             className="w-full max-w-[360px] rounded-[10px] bg-white px-6 py-8 text-center shadow-[0_24px_48px_rgba(15,23,42,0.12)]"
             style={buildPageEnterStyle(60, 520)}

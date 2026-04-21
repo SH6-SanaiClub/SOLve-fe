@@ -1,7 +1,6 @@
 ﻿import { useCallback, useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
-  Badge,
   Card,
   IconButton,
   Icons,
@@ -285,8 +284,8 @@ export function HomePage() {
             transition: isPulling ? 'none' : 'transform 180ms ease',
           }}
         >
-          <div className="mt-5 flex flex-col gap-3">
-            <section className="pl-3" style={buildPageEnterStyle(30, 420)}>
+          <div className="mt-5 flex flex-col">
+            <section className="mb-3 pl-3" style={buildPageEnterStyle(30, 420)}>
               <div className="flex min-w-0 flex-col justify-center gap-[4px] py-2">
                 <p className="text-xl leading-[1.1] tracking-tight font-semibold">
                   <span className="text-primary-500">{userName}</span>
@@ -298,7 +297,7 @@ export function HomePage() {
               </div>
             </section>
 
-            <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-4">
               <div style={buildPageEnterStyle(80, 460)}>
                 <Card className="!h-[136px]">
                   <div className="space-y-3">
@@ -381,130 +380,10 @@ export function HomePage() {
                 </Card>
               </div>
 
-              <div style={buildPageEnterStyle(220, 420)}>
-                <Card
-                  onClick={() => navigate(ROUTE_PATHS.recommend)}
-                  className="hidden !h-[46px] !p-0"
-                >
-                  <div className="flex h-[44px] items-center justify-between gap-3 px-5">
-                    <span className="text-sm leading-none font-semibold text-gray-700">
-                      AI 맞춤 활동 추천
-                    </span>
-                    <Icons.ArrowRight className="text-gray-700" size={18} />
-                  </div>
-                </Card>
-              </div>
-
-              <Card
-                onClick={() => navigate(ROUTE_PATHS.esgQuiz)}
-                className="hidden !gap-0 !overflow-hidden !border !border-orange-100 !p-0 shadow-[0_10px_24px_rgba(15,23,42,0.06)]"
+              <section
+                className="flex flex-col gap-3"
+                style={buildPageEnterStyle(220, 420)}
               >
-                <div className="bg-linear-to-r from-orange-50 via-white to-white px-5 pt-4 pb-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-2">
-                        <Badge
-                          tone="danger"
-                          variant="soft"
-                          className="!px-[10px] !py-[4px]"
-                        >
-                          HOT
-                        </Badge>
-                        <span className="text-xs font-medium text-gray-500">
-                          지금 가장 많이 참여 중인 활동
-                        </span>
-                      </div>
-                      <p className="mt-3 text-base font-semibold text-gray-700">
-                        오늘의 ESG 퀴즈
-                      </p>
-                      <p className="mt-1 text-sm leading-5 text-gray-500">
-                        짧게 참여하고 점수와 포인트를 함께 받을 수 있어요
-                      </p>
-                    </div>
-                    <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white text-gray-500 shadow-sm">
-                      <Icons.ArrowRight size={16} />
-                    </div>
-                  </div>
-
-                  <div className="mt-4 flex items-center justify-between gap-3">
-                    <span className="text-sm font-semibold text-gray-300">
-                      +10점 · +300P
-                    </span>
-                    <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-gray-500 shadow-sm">
-                      1분 참여
-                    </span>
-                  </div>
-                </div>
-              </Card>
-
-              <section className="hidden flex-col gap-3">
-                <Card
-                  onClick={() => navigate(ROUTE_PATHS.recommend)}
-                  className="!gap-0 !overflow-hidden !border !border-gray-100 !p-0 shadow-sm"
-                >
-                  <div className="bg-white px-5 py-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="min-w-0">
-                        <p className="text-base font-semibold text-gray-700">
-                          AI 맞춤 활동 추천
-                        </p>
-                        <p className="mt-1 text-sm leading-5 text-gray-500">
-                          내 활동 기록을 바탕으로 어울리는 활동을 추천해드려요
-                        </p>
-                      </div>
-
-                      <Icons.ArrowRight
-                        className="mt-1 shrink-0 text-gray-400"
-                        size={18}
-                      />
-                    </div>
-                  </div>
-                </Card>
-
-                <Card
-                  onClick={() => navigate(ROUTE_PATHS.esgQuiz)}
-                  className="!gap-0 !overflow-hidden !border !border-gray-100 !p-0 shadow-sm"
-                >
-                  <div className="bg-white px-5 py-4">
-                    <div className="flex items-start justify-between gap-4">
-                      <div className="min-w-0">
-                        <Badge
-                          tone="danger"
-                          variant="soft"
-                          className="!px-[10px] !py-[4px]"
-                        >
-                          인기
-                        </Badge>
-                        <span className="text-xs font-medium text-gray-500">
-                          지금 가장 많이 참여 중인 활동
-                        </span>
-                        <p className="mt-2 text-base font-semibold text-gray-700">
-                          오늘의 ESG 퀴즈
-                        </p>
-                        <p className="mt-1 text-sm leading-5 text-gray-500">
-                          짧게 참여하고 점수와 포인트를 함께 받을 수 있어요
-                        </p>
-                      </div>
-
-                      <Icons.ArrowRight
-                        className="mt-1 shrink-0 text-gray-400"
-                        size={18}
-                      />
-                    </div>
-
-                    <div className="mt-4 flex items-center justify-between gap-3 border-t border-gray-100 pt-3">
-                      <span className="text-sm font-semibold text-primary-500">
-                        +10점 · +300P
-                      </span>
-                      <span className="rounded-full bg-white px-3 py-1 text-xs font-medium text-gray-500 shadow-sm">
-                        약 1분
-                      </span>
-                    </div>
-                  </div>
-                </Card>
-              </section>
-
-              <section className="flex flex-col gap-3">
                 <Card
                   onClick={() => navigate(ROUTE_PATHS.recommend)}
                   className="!gap-0 !overflow-hidden !border !border-gray-100 !p-0 shadow-sm"

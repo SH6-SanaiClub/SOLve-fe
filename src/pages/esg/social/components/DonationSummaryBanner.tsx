@@ -33,7 +33,7 @@ export const DonationSummaryBanner = ({
           src={imageSrc}
           alt={imageAlt}
           aria-hidden={imageAlt ? undefined : true}
-          className="absolute right-3 top-1/2 h-[96px] w-[194px] -translate-y-1/2 object-contain object-right max-[380px]:right-2 max-[380px]:h-[88px] max-[380px]:w-[132px]"
+          className="absolute right-3 top-1/2 h-[88px] w-[176px] -translate-y-1/2 object-contain object-right max-[380px]:right-2 max-[380px]:h-[80px] max-[380px]:w-[120px]"
         />
       ) : (
         <>

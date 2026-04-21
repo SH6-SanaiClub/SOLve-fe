@@ -40,7 +40,7 @@ const RecommendLoadingModal = () => (
   >
     <div className="absolute inset-0 bg-[rgba(241,245,249,0.72)] backdrop-blur-[2px]" />
 
-    <div className="relative w-full max-w-[280px] rounded-[28px] border border-white/80 bg-white/96 px-6 py-7 text-center shadow-[0_18px_40px_rgba(15,23,42,0.10)]">
+    <div className="relative w-full max-w-[280px] rounded-[8px] border border-white/80 bg-white/96 px-6 py-7 text-center shadow-[0_18px_40px_rgba(15,23,42,0.10)]">
       <div className="mx-auto flex h-[110px] w-[110px] items-center justify-center rounded-full bg-[radial-gradient(circle_at_top,_rgba(0,70,255,0.16),_rgba(255,255,255,0.95)_68%)]">
         <img
           src={mainMascotImage}

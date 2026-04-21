@@ -236,18 +236,18 @@ export function VolunteerDetailPage() {
                 )}
               </section>
 
-              <section className="px-[24px] pt-6">
+              <section className="px-[24px] pt-4">
                 <div className="flex flex-col gap-2">
                   <p className="text-sm leading-[120%] font-medium tracking-[-0.02em] text-gray-400">
                     {volunteerDetail.organization}
                   </p>
-                  <h2 className="text-[22px] leading-[140%] font-bold tracking-[-0.02em] text-font-main">
+                  <h2 className="text-[20px] leading-[140%] font-bold tracking-[-0.02em] text-font-main">
                     {volunteerDetail.name}
                   </h2>
                 </div>
               </section>
 
-              <section className="px-[24px] pt-6">
+              <section className="px-[24px] pt-4">
                 <div className="rounded-control bg-gray-100 px-4 py-5">
                   <div className="space-y-5">
                     <div className="flex items-start justify-between gap-5">

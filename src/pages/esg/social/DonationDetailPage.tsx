@@ -14,6 +14,17 @@ import MainLayout from '../../../components/layout/MainLayout'
 import { getDonationDetail } from '../../../services/donationService'
 import type { DonationDetail } from '../../../types/donation'
 
+type DonationDescriptionBlockObject = {
+  type?: string
+  value?: string
+  url?: string
+  imageUrl?: string
+}
+
+type ParsedDonationDescriptionBlock =
+  | { type: 'image'; value: string }
+  | { type: 'text'; value: string }
+
 const formatCurrency = (amount: number) =>
   `${new Intl.NumberFormat('ko-KR').format(amount)}원`
 const formatNumber = (value: number) =>
@@ -51,6 +62,76 @@ const resolveImageUrl = (imageUrl: string) => {
 
   return normalizedImageUrl
 }
+
+const normalizeDonationDescriptionArray = (
+  parsed: unknown,
+): ParsedDonationDescriptionBlock[] => {
+  if (!Array.isArray(parsed)) {
+    return []
+  }
+
+  return parsed.reduce<ParsedDonationDescriptionBlock[]>((acc, block) => {
+    if (!block || typeof block !== 'object') {
+      return acc
+    }
+
+    const { type, value, url, imageUrl } =
+      block as DonationDescriptionBlockObject
+    const normalizedType = type?.trim().toLowerCase()
+    const normalizedValue = value?.trim()
+
+    if (normalizedType === 'text' && normalizedValue) {
+      acc.push({ type: 'text', value: normalizedValue })
+      return acc
+    }
+
+    if (normalizedType === 'image') {
+      const imageValue = imageUrl?.trim() || url?.trim() || normalizedValue
+
+      if (imageValue) {
+        acc.push({ type: 'image', value: imageValue })
+      }
+    }
+
+    return acc
+  }, [])
+}
+
+const parseDonationDescriptionBlocks = (
+  description: string,
+): ParsedDonationDescriptionBlock[] => {
+  const trimmedDescription = description.replace(/^\uFEFF/, '').trim()
+
+  if (!trimmedDescription) {
+    return []
+  }
+
+  try {
+    const parsed = JSON.parse(trimmedDescription) as unknown
+    return normalizeDonationDescriptionArray(parsed)
+  } catch {
+    const arrayStartIndex = trimmedDescription.indexOf('[')
+    const arrayEndIndex = trimmedDescription.lastIndexOf(']')
+
+    if (arrayStartIndex >= 0 && arrayEndIndex > arrayStartIndex) {
+      const arrayText = trimmedDescription
+        .slice(arrayStartIndex, arrayEndIndex + 1)
+        .trim()
+
+      try {
+        const parsedArray = JSON.parse(arrayText) as unknown
+        return normalizeDonationDescriptionArray(parsedArray)
+      } catch {
+        return []
+      }
+    }
+
+    return []
+  }
+}
+
+const isDonationDescriptionHeading = (value: string) =>
+  !value.includes('\n') && value.trim().length <= 30
 
 export function DonationDetailPage() {
   const navigate = useNavigate()
@@ -90,6 +171,9 @@ export function DonationDetailPage() {
   }, [requestDonationDetail])
 
   const hasEnded = donationDetail ? isDonationEnded(donationDetail.endDate) : false
+  const descriptionBlocks = donationDetail
+    ? parseDonationDescriptionBlocks(donationDetail.description)
+    : []
 
   return (
     <MainLayout
@@ -160,11 +244,11 @@ export function DonationDetailPage() {
 
                   <div className="absolute inset-x-0 bottom-0 h-[120px] bg-linear-to-t from-black to-transparent" />
 
-                  <div className="absolute bottom-[25px] left-[30px] flex w-[248px] flex-col gap-[10px]">
-                    <h2 className="text-[20px] leading-4 font-bold text-white">
+                  <div className="absolute right-[30px] bottom-[25px] left-[30px] flex flex-col gap-1">
+                    <h2 className="text-[20px] leading-[1.2] font-bold text-white">
                       {donationDetail.name}
                     </h2>
-                    <p className="text-base leading-4 font-light text-gray-300">
+                    <p className="text-base leading-[1.2] font-light text-gray-300">
                       {donationDetail.summary}
                     </p>
                   </div>
@@ -215,9 +299,37 @@ export function DonationDetailPage() {
 
                 <section className="px-[24px] pt-6">
                   <div className="flex flex-col gap-[11px]">
-                    <p className="whitespace-pre-line text-base leading-[26px] font-normal text-gray-500">
-                      {donationDetail.description}
-                    </p>
+                    {descriptionBlocks.length > 0 ? (
+                      descriptionBlocks.map((block, index) => {
+                        if (block.type === 'image') {
+                          return (
+                            <img
+                              key={`donation-description-image-${index}`}
+                              src={resolveImageUrl(block.value)}
+                              alt={`${donationDetail.name} 상세 이미지 ${index + 1}`}
+                              className="my-3 w-full object-cover"
+                            />
+                          )
+                        }
+
+                        return (
+                          <p
+                            key={`donation-description-text-${index}`}
+                            className={
+                              isDonationDescriptionHeading(block.value)
+                                ? 'whitespace-pre-line text-[18px] leading-[28px] font-semibold text-gray-600'
+                                : 'whitespace-pre-line text-base leading-[26px] font-normal text-gray-500'
+                            }
+                          >
+                            {block.value}
+                          </p>
+                        )
+                      })
+                    ) : (
+                      <p className="whitespace-pre-line text-base leading-[26px] font-normal text-gray-500">
+                        {donationDetail.description}
+                      </p>
+                    )}
                     <p className="text-base leading-[26px] font-normal text-gray-400">
                       해당 캠페인은 {donationDetail.organization}과 함께합니다.
                     </p>

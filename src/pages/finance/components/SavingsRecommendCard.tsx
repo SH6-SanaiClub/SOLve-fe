@@ -15,7 +15,7 @@ export const SavingsRecommendCard = ({
   return (
     <Card
       onClick={onClick}
-      className="!gap-0 !rounded-control !border-0 !px-5 !py-[18px] shadow-sm"
+      className="!gap-0 !rounded-control !border-0 !p-5 shadow-sm"
       aria-label={`${item.productName} 추천 상품 자세히 보기`}
     >
       <div className="flex items-center justify-between gap-3">

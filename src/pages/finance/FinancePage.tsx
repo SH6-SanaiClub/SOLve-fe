@@ -152,7 +152,7 @@ export const FinancePage = () => {
                   {savingsProducts.length}건
                 </span>
               }
-              className="px-3"
+              className="pl-1"
             />
 
             <div className="flex flex-col gap-3">
@@ -166,7 +166,7 @@ export const FinancePage = () => {
                   }
                   className={getProductCardClassName(
                     product,
-                    '!gap-0 !rounded-control !border-0 !bg-white !px-[26px] !py-4 shadow-sm',
+                    '!gap-0 !rounded-control !border-0 !bg-white !p-5 shadow-sm',
                   )}
                 >
                   <div className="flex min-h-[58px] items-center justify-between gap-5">
@@ -220,7 +220,7 @@ export const FinancePage = () => {
                   {loanProducts.length}건
                 </span>
               }
-              className="px-3"
+              className="pl-1"
             />
 
             {loanProduct ? (
@@ -233,7 +233,7 @@ export const FinancePage = () => {
                 }
                 className={getProductCardClassName(
                   loanProduct,
-                  '!gap-0 !rounded-control !border-0 !px-5 !py-[26px] shadow-sm',
+                  '!gap-0 !rounded-control !border-0 !p-5 shadow-sm',
                 )}
               >
                 <div className="flex items-start justify-between gap-4">

@@ -41,7 +41,7 @@ export function EnvironmentLoadingOverlay({ open }: EnvironmentLoadingOverlayPro
       <section
         role="status"
         aria-live="polite"
-        className="relative flex w-full max-w-[280px] flex-col items-center rounded-[16px] border border-white/70 bg-white/90 px-6 py-7 text-center shadow-[0_20px_48px_rgba(15,23,42,0.16)]"
+        className="relative flex w-full max-w-[280px] flex-col items-center rounded-[8px] border border-white/70 bg-white/90 px-6 py-7 text-center shadow-[0_20px_48px_rgba(15,23,42,0.16)]"
       >
         <img
           src={loadingImage}

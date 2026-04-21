@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Card, IconButton } from '../../../components/common'
 import { Icons } from '../../../components/common'
+import { PageMotionStyles, buildPageEnterStyle } from '../../../components/common/PageMotion'
 import BottomNavigation from '../../../components/layout/BottomNavigation'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
@@ -83,6 +84,7 @@ export function ValueStorePage() {
       subHeader={<SocialActivityTabs activeTab="store" />}
       contentSpacing="comfortable"
     >
+      <PageMotionStyles />
       {isLoading ? (
         <div className="flex flex-col gap-6">
           <section className="space-y-4 pt-2">
@@ -129,7 +131,7 @@ export function ValueStorePage() {
 
       {!isLoading && !error && productData ? (
         <div className="flex flex-col gap-6">
-          <section className="space-y-4 pt-3">
+          <section className="space-y-4 pt-3" style={buildPageEnterStyle(50, 460)}>
             <div className="flex items-center justify-between">
               <h2 className="text-lg leading-[120%] font-semibold text-gray-700">
                 판매중인 상품
@@ -150,14 +152,18 @@ export function ValueStorePage() {
               </Card>
             ) : (
               <div className="grid grid-cols-2 gap-3">
-                {productData.products.map((product) => (
-                  <ValueStoreProductCard
+                {productData.products.map((product, index) => (
+                  <div
                     key={product.productId}
-                    product={product}
-                    onClick={(productId) =>
-                      navigate(getValueStoreProductDetailPath(productId))
-                    }
-                  />
+                    style={buildPageEnterStyle(100 + index * 45, 400)}
+                  >
+                    <ValueStoreProductCard
+                      product={product}
+                      onClick={(productId) =>
+                        navigate(getValueStoreProductDetailPath(productId))
+                      }
+                    />
+                  </div>
                 ))}
               </div>
             )}

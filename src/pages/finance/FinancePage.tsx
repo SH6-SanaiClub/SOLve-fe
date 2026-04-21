@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Badge, Card, Icons, SectionHeader } from '../../components/common'
+import { PageMotionStyles, buildPageEnterStyle } from '../../components/common/PageMotion'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import MainLayout from '../../components/layout/MainLayout'
 import {
@@ -114,17 +115,20 @@ export const FinancePage = () => {
       contentSpacing="comfortable"
       className="bg-bg-light"
     >
+      <PageMotionStyles />
       <div className="-mx-4 flex flex-col gap-4 bg-bg-light px-(--side-padding) pt-3 pb-2">
         {visibleRecommendation && recommendedItem ? (
-          <SavingsRecommendCard
-            item={recommendedItem}
-            isNewUser={recommend?.isNewUser ?? false}
-            onClick={() =>
-              navigate(getFinanceDetailPath(recommendedItem.productId), {
-                state: { productType: 'SAVINGS' },
-              })
-            }
-          />
+          <div style={buildPageEnterStyle(30, 460)}>
+            <SavingsRecommendCard
+              item={recommendedItem}
+              isNewUser={recommend?.isNewUser ?? false}
+              onClick={() =>
+                navigate(getFinanceDetailPath(recommendedItem.productId), {
+                  state: { productType: 'SAVINGS' },
+                })
+              }
+            />
+          </div>
         ) : null}
 
         {isLoading ? (
@@ -140,7 +144,11 @@ export const FinancePage = () => {
         ) : null}
 
         {showSavingsSection ? (
-          <section className="flex flex-col gap-4">
+          <section
+            key={`savings-${activeTab}`}
+            className="flex flex-col gap-4"
+            style={buildPageEnterStyle(90, 460)}
+          >
             <SectionHeader
               title={
                 <span className="text-lg font-semibold leading-[120%] text-gray-700">
@@ -156,46 +164,47 @@ export const FinancePage = () => {
             />
 
             <div className="flex flex-col gap-3">
-              {savingsProducts.map((product) => (
-                <Card
-                  key={product.id}
-                  onClick={() =>
-                    navigate(getFinanceDetailPath(product.id), {
-                      state: { productType: product.type },
-                    })
-                  }
-                  className={getProductCardClassName(
-                    product,
-                    '!gap-0 !rounded-control !border-0 !bg-white !p-5 shadow-sm',
-                  )}
-                >
-                  <div className="flex min-h-[58px] items-center justify-between gap-5">
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-center gap-2">
-                        <p className="break-keep text-base font-semibold leading-[1.2] text-font-main">
-                          {product.name}
+              {savingsProducts.map((product, index) => (
+                <div key={product.id} style={buildPageEnterStyle(130 + index * 50, 420)}>
+                  <Card
+                    onClick={() =>
+                      navigate(getFinanceDetailPath(product.id), {
+                        state: { productType: product.type },
+                      })
+                    }
+                    className={getProductCardClassName(
+                      product,
+                      '!gap-0 !rounded-control !border-0 !bg-white !p-5 shadow-sm',
+                    )}
+                  >
+                    <div className="flex min-h-[58px] items-center justify-between gap-5">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="break-keep text-base font-semibold leading-[1.2] text-font-main">
+                            {product.name}
+                          </p>
+                          {!product.available ? (
+                            <Badge tone="neutral" variant="soft" className="shrink-0 text-[11px]">
+                              가입 불가
+                            </Badge>
+                          ) : null}
+                        </div>
+                        <p className="mt-2 whitespace-pre-line text-xs leading-[1.2] text-gray-600">
+                          {product.available
+                            ? product.subtitle ?? ''
+                            : getFinanceUnavailableReasonLabel(product.unavailableReason)}
                         </p>
-                        {!product.available ? (
-                          <Badge tone="neutral" variant="soft" className="shrink-0 text-[11px]">
-                            가입 불가
-                          </Badge>
-                        ) : null}
                       </div>
-                      <p className="mt-2 whitespace-pre-line text-xs leading-[1.2] text-gray-600">
-                        {product.available
-                          ? product.subtitle ?? ''
-                          : getFinanceUnavailableReasonLabel(product.unavailableReason)}
-                      </p>
-                    </div>
 
-                    <div className="flex shrink-0 items-center">
-                      <span className="text-base font-bold leading-none text-primary-500">
-                        {formatRate(product.maxRate)}
-                      </span>
-                      <Icons.ArrowRight className="text-gray-500" size={24} />
+                      <div className="flex shrink-0 items-center">
+                        <span className="text-base font-bold leading-none text-primary-500">
+                          {formatRate(product.maxRate)}
+                        </span>
+                        <Icons.ArrowRight className="text-gray-500" size={24} />
+                      </div>
                     </div>
-                  </div>
-                </Card>
+                  </Card>
+                </div>
               ))}
 
               {!isLoading && !errorMessage && savingsProducts.length === 0 ? (
@@ -208,7 +217,11 @@ export const FinancePage = () => {
         ) : null}
 
         {showLoanSection ? (
-          <section className="flex flex-col gap-4">
+          <section
+            key={`loan-${activeTab}`}
+            className="flex flex-col gap-4"
+            style={buildPageEnterStyle(140, 460)}
+          >
             <SectionHeader
               title={
                 <span className="text-lg font-semibold leading-[120%] text-gray-700">
@@ -224,51 +237,53 @@ export const FinancePage = () => {
             />
 
             {loanProduct ? (
-              <Card
-                key={loanProduct.id}
-                onClick={() =>
-                  navigate(getFinanceDetailPath(loanProduct.id), {
-                    state: { productType: loanProduct.type },
-                  })
-                }
-                className={getProductCardClassName(
-                  loanProduct,
-                  '!gap-0 !rounded-control !border-0 !p-5 shadow-sm',
-                )}
-              >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0 max-w-[235px]">
-                    <p className="text-[20px] font-bold leading-[1.2] text-font-main">
-                      {loanProduct.name}
-                    </p>
-                    <p className="mt-2 text-xs leading-[1.2] text-font-main">
-                      {loanProduct.subtitle ?? ''}
-                    </p>
-                  </div>
-
-                  <Icons.ArrowRight className="mt-5 shrink-0 text-gray-500" size={24} />
-                </div>
-
-                <div className="mt-7 border-t border-gray-100 pt-5">
-                  <p className="text-xs font-medium leading-[1.625] text-gray-500">
-                    상품 기본 조건
-                  </p>
-                  <div className="mt-3 grid grid-cols-2 gap-3">
-                    <div className="rounded-[14px] bg-primary-50/70 px-4 py-3">
-                      <p className="text-[11px] font-medium text-primary-400">대출 한도</p>
-                      <p className="mt-1 text-base font-bold leading-6 text-font-main">
-                        {formatCurrency(MAX_LOAN_LIMIT)}
+              <div style={buildPageEnterStyle(180, 420)}>
+                <Card
+                  key={loanProduct.id}
+                  onClick={() =>
+                    navigate(getFinanceDetailPath(loanProduct.id), {
+                      state: { productType: loanProduct.type },
+                    })
+                  }
+                  className={getProductCardClassName(
+                    loanProduct,
+                    '!gap-0 !rounded-control !border-0 !p-5 shadow-sm',
+                  )}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0 max-w-[235px]">
+                      <p className="text-[20px] font-bold leading-[1.2] text-font-main">
+                        {loanProduct.name}
+                      </p>
+                      <p className="mt-2 text-xs leading-[1.2] text-font-main">
+                        {loanProduct.subtitle ?? ''}
                       </p>
                     </div>
-                    <div className="rounded-[14px] bg-gray-50 px-4 py-3">
-                      <p className="text-[11px] font-medium text-gray-500">적용 금리</p>
-                      <p className="mt-1 text-base font-bold leading-6 text-primary-500">
-                        {MIN_LOAN_RATE_LABEL}
-                      </p>
+
+                    <Icons.ArrowRight className="mt-5 shrink-0 text-gray-500" size={24} />
+                  </div>
+
+                  <div className="mt-7 border-t border-gray-100 pt-5">
+                    <p className="text-xs font-medium leading-[1.625] text-gray-500">
+                      상품 기본 조건
+                    </p>
+                    <div className="mt-3 grid grid-cols-2 gap-3">
+                      <div className="rounded-[14px] bg-primary-50/70 px-4 py-3">
+                        <p className="text-[11px] font-medium text-primary-400">대출 한도</p>
+                        <p className="mt-1 text-base font-bold leading-6 text-font-main">
+                          {formatCurrency(MAX_LOAN_LIMIT)}
+                        </p>
+                      </div>
+                      <div className="rounded-[14px] bg-gray-50 px-4 py-3">
+                        <p className="text-[11px] font-medium text-gray-500">적용 금리</p>
+                        <p className="mt-1 text-base font-bold leading-6 text-primary-500">
+                          {MIN_LOAN_RATE_LABEL}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Card>
+                </Card>
+              </div>
             ) : !isLoading && !errorMessage ? (
               <Card className="!rounded-control !border-0 !px-5 !py-6 shadow-sm">
                 <p className="text-sm text-gray-500">이용 가능한 대출 상품이 없습니다.</p>

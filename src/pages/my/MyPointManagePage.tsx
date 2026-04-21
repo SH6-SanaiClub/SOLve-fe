@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, Icons, SectionHeader } from '../../components/common'
+import { PageMotionStyles, buildPageEnterStyle } from '../../components/common/PageMotion'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import MainLayout from '../../components/layout/MainLayout'
 // import { getS3AssetUrl } from '../../constants/assetUrls'
@@ -120,7 +121,8 @@ export const MyPointManagePage = () => {
       }
       className="bg-bg-light"
     >
-      <section className="mt-2 flex flex-col gap-5">
+      <PageMotionStyles />
+      <section className="mt-2 flex flex-col gap-5" style={buildPageEnterStyle(40, 460)}>
         <Card className="mt-3 !gap-3">
           <div className="flex items-start justify-between gap-4">
             <div className="space-y-2">

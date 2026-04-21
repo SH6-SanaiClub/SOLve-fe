@@ -1,6 +1,7 @@
-﻿import { useEffect, useMemo, useRef, useState } from 'react'
+﻿import { useEffect, useMemo, useRef, useState, type CSSProperties } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Badge, Button, Card, InfoRow, ProgressBar, SectionHeader } from '../../components/common'
+import { PageMotionStyles, buildPageEnterStyle } from '../../components/common/PageMotion'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import MainLayout from '../../components/layout/MainLayout'
 import {
@@ -99,6 +100,7 @@ export const MyGradePage = () => {
   const [activeFilter, setActiveFilter] = useState<ActivityStatusFilter>('ALL')
   const activeFilterRef = useRef<ActivityStatusFilter>('ALL')
   const chartContainerRef = useRef<HTMLDivElement | null>(null)
+  const chartLinePathRef = useRef<SVGPathElement | null>(null)
   const [overviewRequestKey, setOverviewRequestKey] = useState(0)
   const [overview, setOverview] = useState<ActivityStatusOverviewResponse | null>(null)
   const [logs, setLogs] = useState<ActivityStatusLogItem[]>([])
@@ -111,6 +113,9 @@ export const MyGradePage = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false)
   const [overviewError, setOverviewError] = useState('')
   const [logsError, setLogsError] = useState('')
+  const [displayedTotalScore, setDisplayedTotalScore] = useState(0)
+  const [animatedProgressCurrent, setAnimatedProgressCurrent] = useState(0)
+  const [chartLineLength, setChartLineLength] = useState(0)
 
   useEffect(() => {
     activeFilterRef.current = activeFilter
@@ -233,6 +238,72 @@ export const MyGradePage = () => {
     }
   }, [activeFilter])
 
+  useEffect(() => {
+    const totalScore = overview?.summary?.totalScore ?? 0
+
+    if (typeof window === 'undefined') {
+      setDisplayedTotalScore(totalScore)
+      return
+    }
+
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (mediaQuery.matches) {
+      setDisplayedTotalScore(totalScore)
+      return
+    }
+
+    let animationFrameId = 0
+    let startTime: number | null = null
+    const duration = 900
+
+    const animate = (currentTime: number) => {
+      if (startTime === null) {
+        startTime = currentTime
+        setDisplayedTotalScore(0)
+      }
+
+      const elapsed = currentTime - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+
+      setDisplayedTotalScore(Math.round(totalScore * eased))
+
+      if (progress < 1) {
+        animationFrameId = window.requestAnimationFrame(animate)
+      }
+    }
+
+    animationFrameId = window.requestAnimationFrame(animate)
+
+    return () => {
+      window.cancelAnimationFrame(animationFrameId)
+    }
+  }, [overview?.summary?.totalScore])
+
+  useEffect(() => {
+    const progressCurrent = overview?.summary?.progressCurrent ?? 0
+
+    if (typeof window === 'undefined') {
+      setAnimatedProgressCurrent(progressCurrent)
+      return
+    }
+
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (mediaQuery.matches) {
+      setAnimatedProgressCurrent(progressCurrent)
+      return
+    }
+
+    setAnimatedProgressCurrent(0)
+    const frameId = window.requestAnimationFrame(() => {
+      setAnimatedProgressCurrent(progressCurrent)
+    })
+
+    return () => {
+      window.cancelAnimationFrame(frameId)
+    }
+  }, [overview?.summary?.progressCurrent])
+
   const handleLoadMore = async () => {
     if (!hasNext || !nextCursor || isLoadingMore) {
       return
@@ -320,6 +391,22 @@ export const MyGradePage = () => {
     }
   }, [chartWidth, monthlyScoreSeries])
 
+  useEffect(() => {
+    if (!scoreChart || !chartLinePathRef.current || typeof window === 'undefined') {
+      setChartLineLength(0)
+      return
+    }
+
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    if (mediaQuery.matches) {
+      setChartLineLength(0)
+      return
+    }
+
+    const nextLength = chartLinePathRef.current.getTotalLength()
+    setChartLineLength(nextLength)
+  }, [scoreChart])
+
   return (
     <MainLayout
       header={
@@ -343,8 +430,9 @@ export const MyGradePage = () => {
       }
       className="bg-bg-light"
     >
+      <PageMotionStyles />
       <section className="mt-2 flex flex-col gap-4 pb-2">
-        <Card className="mt-3 !gap-3">
+        <Card className="mt-3 !gap-3" style={buildPageEnterStyle(40, 460)}>
           {hasOverviewError ? (
             <div className="flex flex-col items-center justify-center gap-3 py-5 text-center">
               <div className="space-y-1">
@@ -404,15 +492,16 @@ export const MyGradePage = () => {
 
               <div className="pb-1 pt-1">
                 <p className="text-2xl leading-none font-semibold tracking-tight text-font-main">
-                  {numberFormatter.format(summary?.totalScore ?? 0)}
+                  {numberFormatter.format(displayedTotalScore)}
                   <span className="ml-1 text-lg font-semibold text-font-sub">점</span>
                 </p>
               </div>
 
               <ProgressBar
-                value={summary?.progressCurrent ?? 0}
+                value={animatedProgressCurrent}
                 max={summary?.progressTarget ?? SCORE_CHART_MAX}
                 className="mt-0.5"
+                barClassName="!duration-[1200ms]"
               />
 
               <div className="mt-3 h-px w-full bg-gray-200" />
@@ -432,7 +521,7 @@ export const MyGradePage = () => {
           )}
         </Card>
 
-        <Card className="!gap-3">
+        <Card className="!gap-3" style={buildPageEnterStyle(100, 460)}>
           <SectionHeader
             title="등급 변화 이력"
             right={<span className="mr-1 text-xs font-medium text-gray-400">최근 4개월</span>}
@@ -473,7 +562,7 @@ export const MyGradePage = () => {
           )}
         </Card>
 
-        <Card className="!gap-3">
+        <Card className="!gap-3" style={buildPageEnterStyle(160, 460)}>
           <SectionHeader
             title="월별 점수 변화 그래프"
             right={<span className="mr-1 text-xs font-medium text-gray-400">최근 4개월</span>}
@@ -529,19 +618,50 @@ export const MyGradePage = () => {
                   )
                 })}
 
-                <path d={scoreChart.areaPath} fill="rgba(0, 70, 255, 0.08)" />
                 <path
+                  d={scoreChart.areaPath}
+                  fill="rgba(0, 70, 255, 0.08)"
+                  style={{
+                    opacity: chartLineLength > 0 ? 0 : 1,
+                    animation:
+                      chartLineLength > 0
+                        ? 'solvePageFadeUp 520ms cubic-bezier(0.22, 1, 0.36, 1) 120ms forwards'
+                        : undefined,
+                  }}
+                />
+                <path
+                  ref={chartLinePathRef}
                   d={scoreChart.linePath}
                   fill="none"
                   stroke="var(--color-primary-400)"
                   strokeWidth="3"
                   strokeLinecap="round"
                   strokeLinejoin="round"
+                  style={
+                    chartLineLength > 0
+                      ? ({
+                          ['--line-length' as string]: String(chartLineLength),
+                          strokeDasharray: chartLineLength,
+                          strokeDashoffset: chartLineLength,
+                          animation: 'solvePageDrawLine 900ms cubic-bezier(0.22, 1, 0.36, 1) 120ms forwards',
+                        } as CSSProperties)
+                      : undefined
+                  }
                 />
 
-                {scoreChart.points.map((point) => (
+                {scoreChart.points.map((point, index) => (
                   <g key={`${point.year}-${point.month}`}>
-                    <circle cx={point.x} cy={point.y} r="4" fill="var(--color-primary-400)" />
+                    <circle
+                      cx={point.x}
+                      cy={point.y}
+                      r="4"
+                      fill="var(--color-primary-400)"
+                      style={{
+                        opacity: 0,
+                        transformOrigin: `${point.x}px ${point.y}px`,
+                        animation: `solvePagePopIn 260ms ease-out ${220 + index * 70}ms forwards`,
+                      }}
+                    />
                     <text
                       x={point.x}
                       y={point.y - 12}
@@ -549,6 +669,10 @@ export const MyGradePage = () => {
                       fontSize="12"
                       fontWeight="600"
                       fill={point.currentMonth ? 'var(--color-primary-400)' : 'var(--color-gray-600)'}
+                      style={{
+                        opacity: 0,
+                        animation: `solvePageFadeUp 300ms ease-out ${250 + index * 70}ms forwards`,
+                      }}
                     >
                       {point.score}
                     </text>
@@ -559,6 +683,10 @@ export const MyGradePage = () => {
                       fontSize="11"
                       fontWeight={point.currentMonth ? '600' : '500'}
                       fill={point.currentMonth ? 'var(--color-primary-400)' : 'var(--color-gray-400)'}
+                      style={{
+                        opacity: 0,
+                        animation: `solvePageFadeUp 300ms ease-out ${280 + index * 70}ms forwards`,
+                      }}
                     >
                       {formatGraphMonth(point.month)}
                     </text>
@@ -576,7 +704,7 @@ export const MyGradePage = () => {
           )}
         </Card>
 
-        <Card className="!gap-0 !overflow-hidden !p-0">
+        <Card className="!gap-0 !overflow-hidden !p-0" style={buildPageEnterStyle(220, 460)}>
           <div className="px-5 pt-4">
             <SectionHeader
               title={

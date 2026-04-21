@@ -1,5 +1,6 @@
 import { ChevronRight, X } from 'lucide-react'
 import { Badge, Card } from '../../../../components/common'
+import { buildPageEnterStyle } from '../../../../components/common/PageMotion'
 import { ENV_ACTIVITY_ITEMS, type EnvActivityType } from '../envActivityData'
 import { EnvBottomSheet } from './EnvBottomSheet'
 import { EnvironmentActivityIcon } from './EnvironmentActivityIcon'
@@ -29,7 +30,10 @@ export function EnvironmentEntryModal({
 
   return (
     <EnvBottomSheet open={open} onClose={onClose}>
-      <div className="flex items-start justify-between gap-4">
+      <div
+        className="flex items-start justify-between gap-4"
+        style={buildPageEnterStyle(40, 420)}
+      >
         <div className="min-w-0 pl-1">
           <h2 className="text-lg font-bold text-gray-900">친환경 활동 인증하기</h2>
           <p className="mt-2 text-sm leading-5 font-medium text-gray-500">
@@ -48,7 +52,7 @@ export function EnvironmentEntryModal({
       </div>
 
       <div className="mt-6 space-y-3">
-        {ENV_ACTIVITY_ITEMS.map((activity) => {
+        {ENV_ACTIVITY_ITEMS.map((activity, index) => {
           const isBlocked = blockedActivityTypes.includes(activity.type)
           const isApproved = activityResults[activity.type]
 
@@ -59,6 +63,7 @@ export function EnvironmentEntryModal({
               className={`!gap-0 !rounded-[8px] !border-transparent !p-4 shadow-card ${
                 isBlocked ? '!bg-gray-100 opacity-60' : '!bg-gray-50'
               }`}
+              style={buildPageEnterStyle(110 + index * 60, 420)}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="flex min-w-0 flex-1 items-center gap-4">

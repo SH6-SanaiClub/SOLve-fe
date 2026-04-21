@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Badge, Button, Card, InfoRow, Input, SectionHeader } from '../../components/common'
+import { PageMotionStyles, buildPageEnterStyle } from '../../components/common/PageMotion'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import MainLayout from '../../components/layout/MainLayout'
 import {
@@ -480,7 +481,8 @@ export const MyProfilePage = () => {
       }
       className="bg-bg-light"
     >
-      <div className="mt-5 flex flex-col gap-5 pb-2">
+      <PageMotionStyles />
+      <div className="mt-5 flex flex-col gap-5 pb-2" style={buildPageEnterStyle(40, 460)}>
         <Card className="!gap-0 !border-0 !px-5 !py-5 shadow-sm">
           <div className="flex items-center gap-4">
             <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-primary-50 text-[22px] font-semibold text-primary-500">
@@ -673,5 +675,4 @@ export const MyProfilePage = () => {
     </MainLayout>
   )
 }
-
 

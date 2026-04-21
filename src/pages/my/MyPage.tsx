@@ -9,6 +9,7 @@
 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { Card, Icons } from '../../components/common'
+import { PageMotionStyles, buildPageEnterStyle } from '../../components/common/PageMotion'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import MainLayout from '../../components/layout/MainLayout'
 import {
@@ -190,12 +191,13 @@ export const MyPage = () => {
       }
       className="bg-bg-light"
     >
+      <PageMotionStyles />
       <section className="mt-2 flex flex-col gap-5">
-        <section className="flex flex-col gap-3">
+        <section className="flex flex-col gap-3" style={buildPageEnterStyle(40, 460)}>
           {renderActivityFinanceMenuCard()}
         </section>
 
-        <section className="flex flex-col gap-3">
+        <section className="flex flex-col gap-3" style={buildPageEnterStyle(110, 460)}>
           <Card className="!gap-0 !p-0">
             <div className="px-5 pb-2 pt-5">
               <p className="text-xs font-semibold tracking-[0.18em] text-gray-400">

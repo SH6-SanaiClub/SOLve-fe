@@ -124,7 +124,7 @@ function AnimatedPaymentButtonLabel({ amount }: { amount: number }) {
 
   return (
     <span
-      className="inline-flex max-w-full items-center justify-center gap-[6px] whitespace-nowrap leading-none"
+      className="inline-flex w-full items-center justify-center gap-[6px] whitespace-nowrap leading-none text-center"
       style={{
         fontFamily: 'inherit',
         fontWeight: 'inherit',
@@ -132,7 +132,7 @@ function AnimatedPaymentButtonLabel({ amount }: { amount: number }) {
         fontVariantNumeric: 'tabular-nums',
       }}
     >
-      <span className="inline-flex min-w-[124px] shrink-0 items-center justify-end whitespace-nowrap leading-none">
+      <span className="inline-flex shrink-0 items-center justify-center whitespace-nowrap leading-none">
         {paddedDigits.map((digit, index) => {
           const shouldShowDigit = index >= firstVisibleIndex
           const shouldShowComma =

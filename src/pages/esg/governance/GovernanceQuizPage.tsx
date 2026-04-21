@@ -3,6 +3,12 @@ import { AlertCircle, LoaderCircle } from 'lucide-react'
 import axios from 'axios'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, IconButton, Icons } from '../../../components/common'
+import {
+  PageMotionStyles,
+  buildFloatingStyle,
+  buildPageEnterStyle,
+  buildPulseGlowStyle,
+} from '../../../components/common/PageMotion'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
 import { getS3AssetUrl } from '../../../constants/assetUrls'
@@ -196,13 +202,18 @@ export function GovernanceQuizPage() {
           />
         }
       >
-        <section className="mb-[-24px] flex min-h-[calc(100dvh-56px-48px)] items-center justify-center px-4 pt-6 pb-0">
-          <article className="w-full max-w-[360px] rounded-[10px] bg-white px-6 py-8 text-center shadow-[0_24px_48px_rgba(15,23,42,0.12)]">
+        <PageMotionStyles />
+        <section className="mb-[-24px] flex min-h-full items-center justify-center px-4 pt-6 pb-0">
+          <article
+            className="w-full max-w-[360px] rounded-[10px] bg-white px-6 py-8 text-center shadow-[0_24px_48px_rgba(15,23,42,0.12)]"
+            style={buildPageEnterStyle(60, 520)}
+          >
             <img
               src={completeImage}
               alt=""
               aria-hidden="true"
               className="mx-auto h-[96px] w-auto object-contain"
+              style={buildFloatingStyle(3400)}
             />
 
             <h2 className="mt-6 text-[24px] leading-none font-bold tracking-[-0.03em] text-[#1E293B]">
@@ -256,26 +267,40 @@ export function GovernanceQuizPage() {
         />
       }
     >
-      <section className="flex h-[calc(100dvh-56px)] flex-col overflow-y-auto px-1 pt-4 pb-[150px]">
-        <p className="text-[15px] font-bold tracking-[-0.02em] text-[#64748B]">
+      <PageMotionStyles />
+      <section className="flex min-h-full flex-col px-1 pt-4 pb-[150px]">
+        <p
+          className="text-[15px] font-bold tracking-[-0.02em] text-[#64748B]"
+          style={buildPageEnterStyle(30, 420)}
+        >
           <span className="mr-[4px]">오늘의 금융</span>
           <span className="text-[16px] text-primary-500">Quiz</span>
         </p>
 
-        <div className="mt-4 rounded-[10px] bg-white px-5 py-5 text-center">
+        <div
+          className="relative mt-4 overflow-hidden rounded-[10px] bg-white px-5 py-5 text-center"
+          style={buildPageEnterStyle(90, 480)}
+        >
+          {quiz?.options.length ? (
+            <div
+              className="pointer-events-none absolute left-1/2 top-4 h-[112px] w-[112px] -translate-x-1/2 rounded-full bg-primary-50 blur-2xl"
+              style={buildPulseGlowStyle(2800)}
+            />
+          ) : null}
           {isLoading ? (
-            <div className="flex min-h-[136px] items-center justify-center gap-2 text-[15px] font-medium text-white">
+            <div className="flex min-h-[136px] items-center justify-center gap-2 text-[15px] font-medium text-[#5B6B82]">
               <LoaderCircle className="animate-spin" size={18} />
               퀴즈를 불러오는 중입니다.
             </div>
           ) : (
-            <div className="flex min-h-[136px] flex-col items-center justify-center gap-3">
+            <div className="relative z-10 flex min-h-[136px] flex-col items-center justify-center gap-3">
               {quiz?.options.length ? (
                 <img
                   src={completeImage}
                   alt=""
                   aria-hidden="true"
                   className="h-[78px] w-auto object-contain"
+                  style={buildFloatingStyle(3200, 120)}
                 />
               ) : null}
               <p className="mx-auto max-w-[300px] text-[18px] leading-[1.6] font-bold tracking-[-0.02em] text-[#1E293B] break-keep">
@@ -303,7 +328,10 @@ export function GovernanceQuizPage() {
 
         {quiz?.options.length ? (
           <>
-            <div className="mt-5 flex shrink-0 items-center gap-3">
+            <div
+              className="mt-5 flex shrink-0 items-center gap-3"
+              style={buildPageEnterStyle(150, 420)}
+            >
               <span className="h-px flex-1 bg-[#D3DDEA]" aria-hidden="true" />
               <p className="text-center text-[11px] font-semibold tracking-[-0.01em] text-[#7B89A1]">
                 아래 4문항 중 정답을 선택해 주세요
@@ -311,18 +339,22 @@ export function GovernanceQuizPage() {
               <span className="h-px flex-1 bg-[#D3DDEA]" aria-hidden="true" />
             </div>
 
-            <article className="relative mt-4 flex shrink-0 flex-col rounded-[10px] bg-white px-5 py-5 overflow-hidden">
-                <div className="absolute inset-0 z-0 opacity-[100] bg-no-repeat bg-center pointer-events-none" />
+            <article
+              className="relative mt-4 flex shrink-0 flex-col overflow-hidden rounded-[10px] bg-white px-5 py-5"
+              style={buildPageEnterStyle(190, 460)}
+            >
+              <div className="absolute inset-0 z-0 opacity-[100] bg-no-repeat bg-center pointer-events-none" />
               <div className="relative z-10 flex flex-col gap-3">
-                {quiz.options.map((option) => (
-                  <QuizChoiceButton
-                    key={option.id}
-                    active={selectedOptionId === option.id}
-                    disabled={isLoading || isSubmitting}
-                    hasSelection={Boolean(selectedOptionId)}
-                    text={option.text}
-                    onClick={() => setSelectedOptionId(option.id)}
-                  />
+                {quiz.options.map((option, index) => (
+                  <div key={option.id} style={buildPageEnterStyle(220 + index * 60, 380)}>
+                    <QuizChoiceButton
+                      active={selectedOptionId === option.id}
+                      disabled={isLoading || isSubmitting}
+                      hasSelection={Boolean(selectedOptionId)}
+                      text={option.text}
+                      onClick={() => setSelectedOptionId(option.id)}
+                    />
+                  </div>
                 ))}
               </div>
 

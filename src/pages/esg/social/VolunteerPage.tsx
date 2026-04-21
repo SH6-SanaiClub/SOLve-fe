@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import BottomNavigation from '../../../components/layout/BottomNavigation'
 import { Card, IconButton } from '../../../components/common'
 import { Icons } from '../../../components/common'
+import { PageMotionStyles, buildPageEnterStyle } from '../../../components/common/PageMotion'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
 import {
@@ -97,6 +98,7 @@ export function VolunteerPage() {
       subHeader={<SocialActivityTabs activeTab="volunteer" />}
       contentSpacing="comfortable"
     >
+      <PageMotionStyles />
       {isLoading ? (
         <section className="space-y-3 pt-2">
           {Array.from({ length: 4 }).map((_, index) => (
@@ -127,7 +129,10 @@ export function VolunteerPage() {
       ) : null}
 
       {!isLoading && !error && volunteerData ? (
-        <section className="mx-[-16px] min-h-[calc(100vh-var(--header-h)-var(--nav-h)-96px)] bg-gray-100 px-4 pt-3">
+        <section
+          className="mx-[-16px] min-h-[calc(100vh-var(--header-h)-var(--nav-h)-96px)] bg-gray-100 px-4 pt-3"
+          style={buildPageEnterStyle(50, 460)}
+        >
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-[18px] leading-[120%] font-semibold tracking-[-0.02em] text-font-main">
@@ -139,15 +144,19 @@ export function VolunteerPage() {
             </div>
 
             <div className="space-y-4">
-              {volunteerData.volunteers.map((volunteer) => (
-                <VolunteerActivityCard
+              {volunteerData.volunteers.map((volunteer, index) => (
+                <div
                   key={volunteer.volunteerId}
-                  volunteer={volunteer}
-                  showImage
-                  onClick={() =>
-                    navigate(getVolunteerDetailPath(volunteer.volunteerId))
-                  }
-                />
+                  style={buildPageEnterStyle(100 + index * 50, 420)}
+                >
+                  <VolunteerActivityCard
+                    volunteer={volunteer}
+                    showImage
+                    onClick={() =>
+                      navigate(getVolunteerDetailPath(volunteer.volunteerId))
+                    }
+                  />
+                </div>
               ))}
             </div>
           </div>

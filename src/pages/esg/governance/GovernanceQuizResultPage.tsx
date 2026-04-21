@@ -2,6 +2,11 @@ import { useEffect, useState } from 'react'
 import { Check, Lightbulb, LoaderCircle, X } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, IconButton, Icons } from '../../../components/common'
+import {
+  CelebrationBurst,
+  PageMotionStyles,
+  buildPageEnterStyle,
+} from '../../../components/common/PageMotion'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
 import { ROUTE_PATHS } from '../../../constants/routePaths'
@@ -120,6 +125,7 @@ export function GovernanceQuizResultPage() {
           />
         }
       >
+        <PageMotionStyles />
         <div className="flex min-h-[70vh] items-center justify-center text-[14px] text-[#6C7B91]">
           <LoaderCircle className="mr-2 animate-spin" size={16} />
           결과를 불러오는 중입니다.
@@ -162,24 +168,31 @@ export function GovernanceQuizResultPage() {
         />
       }
     >
+      <PageMotionStyles />
       <div className="fixed inset-0 top-[56px] bg-[rgba(15,23,42,0.18)]" aria-hidden="true" />
 
       <section className="relative z-10 flex min-h-[calc(100vh-56px-48px)] items-center justify-center py-6">
-        <article className="w-full max-w-[360px] rounded-[10px] bg-white px-5 pt-7 pb-5 shadow-[0_24px_48px_rgba(15,23,42,0.12)]">
+        <article
+          className="w-full max-w-[360px] rounded-[10px] bg-white px-5 pt-7 pb-5 shadow-[0_24px_48px_rgba(15,23,42,0.12)]"
+          style={buildPageEnterStyle(40, 500)}
+        >
           <div className="flex flex-col items-center text-center">
-            <div
-              className={[
-                'flex h-[76px] w-[76px] items-center justify-center rounded-full',
-                result.isCorrect ? 'bg-[#EAF2FF]' : 'bg-[#FFE9E9]',
-              ].join(' ')}
-            >
+            <div className="relative">
+              {result.isCorrect ? <CelebrationBurst className="-top-1" /> : null}
               <div
                 className={[
-                  'flex h-[44px] w-[44px] items-center justify-center rounded-full',
-                  result.isCorrect ? 'bg-[#D8E7FF] text-[#1F5FFF]' : 'bg-[#FFD5D5] text-[#E14B4B]',
+                  'relative z-10 flex h-[76px] w-[76px] items-center justify-center rounded-full',
+                  result.isCorrect ? 'bg-[#EAF2FF]' : 'bg-[#FFE9E9]',
                 ].join(' ')}
               >
-                {result.isCorrect ? <Check size={24} strokeWidth={3} /> : <X size={24} strokeWidth={3} />}
+                <div
+                  className={[
+                    'flex h-[44px] w-[44px] items-center justify-center rounded-full',
+                    result.isCorrect ? 'bg-[#D8E7FF] text-[#1F5FFF]' : 'bg-[#FFD5D5] text-[#E14B4B]',
+                  ].join(' ')}
+                >
+                  {result.isCorrect ? <Check size={24} strokeWidth={3} /> : <X size={24} strokeWidth={3} />}
+                </div>
               </div>
             </div>
 

@@ -1,7 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card } from '../../../components/common'
+import { PageMotionStyles, buildPageEnterStyle } from '../../../components/common/PageMotion'
+import BottomNavigation from '../../../components/layout/BottomNavigation'
 import MainLayout from '../../../components/layout/MainLayout'
+import {
+  BOTTOM_NAVIGATION_ITEMS,
+  BOTTOM_NAVIGATION_ROUTE_BY_KEY,
+} from '../../../constants/bottomNavigation'
 import {
   ROUTE_PATHS,
   getDonationDetailPath,
@@ -135,11 +141,28 @@ export function DonationHistoryPage() {
     navigate(ROUTE_PATHS.my)
   }
 
+  const handleBottomNavigation = (key: string) => {
+    const nextPath =
+      BOTTOM_NAVIGATION_ROUTE_BY_KEY[key as keyof typeof BOTTOM_NAVIGATION_ROUTE_BY_KEY]
+
+    if (nextPath) {
+      navigate(nextPath)
+    }
+  }
+
   return (
     <MainLayout
       header={<ShopHeader title="기부 후원 내역" onBack={handleBack} />}
+      nav={
+        <BottomNavigation
+          items={BOTTOM_NAVIGATION_ITEMS}
+          value="my"
+          onChange={handleBottomNavigation}
+        />
+      }
       className="bg-bg-light"
     >
+      <PageMotionStyles />
       <section className="flex flex-col gap-4 pt-2">
         {isLoading ? (
           <div className="flex min-h-[240px] flex-col items-center justify-center gap-4 text-center">
@@ -156,8 +179,12 @@ export function DonationHistoryPage() {
             <span className="text-sm font-medium text-font-sub">{error}</span>
           </Card>
         ) : groupedDonations.length > 0 ? (
-          groupedDonations.map((group) => (
-            <section key={group.dateLabel} className="space-y-3">
+          groupedDonations.map((group, groupIndex) => (
+            <section
+              key={group.dateLabel}
+              className="space-y-3"
+              style={buildPageEnterStyle(40 + groupIndex * 70, 440)}
+            >
               <div className="px-1">
                 <h2 className="text-[15px] font-semibold text-font-main">
                   {group.dateLabel}
@@ -165,53 +192,57 @@ export function DonationHistoryPage() {
               </div>
 
               <div className="space-y-3">
-                {group.items.map((donation) => (
-                  <Card
+                {group.items.map((donation, itemIndex) => (
+                  <div
                     key={donation.donationLogId}
-                    className="!gap-0 !overflow-hidden !rounded-control !p-0 cursor-pointer"
-                    onClick={() =>
-                      navigate(getDonationDetailPath(donation.donationId))
-                    }
+                    style={buildPageEnterStyle(90 + groupIndex * 70 + itemIndex * 45, 380)}
                   >
-                    <div className="space-y-4 px-4 py-4">
-                      <div className="flex min-w-0 items-center gap-4">
-                        <div className="h-[76px] w-[76px] shrink-0 overflow-hidden rounded-[8px] bg-primary-100">
-                          <img
-                            src={resolveImageUrl(donation.imageUrl)}
-                            alt={donation.name}
-                            className="h-full w-full object-cover"
-                          />
+                    <Card
+                      className="!gap-0 !overflow-hidden !rounded-control !p-0 cursor-pointer"
+                      onClick={() =>
+                        navigate(getDonationDetailPath(donation.donationId))
+                      }
+                    >
+                      <div className="space-y-4 px-4 py-4">
+                        <div className="flex min-w-0 items-center gap-4">
+                          <div className="h-[76px] w-[76px] shrink-0 overflow-hidden rounded-[8px] bg-primary-100">
+                            <img
+                              src={resolveImageUrl(donation.imageUrl)}
+                              alt={donation.name}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+
+                          <div className="flex min-h-[76px] min-w-0 flex-col justify-center space-y-1">
+                            <p className="text-sm font-medium text-font-sub">
+                              {donation.organization}
+                            </p>
+                            <h3 className="break-keep text-[16px] leading-[140%] font-semibold text-font-main">
+                              {donation.name}
+                            </h3>
+                          </div>
                         </div>
 
-                        <div className="flex min-h-[76px] min-w-0 flex-col justify-center space-y-1">
+                        <div className="space-y-1.5 rounded-control bg-gray-50 px-4 py-3">
                           <p className="text-sm font-medium text-font-sub">
-                            {donation.organization}
+                            후원일시
                           </p>
-                          <h3 className="break-keep text-[16px] leading-[140%] font-semibold text-font-main">
-                            {donation.name}
-                          </h3>
+                          <p className="text-[15px] leading-[160%] font-normal text-font-main">
+                            {formatDateTime(donation.donatedAt)}
+                          </p>
                         </div>
                       </div>
 
-                      <div className="space-y-1.5 rounded-control bg-gray-50 px-4 py-3">
-                        <p className="text-sm font-medium text-font-sub">
-                          후원일시
+                      <div className="flex items-center justify-between border-t border-gray-100 px-4 py-4">
+                        <p className="text-[16px] leading-[120%] font-semibold tracking-[-0.02em] text-font-main">
+                          결제 금액
                         </p>
-                        <p className="text-[15px] leading-[160%] font-normal text-font-main">
-                          {formatDateTime(donation.donatedAt)}
-                        </p>
+                        <span className="text-[18px] leading-[120%] font-bold tracking-[-0.02em] text-font-main">
+                          {formatAmount(donation.amount)}
+                        </span>
                       </div>
-                    </div>
-
-                    <div className="flex items-center justify-between border-t border-gray-100 px-4 py-4">
-                      <p className="text-[16px] leading-[120%] font-semibold tracking-[-0.02em] text-font-main">
-                        결제 금액
-                      </p>
-                      <span className="text-[18px] leading-[120%] font-bold tracking-[-0.02em] text-font-main">
-                        {formatAmount(donation.amount)}
-                      </span>
-                    </div>
-                  </Card>
+                    </Card>
+                  </div>
                 ))}
               </div>
             </section>

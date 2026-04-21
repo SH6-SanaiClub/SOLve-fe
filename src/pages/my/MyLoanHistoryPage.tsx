@@ -1,6 +1,7 @@
 ﻿import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Badge, Card, SectionHeader } from '../../components/common'
+import { PageMotionStyles, buildPageEnterStyle } from '../../components/common/PageMotion'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import MainLayout from '../../components/layout/MainLayout'
 import {
@@ -80,7 +81,8 @@ export const MyLoanHistoryPage = () => {
       }
       className="bg-bg-light"
     >
-      <div className="mt-5 flex flex-col gap-3">
+      <PageMotionStyles />
+      <div className="mt-5 flex flex-col gap-3" style={buildPageEnterStyle(40, 460)}>
         <SectionHeader
           title={<span className="text-base font-semibold text-font-main">최근 거래 내역</span>}
           right={<span className="text-xs font-medium text-primary-400">{historyItems.length}건</span>}

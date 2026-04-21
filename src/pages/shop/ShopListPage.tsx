@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card, SectionHeader } from '../../components/common'
+import { PageMotionStyles, buildPageEnterStyle } from '../../components/common/PageMotion'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import MainLayout from '../../components/layout/MainLayout'
 import {
@@ -116,17 +117,20 @@ export const ShopListPage = () => {
       subHeader={<ShopTabs items={shopTabs} value={selectedTab} onChange={setSelectedTab} />}
       contentSpacing="comfortable"
     >
+      <PageMotionStyles />
       <div className="-mx-4 flex flex-col gap-[var(--space-4)]">
         <div className="flex flex-col gap-[var(--space-4)] bg-bg-light px-(--side-padding) pt-2 pb-[var(--space-4)]">
-          <SectionHeader
-            title={<span className="text-lg font-semibold text-gray-700">상품 목록</span>}
-            right={
-              <div className="flex shrink-0 items-center gap-[var(--space-2)] whitespace-nowrap">
-                <span className="text-sm font-medium text-gray-500">보유 포인트</span>
-                <span className="text-base font-semibold text-gray-700">{formattedPoints}</span>
-              </div>
-            }
-          />
+          <div style={buildPageEnterStyle(40, 460)}>
+            <SectionHeader
+              title={<span className="text-lg font-semibold text-gray-700">상품 목록</span>}
+              right={
+                <div className="flex shrink-0 items-center gap-[var(--space-2)] whitespace-nowrap">
+                  <span className="text-sm font-medium text-gray-500">보유 포인트</span>
+                  <span className="text-base font-semibold text-gray-700">{formattedPoints}</span>
+                </div>
+              }
+            />
+          </div>
 
           {isLoading ? (
             <Card className="items-center !rounded-control !p-[var(--space-4)] text-center">
@@ -139,17 +143,24 @@ export const ShopListPage = () => {
               <span className="text-sm font-medium text-font-sub">{error}</span>
             </Card>
           ) : visibleProducts.length > 0 ? (
-            <div className="grid auto-rows-fr grid-cols-2 gap-[var(--space-3)]">
-              {visibleProducts.map((item) => (
-                <ShopProductCard
+            <div
+              key={selectedTab}
+              className="grid auto-rows-fr grid-cols-2 gap-[var(--space-3)]"
+            >
+              {visibleProducts.map((item, index) => (
+                <div
                   key={item.itemId}
-                  title={item.name}
-                  priceLabel={formatPoints(item.requiredPoints)}
-                  imageSrc={item.imageUrl ?? undefined}
-                  placeholderLabel={getPlaceholderLabel(item.name)}
-                  placeholderSubLabel={getCategoryLabel(item.category)}
-                  onClick={() => navigate(getShopDetailPath(String(item.itemId)))}
-                />
+                  style={buildPageEnterStyle(90 + index * 45, 420)}
+                >
+                  <ShopProductCard
+                    title={item.name}
+                    priceLabel={formatPoints(item.requiredPoints)}
+                    imageSrc={item.imageUrl ?? undefined}
+                    placeholderLabel={getPlaceholderLabel(item.name)}
+                    placeholderSubLabel={getCategoryLabel(item.category)}
+                    onClick={() => navigate(getShopDetailPath(String(item.itemId)))}
+                  />
+                </div>
               ))}
             </div>
           ) : (

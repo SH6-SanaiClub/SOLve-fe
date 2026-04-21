@@ -1,6 +1,7 @@
 ﻿import type { ReactNode } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { IconButton, Icons } from '../components/common'
+import { PageMotionStyles, buildPageEnterStyle } from '../components/common/PageMotion'
 import headerLogo from '../assets/home/logo.png'
 import { ROUTE_PATHS } from '../constants/routePaths'
 import { useAuthStore } from '../store/authStore'
@@ -52,6 +53,7 @@ export function PageScaffold({ title, description, children }: PageScaffoldProps
 
   return (
     <div className="app-shell">
+      <PageMotionStyles />
       <div className="absolute left-6 top-6 z-10">
         <IconButton
           label="뒤로가기"
@@ -68,7 +70,7 @@ export function PageScaffold({ title, description, children }: PageScaffoldProps
           로그아웃
         </button>
       )}
-      <section className="page-card flex flex-col gap-4">
+      <section className="page-card flex flex-col gap-4" style={buildPageEnterStyle(40, 460)}>
         <img src={headerLogo} alt="SOLve" className="h-9 w-fit object-contain" />
         <h1 className="text-2xl font-bold text-font-main">{title}</h1>
         <p className="text-base text-font-sub">{description}</p>

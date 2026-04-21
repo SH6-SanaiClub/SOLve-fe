@@ -1,6 +1,10 @@
 import { useEffect } from 'react'
 import { X } from 'lucide-react'
 import Button from '../../../../components/common/Button'
+import {
+  CelebrationBurst,
+  PageMotionStyles,
+} from '../../../../components/common/PageMotion'
 import { getS3AssetUrl } from '../../../../constants/assetUrls'
 
 export type EnvironmentResultVariant = 'success' | 'failure'
@@ -76,6 +80,7 @@ export function EnvironmentResultModal({
 
   return (
     <div className="fixed inset-y-0 left-1/2 z-[110] flex w-full max-w-[600px] -translate-x-1/2 items-center justify-center px-6 py-8">
+      <PageMotionStyles />
       <button
         type="button"
         aria-label="인증 결과 모달 닫기"
@@ -97,11 +102,14 @@ export function EnvironmentResultModal({
 
         <div className="flex flex-1 flex-col items-center px-3 pt-6 text-center">
           {variant === 'success' ? (
-            <img
-              src={goodImage}
-              alt=""
-              className="h-[96px] w-[96px] object-contain"
-            />
+            <div className="relative">
+              <CelebrationBurst className="-top-2" />
+              <img
+                src={goodImage}
+                alt=""
+                className="relative z-10 h-[96px] w-[96px] object-contain"
+              />
+            </div>
           ) : (
             <div className="flex h-[68px] w-[68px] items-center justify-center rounded-full bg-[#FFE1E1]">
               <X size={28} strokeWidth={2.8} className="text-[#D92D20]" />

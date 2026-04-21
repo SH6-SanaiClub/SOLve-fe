@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import mainMascotImage from '../../assets/home/main-mascot.png'
 import { Badge, IconButton, Icons } from '../../components/common'
+import { PageMotionStyles, buildPageEnterStyle } from '../../components/common/PageMotion'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import Header from '../../components/layout/Header'
 import MainLayout from '../../components/layout/MainLayout'
@@ -222,26 +223,36 @@ export const RecommendPage = () => {
         />
       }
     >
+      <PageMotionStyles />
       {error ? (
         <div className="flex items-center justify-center py-20">
           <p className="text-sm text-font-sub">{error}</p>
         </div>
       ) : data ? (
         <div className="flex flex-col gap-5 py-5">
-          <AiSummaryCard userName={userName} llmSummary={data.llmSummary} />
+          <div style={buildPageEnterStyle(40, 460)}>
+            <AiSummaryCard userName={userName} llmSummary={data.llmSummary} />
+          </div>
 
-          {data.activities.map((activity) => (
-            <ActivityCard
+          {data.activities.map((activity, index) => (
+            <div
               key={getActivityKey(activity)}
-              activity={activity}
-              imageUrl={activityImageMap[getActivityKey(activity)]}
-              onClick={() => handleActivityClick(activity)}
-              categoryBadgePlacement="title-right"
-            />
+              style={buildPageEnterStyle(90 + index * 55, 420)}
+            >
+              <ActivityCard
+                activity={activity}
+                imageUrl={activityImageMap[getActivityKey(activity)]}
+                onClick={() => handleActivityClick(activity)}
+                categoryBadgePlacement="title-right"
+              />
+            </div>
           ))}
 
           {popularActivity ? (
-            <section className="mt-1 flex flex-col gap-3">
+            <section
+              className="mt-1 flex flex-col gap-3"
+              style={buildPageEnterStyle(230, 460)}
+            >
               <div className="flex items-start gap-3 px-1">
                 <Badge tone="primary" variant="solid" className="shrink-0 !px-[10px] !py-[4px]">
                   인기

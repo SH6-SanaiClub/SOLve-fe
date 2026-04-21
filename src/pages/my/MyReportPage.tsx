@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Card } from '../../components/common'
+import { PageMotionStyles, buildPageEnterStyle } from '../../components/common/PageMotion'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import { getS3AssetUrl } from '../../constants/assetUrls'
 import MainLayout from '../../components/layout/MainLayout'
@@ -207,7 +208,8 @@ export const MyReportPage = () => {
       }
       className="bg-bg-light"
     >
-      <section className="mt-5 flex flex-col gap-2 pb-3">
+      <PageMotionStyles />
+      <section className="mt-5 flex flex-col gap-2 pb-3" style={buildPageEnterStyle(40, 460)}>
         <div className="flex items-center justify-between gap-3 px-1">
           <div className="flex flex-wrap gap-2">
             {PERIOD_OPTIONS.map((option) => {

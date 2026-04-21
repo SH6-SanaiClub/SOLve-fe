@@ -9,6 +9,7 @@ import {
   ProgressBar,
   SectionHeader,
 } from '../../components/common'
+import { PageMotionStyles, buildPageEnterStyle } from '../../components/common/PageMotion'
 import BottomNavigation from '../../components/layout/BottomNavigation'
 import Header from '../../components/layout/Header'
 import MainLayout from '../../components/layout/MainLayout'
@@ -259,6 +260,7 @@ export function HomePage() {
         />
       }
     >
+      <PageMotionStyles />
       <div className="relative">
         <div
           className="pointer-events-none absolute inset-x-0 top-0 z-10 flex justify-center"
@@ -284,7 +286,7 @@ export function HomePage() {
           }}
         >
           <div className="mt-5 flex flex-col gap-3">
-            <section className="pl-3">
+            <section className="pl-3" style={buildPageEnterStyle(30, 420)}>
               <div className="flex min-w-0 flex-col justify-center gap-[4px] py-2">
                 <p className="text-xl leading-[1.1] tracking-tight font-semibold">
                   <span className="text-primary-500">{userName}</span>
@@ -297,40 +299,42 @@ export function HomePage() {
             </section>
 
             <div className="flex flex-col gap-6">
-              <Card className="!h-[136px]">
-                <div className="space-y-3">
-                  <SectionHeader
-                    title={
-                      <span className="text-lg font-semibold text-gray-700">
-                        나의 등급{' '}
-                        <span className="text-primary-500">{gradeLabel}</span>
-                      </span>
-                    }
-                    right={
-                      <span className="text-xs font-medium text-gray-400">
-                        {gradeProgress.current} / {gradeProgress.target}
-                      </span>
-                    }
-                  />
-                  <ProgressBar value={gradeProgress.visualValue} max={100} />
-                  <div className="h-px w-full bg-gray-100" />
-                  <InfoRow
-                    label={
-                      <span className="text-base font-medium text-gray-500">
-                        보유 포인트
-                      </span>
-                    }
-                    value={
-                      <span className="text-base font-medium text-gray-500">
-                        {formattedPoints}
-                      </span>
-                    }
-                    className="items-center"
-                  />
-                </div>
-              </Card>
+              <div style={buildPageEnterStyle(80, 460)}>
+                <Card className="!h-[136px]">
+                  <div className="space-y-3">
+                    <SectionHeader
+                      title={
+                        <span className="text-lg font-semibold text-gray-700">
+                          나의 등급{' '}
+                          <span className="text-primary-500">{gradeLabel}</span>
+                        </span>
+                      }
+                      right={
+                        <span className="text-xs font-medium text-gray-400">
+                          {gradeProgress.current} / {gradeProgress.target}
+                        </span>
+                      }
+                    />
+                    <ProgressBar value={gradeProgress.visualValue} max={100} />
+                    <div className="h-px w-full bg-gray-100" />
+                    <InfoRow
+                      label={
+                        <span className="text-base font-medium text-gray-500">
+                          보유 포인트
+                        </span>
+                      }
+                      value={
+                        <span className="text-base font-medium text-gray-500">
+                          {formattedPoints}
+                        </span>
+                      }
+                      className="items-center"
+                    />
+                  </div>
+                </Card>
+              </div>
 
-              <section className="flex flex-col gap-3">
+              <section className="flex flex-col gap-3" style={buildPageEnterStyle(130, 460)}>
                 <DashboardActionTile
                   title="S 활동하기"
                   descriptionItems={['기부', '가치가게', '봉사']}
@@ -357,35 +361,39 @@ export function HomePage() {
                 </div>
               </section>
 
-              <Card className="!h-[141px]">
-                <div className="space-y-4">
-                  <SectionHeader
-                    title={
-                      <span className="text-base font-semibold text-gray-700">
-                        이번주 나의 활동
-                      </span>
-                    }
-                    right={
-                      <span className="text-xs font-medium text-gray-400">
-                        {weekRangeLabel}
-                      </span>
-                    }
-                  />
-                  <WeeklyActivityTracker items={weeklyActivities} />
-                </div>
-              </Card>
+              <div style={buildPageEnterStyle(180, 460)}>
+                <Card className="!h-[141px]">
+                  <div className="space-y-4">
+                    <SectionHeader
+                      title={
+                        <span className="text-base font-semibold text-gray-700">
+                          이번주 나의 활동
+                        </span>
+                      }
+                      right={
+                        <span className="text-xs font-medium text-gray-400">
+                          {weekRangeLabel}
+                        </span>
+                      }
+                    />
+                    <WeeklyActivityTracker items={weeklyActivities} />
+                  </div>
+                </Card>
+              </div>
 
-              <Card
-                onClick={() => navigate(ROUTE_PATHS.recommend)}
-                className="hidden !h-[46px] !p-0"
-              >
-                <div className="flex h-[44px] items-center justify-between gap-3 px-5">
-                  <span className="text-sm leading-none font-semibold text-gray-700">
-                    AI 맞춤 활동 추천
-                  </span>
-                  <Icons.ArrowRight className="text-gray-700" size={18} />
-                </div>
-              </Card>
+              <div style={buildPageEnterStyle(220, 420)}>
+                <Card
+                  onClick={() => navigate(ROUTE_PATHS.recommend)}
+                  className="hidden !h-[46px] !p-0"
+                >
+                  <div className="flex h-[44px] items-center justify-between gap-3 px-5">
+                    <span className="text-sm leading-none font-semibold text-gray-700">
+                      AI 맞춤 활동 추천
+                    </span>
+                    <Icons.ArrowRight className="text-gray-700" size={18} />
+                  </div>
+                </Card>
+              </div>
 
               <Card
                 onClick={() => navigate(ROUTE_PATHS.esgQuiz)}

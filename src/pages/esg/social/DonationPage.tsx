@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, Card, IconButton } from '../../../components/common'
 import { Icons } from '../../../components/common'
+import { PageMotionStyles, buildPageEnterStyle } from '../../../components/common/PageMotion'
 import BottomNavigation from '../../../components/layout/BottomNavigation'
 import Header from '../../../components/layout/Header'
 import MainLayout from '../../../components/layout/MainLayout'
@@ -16,12 +17,6 @@ import { DonationSummaryBanner } from './components/DonationSummaryBanner'
 import { SocialActivityTabs } from './components/SocialActivityTabs'
 import { getDonationCampaigns } from '../../../services/donationService'
 import type { DonationListResponse } from '../../../types/donation'
-
-const formatCurrency = (amount: number) =>
-  `${new Intl.NumberFormat('ko-KR').format(amount)}원`
-
-const formatNumber = (value: number) =>
-  new Intl.NumberFormat('ko-KR').format(value)
 
 export function DonationPage() {
   const navigate = useNavigate()
@@ -92,6 +87,7 @@ export function DonationPage() {
       subHeader={<SocialActivityTabs activeTab="donation" />}
       contentSpacing="comfortable"
     >
+      <PageMotionStyles />
       {isLoading ? (
         <div className="flex flex-col gap-6">
           <section className="space-y-6 pt-2">
@@ -145,17 +141,13 @@ export function DonationPage() {
       {!isLoading && !error && donationData ? (
         <div className="flex flex-col gap-6 pt-2">
           <DonationSummaryBanner
-            totalDonationAmountLabel={formatCurrency(
-              donationData.summary.totalDonationAmount,
-            )}
-            totalParticipantCountLabel={formatNumber(
-              donationData.summary.totalParticipantCount,
-            )}
+            totalDonationAmount={donationData.summary.totalDonationAmount}
+            totalParticipantCount={donationData.summary.totalParticipantCount}
             imageSrc={characterFriendsImage}
             imageAlt="SOLve 기부 배너 캐릭터"
           />
 
-          <section className="space-y-4">
+          <section className="space-y-4" style={buildPageEnterStyle(70, 460)}>
             <div className="flex items-center justify-between">
               <h2 className="text-lg leading-[120%] font-semibold text-font-main">
                 진행중인 캠페인
@@ -176,14 +168,18 @@ export function DonationPage() {
               </Card>
             ) : (
               <div className="space-y-3">
-                {donationData.donations.map((donation) => (
-                  <DonationCampaignCard
+                {donationData.donations.map((donation, index) => (
+                  <div
                     key={donation.donationId}
-                    donation={donation}
-                    onClick={() =>
-                      navigate(getDonationDetailPath(donation.donationId))
-                    }
-                  />
+                    style={buildPageEnterStyle(110 + index * 55, 420)}
+                  >
+                    <DonationCampaignCard
+                      donation={donation}
+                      onClick={() =>
+                        navigate(getDonationDetailPath(donation.donationId))
+                      }
+                    />
+                  </div>
                 ))}
               </div>
             )}

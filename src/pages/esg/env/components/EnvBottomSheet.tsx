@@ -1,4 +1,5 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { PageMotionStyles } from '../../../../components/common/PageMotion'
 
 interface EnvBottomSheetProps {
   open: boolean
@@ -7,8 +8,11 @@ interface EnvBottomSheetProps {
 }
 
 export function EnvBottomSheet({ open, onClose, children }: EnvBottomSheetProps) {
+  const [isVisible, setIsVisible] = useState(false)
+
   useEffect(() => {
     if (!open) {
+      setIsVisible(false)
       return
     }
 
@@ -22,8 +26,12 @@ export function EnvBottomSheet({ open, onClose, children }: EnvBottomSheetProps)
 
     document.body.style.overflow = 'hidden'
     window.addEventListener('keydown', handleEscape)
+    const frameId = window.requestAnimationFrame(() => {
+      setIsVisible(true)
+    })
 
     return () => {
+      window.cancelAnimationFrame(frameId)
       document.body.style.overflow = previousOverflow
       window.removeEventListener('keydown', handleEscape)
     }
@@ -36,11 +44,12 @@ export function EnvBottomSheet({ open, onClose, children }: EnvBottomSheetProps)
         open ? 'visible' : 'invisible'
       }`}
     >
+      <PageMotionStyles />
       <button
         type="button"
         aria-label="친환경 활동 바텀시트 닫기"
-        className={`absolute inset-0 transition-opacity duration-200 ${
-          open ? 'opacity-100' : 'opacity-0'
+        className={`absolute inset-0 transition-opacity duration-300 ${
+          open && isVisible ? 'opacity-100' : 'opacity-0'
         }`}
         style={{ backgroundColor: 'rgba(2, 6, 23, 0.62)' }}
         onClick={onClose}
@@ -48,9 +57,12 @@ export function EnvBottomSheet({ open, onClose, children }: EnvBottomSheetProps)
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center">
         <section
-          className={`pointer-events-auto w-full min-h-[440px] rounded-t-[24px] bg-white px-5 pt-8 pb-[calc(24px+env(safe-area-inset-bottom))] shadow-[0_-20px_48px_rgba(15,23,42,0.16)] transition-transform duration-200 will-change-transform ${
-            open ? 'translate-y-0' : 'translate-y-full'
+          className={`pointer-events-auto w-full min-h-[440px] rounded-t-[24px] bg-white px-5 pt-8 pb-[calc(24px+env(safe-area-inset-bottom))] shadow-[0_-20px_48px_rgba(15,23,42,0.16)] transition-[transform,opacity] duration-300 will-change-transform ${
+            open && isVisible ? 'translate-y-0 opacity-100' : 'translate-y-full opacity-0'
           }`}
+          style={{
+            transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          }}
         >
           {children}
         </section>

@@ -14,6 +14,8 @@ import type { MyPointHistoryItem } from '../../types/myPoint'
 import { ShopHeader } from '../shop/components/ShopHeader'
 
 const numberFormatter = new Intl.NumberFormat('ko-KR')
+const INITIAL_VISIBLE_COUNT = 10
+const LOAD_MORE_COUNT = 10
 // const pointImageUrl = getS3AssetUrl('point.webp')
 
 const pointSummary = {
@@ -61,6 +63,7 @@ export const MyPointManagePage = () => {
   const navigate = useNavigate()
   const [totalPoints, setTotalPoints] = useState(0)
   const [histories, setHistories] = useState<MyPointHistoryItem[]>([])
+  const [visibleCount, setVisibleCount] = useState(INITIAL_VISIBLE_COUNT)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
@@ -88,6 +91,10 @@ export const MyPointManagePage = () => {
     void fetchPointData()
   }, [])
 
+  useEffect(() => {
+    setVisibleCount(INITIAL_VISIBLE_COUNT)
+  }, [histories.length])
+
   const handleBottomNavigation = (key: string) => {
     const nextPath =
       BOTTOM_NAVIGATION_ROUTE_BY_KEY[key as keyof typeof BOTTOM_NAVIGATION_ROUTE_BY_KEY]
@@ -97,7 +104,9 @@ export const MyPointManagePage = () => {
     }
   }
 
-  const groupedHistories = groupHistoriesByDate(histories)
+  const visibleHistories = histories.slice(0, visibleCount)
+  const groupedHistories = groupHistoriesByDate(visibleHistories)
+  const hasMoreHistories = histories.length > visibleCount
 
   return (
     <MainLayout
@@ -192,6 +201,16 @@ export const MyPointManagePage = () => {
                   </Card>
                 </section>
               ))}
+
+              {hasMoreHistories ? (
+                <button
+                  type="button"
+                  onClick={() => setVisibleCount((prev) => prev + LOAD_MORE_COUNT)}
+                  className="mx-auto inline-flex h-11 items-center justify-center rounded-full border border-gray-200 bg-white px-5 text-sm font-medium text-gray-600 shadow-sm"
+                >
+                  더보기
+                </button>
+              ) : null}
             </div>
           ) : (
             <Card className="items-center !rounded-control !p-4 text-center">

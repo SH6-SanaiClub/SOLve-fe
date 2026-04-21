@@ -16,6 +16,7 @@ import { getValueStoreProductDetail } from '../../services/productService'
 import { getActivityRecommend } from '../../services/recommendService'
 import type { ActivityRecommendResponse, RecommendedActivity } from '../../types/recommend'
 import { useHomeDashboardSummary } from '../home/hooks/useHomeDashboardSummary'
+import { getVolunteerDetail } from '../../services/volunteerService'
 import { ActivityCard } from './components/ActivityCard'
 import { AiSummaryCard } from './components/AiSummaryCard'
 import { PopularActivityGuideModal } from './components/PopularActivityGuideModal'
@@ -123,6 +124,11 @@ export const RecommendPage = () => {
 
           if (activity.activityType === 'PURCHASE') {
             const detail = await getValueStoreProductDetail(activity.referenceId)
+            return [getActivityKey(activity), detail.imageUrl] as const
+          }
+
+          if (activity.activityType === 'VOLUNTEER') {
+            const detail = await getVolunteerDetail(activity.referenceId)
             return [getActivityKey(activity), detail.imageUrl] as const
           }
 

@@ -238,13 +238,6 @@ export const FinancePage = () => {
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 max-w-[235px]">
-                    <Badge
-                      tone="primary"
-                      variant="soft"
-                      className="mb-3 !rounded-[4px] !px-[6px] !py-[2px] text-xs font-medium"
-                    >
-                      신청 가능
-                    </Badge>
                     <p className="text-[20px] font-bold leading-[1.2] text-font-main">
                       {loanProduct.name}
                     </p>

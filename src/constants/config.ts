@@ -5,7 +5,7 @@ declare const __PORTONE_PG__: string
 export const APP_CONFIG = {
   appName: 'SOLve',
   apiBaseUrl: import.meta.env.VITE_API_BASE_URL ?? '/api',
-  apiTimeoutMs: Number(import.meta.env.VITE_API_TIMEOUT_MS ?? 10000),
+  apiTimeoutMs: Number(import.meta.env.VITE_API_TIMEOUT_MS ?? 30000),
   enableDevAuthBypass: false,
   portone: {
     impCode: import.meta.env.VITE_PORTONE_IMP_CODE || __PORTONE_IMP_CODE__ || 'imp57425168',

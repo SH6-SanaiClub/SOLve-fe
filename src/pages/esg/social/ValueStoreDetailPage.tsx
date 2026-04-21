@@ -12,6 +12,17 @@ import useReturnNavigation from '../../../hooks/useReturnNavigation'
 import { getValueStoreProductDetail } from '../../../services/productService'
 import type { ValueStoreProductDetail } from '../../../types/product'
 
+type ProductDescriptionBlockObject = {
+  type?: string
+  value?: string
+  url?: string
+  imageUrl?: string
+}
+
+type ParsedDescriptionBlock =
+  | { type: 'image'; value: string }
+  | { type: 'text'; value: string }
+
 const formatPrice = (price: number) =>
   `${new Intl.NumberFormat('ko-KR').format(price)}원`
 
@@ -36,6 +47,70 @@ const resolveImageUrl = (imageUrl: string) => {
   }
 
   return normalizedImageUrl
+}
+
+const normalizeParsedDescriptionArray = (
+  parsed: unknown,
+): ParsedDescriptionBlock[] => {
+  if (!Array.isArray(parsed)) {
+    return []
+  }
+
+  return parsed.reduce<ParsedDescriptionBlock[]>((acc, block) => {
+    if (!block || typeof block !== 'object') {
+      return acc
+    }
+
+    const { type, value, url, imageUrl } = block as ProductDescriptionBlockObject
+    const normalizedType = type?.trim().toLowerCase()
+    const normalizedValue = value?.trim()
+
+    if (normalizedType === 'text' && normalizedValue) {
+      acc.push({ type: 'text', value: normalizedValue })
+      return acc
+    }
+
+    if (normalizedType === 'image') {
+      const imageValue = imageUrl?.trim() || url?.trim() || normalizedValue
+
+      if (imageValue) {
+        acc.push({ type: 'image', value: imageValue })
+      }
+    }
+
+    return acc
+  }, [])
+}
+
+const parseDescriptionBlocks = (description: string): ParsedDescriptionBlock[] => {
+  const trimmedDescription = description.replace(/^\uFEFF/, '').trim()
+
+  if (!trimmedDescription) {
+    return []
+  }
+
+  try {
+    const parsed = JSON.parse(trimmedDescription) as unknown
+    return normalizeParsedDescriptionArray(parsed)
+  } catch {
+    const arrayStartIndex = trimmedDescription.indexOf('[')
+    const arrayEndIndex = trimmedDescription.lastIndexOf(']')
+
+    if (arrayStartIndex >= 0 && arrayEndIndex > arrayStartIndex) {
+      const arrayText = trimmedDescription
+        .slice(arrayStartIndex, arrayEndIndex + 1)
+        .trim()
+
+      try {
+        const parsedArray = JSON.parse(arrayText) as unknown
+        return normalizeParsedDescriptionArray(parsedArray)
+      } catch {
+        return []
+      }
+    }
+
+    return []
+  }
 }
 
 export function ValueStoreDetailPage() {
@@ -75,6 +150,13 @@ export function ValueStoreDetailPage() {
   }, [fetchProductDetail])
 
   const isSoldOut = Boolean(productDetail?.soldOut)
+  const descriptionBlocks = productDetail
+    ? parseDescriptionBlocks(productDetail.description)
+    : []
+  const hasTextBlock = descriptionBlocks.some((block) => block.type === 'text')
+  const hasImageBlock = descriptionBlocks.some((block) => block.type === 'image')
+  let hasRenderedBrandStoryTitle = false
+  let hasRenderedProductDescriptionTitle = false
 
   return (
     <MainLayout
@@ -137,8 +219,8 @@ export function ValueStoreDetailPage() {
                   />
                 </section>
 
-                <section className="px-[20px] pt-3">
-                  <div className="space-y-[18px]">
+                <section>
+                  <div className="bg-white px-[20px] pt-[18px] pb-3">
                     <div className="space-y-[10px]">
                       <p className="text-[13px] leading-[120%] font-semibold tracking-[-0.02em] text-gray-500">
                         {productDetail.storeName}
@@ -153,7 +235,7 @@ export function ValueStoreDetailPage() {
                           >
                             {productDetail.category}
                           </Badge>
-                          <h2 className="w-[248px] text-[16px] leading-[120%] font-semibold text-gray-600">
+                          <h2 className="w-full text-[16px] leading-[120%] font-semibold text-gray-600">
                             {productDetail.name}
                           </h2>
                         </div>
@@ -176,14 +258,69 @@ export function ValueStoreDetailPage() {
                         </div>
                       </div>
                     </div>
+                  </div>
 
-                    <div className="mx-[-20px] h-px bg-gray-200/70" />
+                  <div className="px-[20px] pt-0">
+                    {descriptionBlocks.length > 0 ? (
+                      <div>
+                        {descriptionBlocks.map((block, index) => {
+                          if (block.type === 'text') {
+                            return (
+                              <div
+                                key={`product-description-text-${index}`}
+                                className="space-y-0"
+                              >
+                                {!hasRenderedBrandStoryTitle && hasTextBlock ? (
+                                  (() => {
+                                    hasRenderedBrandStoryTitle = true
+                                    return (
+                                      <div className="space-y-3 pt-4">
+                                        <p className="text-[18px] leading-[28px] font-semibold text-gray-600">
+                                          Brand Story
+                                        </p>
+                                        <div className="h-px w-[22px] bg-gray-600" />
+                                      </div>
+                                    )
+                                  })()
+                                ) : null}
+                                <p className="py-3 whitespace-pre-line text-base leading-[26px] font-normal text-gray-500">
+                                  {block.value}
+                                </p>
+                              </div>
+                            )
+                          }
 
-                    <div className="space-y-[11px]">
-                      <p className="whitespace-pre-line text-base leading-[26px] font-normal text-gray-500">
-                        {productDetail.description}
-                      </p>
-                    </div>
+                          return (
+                            <div key={`product-description-image-${index}`}>
+                              {!hasRenderedProductDescriptionTitle && hasImageBlock ? (
+                                (() => {
+                                  hasRenderedProductDescriptionTitle = true
+                                  return (
+                                    <div className="space-y-3 pb-4">
+                                      <div className="h-px w-full bg-gray-200/70" />
+                                      <p className="text-[18px] leading-[28px] font-semibold text-gray-600">
+                                        상품 설명
+                                      </p>
+                                    </div>
+                                  )
+                                })()
+                              ) : null}
+                              <img
+                                src={resolveImageUrl(block.value)}
+                                alt={`${productDetail.name} 상세 이미지 ${index + 1}`}
+                                className="w-full object-cover"
+                              />
+                            </div>
+                          )
+                        })}
+                      </div>
+                    ) : (
+                      <div className="space-y-[11px] pt-4">
+                        <p className="whitespace-pre-line text-base leading-[26px] font-normal text-gray-500">
+                          {productDetail.description}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 </section>
               </>

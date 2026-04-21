@@ -117,7 +117,7 @@ export const VolunteerActivityCard = ({
               <p className="text-sm leading-[120%] font-medium tracking-[-0.02em] text-font-sub">
                 {getVolunteerMetaLabel(volunteer)}
               </p>
-              <h3 className="text-[18px] leading-[120%] font-bold tracking-[-0.02em] text-font-main">
+              <h3 className="text-base leading-[120%] font-bold tracking-[-0.02em] text-font-main">
                 {volunteer.name}
               </h3>
             </div>

@@ -41,6 +41,10 @@ const LEGACY_SAVINGS_SLUG_TO_NAME: Record<string, string> = {
   'esg-master-savings': 'ESG 마스터 적금',
 }
 
+const LEGACY_LOAN_SLUG_TO_NAME: Record<string, string> = {
+  'esg-micro-loan': 'ESG 소액대출',
+}
+
 const renderNoticeBlock = (noticeLines: string[]) => (
   <div className="px-[3px]">
     <h3 className="text-[12px] font-semibold leading-[1.2] text-gray-500">알아두세요</h3>
@@ -79,12 +83,14 @@ export const FinanceDetailPage = () => {
         setErrorMessage('')
 
         if (routeState?.productType === 'LOAN') {
-          if (!isNumericId) {
-            throw new Error('NOT_FOUND')
-          }
-
           const loans = await getFinanceProducts('loan')
-          const selectedLoan = loans.find((product) => String(product.id) === id)
+          const selectedLoan = loans.find((product) => {
+            if (String(product.id) === id) {
+              return true
+            }
+
+            return LEGACY_LOAN_SLUG_TO_NAME[id] === product.name
+          })
 
           if (!selectedLoan) {
             throw new Error('NOT_FOUND')
@@ -120,12 +126,18 @@ export const FinanceDetailPage = () => {
           return
         }
 
-        if (!isNumericId) {
+        if (!isNumericId && !LEGACY_LOAN_SLUG_TO_NAME[id]) {
           throw new Error('NOT_FOUND')
         }
 
         const loans = await getFinanceProducts('loan')
-        const selectedLoan = loans.find((product) => String(product.id) === id)
+        const selectedLoan = loans.find((product) => {
+          if (String(product.id) === id) {
+            return true
+          }
+
+          return LEGACY_LOAN_SLUG_TO_NAME[id] === product.name
+        })
 
         if (!selectedLoan) {
           throw new Error('NOT_FOUND')
